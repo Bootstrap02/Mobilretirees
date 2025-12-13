@@ -5,7 +5,7 @@ import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { BigLoader } from '../Modals/Loaders';
-import exxonLogo from '../assets/exxonmobil-logo-white.png';
+import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
 
 // Reusable Input Component
 const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, showToggle, toggleShow, ...props }) => (
@@ -70,7 +70,7 @@ export const Signup = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/register', formData);
+      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/register', formData);
       localStorage.setItem('userData', JSON.stringify(res.data));
       setTimeout(() => {
         setLoading(false);
@@ -85,7 +85,7 @@ export const Signup = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/google', {
+      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/google', {
         token: credentialResponse.credential
       });
       localStorage.setItem('userData', JSON.stringify(res.data));
@@ -191,7 +191,7 @@ export const Signin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/login', formData);
+      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login', formData);
       localStorage.setItem('userData', JSON.stringify(res.data));
       navigate('/dashboard');
     } catch (err) {
@@ -204,7 +204,7 @@ export const Signin = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/google', {
+      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/google', {
         token: credentialResponse.credential
       });
       localStorage.setItem('userData', JSON.stringify(res.data));
@@ -293,7 +293,7 @@ export const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/forgot-password', { email });
+      await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/forgot-password', { email });
       setSent(true);
     } catch (err) {
       alert('Email not found');
@@ -367,7 +367,7 @@ export const ResetPassword = () => {
 
     try {
       await axios.post(
-        `https://campusbuy-backend-nkmx.onrender.com/mobilecreateuser/reset-password/${token}`,
+        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/reset-password/${token}`,
         { password }
       );
 

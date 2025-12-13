@@ -1,7 +1,7 @@
 // components/Modals.jsx
 import React from "react";
 import { ClipLoader, HashLoader } from "react-spinners";
-import exxonLogo from "../assets/exxonmobil-logo-white.png"; // Add this logo (white on red)
+import exxonLogo from "../assets/exxonmobil-logo-white.jpg"; // Add this logo (white on red)
 
 // ===================================================================
 // 1. FULL PAGE LOADER (Used on initial app load)

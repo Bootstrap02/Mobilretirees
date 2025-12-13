@@ -1,8 +1,8 @@
 // components/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FiMenu, FiX, FiBell, FiUser, FiLogOut, FiHelpCircle } from 'react-icons/fi';
-import exxonLogo from '../assets/exxonmobil-logo-white.png'; // White logo on transparent
+import { FiMenu, FiX, FiBell, FiUser, FiLogOut } from 'react-icons/fi';
+import exxonLogo from '../assets/exxonmobil-logo-white.jpg'; // White logo on transparent
 
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);

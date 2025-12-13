@@ -10,7 +10,6 @@ import Footer from '../../Components/Footer'
 import { schools, states } from '../../Constants/Universities';
 import {Minifooter} from '../../Components/Subheaders';
 import { ColorRing  } from 'react-loader-spinner';
-import {Helmet} from 'react-helmet';
 import { MdOutlineVisibility } from "react-icons/md";
 import { MdOutlineVisibilityOff } from "react-icons/md";
 import { Pricetips, Purchasetips, Bulkgoodstips } from '../../Modals/Tips';
@@ -248,7 +247,6 @@ export const Signuplink = () => {
   return (
 
     <div className='' style={mainBG}>
-       <Helmet>
    {/* Other meta tags */}
    <meta property="og:url" content="https://campusify.net/signin" />
    <meta property="og:title" content="Signin: Join the student market on campus" />
@@ -270,7 +268,6 @@ export const Signuplink = () => {
     <meta name="twitter:title" content="Campusify" />
     <meta name="twitter:description" content="The largest student-to-student online marketplace in Nigeria. Buy and sell anything from your fellow students. Textbooks, electronics, clothes, and more! Safe and secure platform with guaranteed delivery." />
     <meta name="twitter:image" content="" />
-    </Helmet>
     <div className='w-[15%]  max-lg:w-[20%] all-round-tips rounded-lg bg-[rgba(255, 255, 255, 0.8)]'>
    
 </div>

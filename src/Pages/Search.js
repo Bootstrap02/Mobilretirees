@@ -2,7 +2,6 @@ import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import {useNavigate, useParams } from 'react-router-dom';
 import {Searchcategories} from '../Components/Mobilecategories.js';
-import { Helmet } from 'react-helmet';
 import { Productcard } from '../Components/Productcards.js';
 import Mobilesearch from '../Components/Mobilesearch.js';
 import { Pricetips, Purchasetips, Bulkgoodstips } from '../Modals/Tips';
@@ -188,7 +187,6 @@ const Search = () => {
   // const {category} = props;
   return (
     <div className='w-[100%] bg-[#0C0908]'>
-      <Helmet>
   {/* Other meta tags */}
   <meta property="og:url" content="https://campusify.net/search" />
   <meta property="og:title" content="Search: Find any product on Campusify" />
@@ -208,7 +206,6 @@ const Search = () => {
     <meta name="twitter:title" content="Campusify" />
     <meta name="twitter:description" content="The largest student-to-student online marketplace in Nigeria. Buy and sell anything from your fellow students. Textbooks, electronics, clothes, and more! Safe and secure platform with guaranteed delivery." />
     <meta name="twitter:image" content="" />
-    </Helmet>
       <div className='w-[100%] flex flex-col gap-2 max-lg:hidden'>
       <div className='w-[15%]  max-lg:w-[20%] all-round-tips rounded-lg bg-[rgba(255, 255, 255, 0.8)]'>
    

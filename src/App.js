@@ -12,8 +12,7 @@ import EmploymentForm from './Pages/Useguide';
 import FAQs from './Pages/FAQs';
 import { Createproductpage } from './Pages/Createproductpage'
 import {  Editproductpage } from './Pages/Editproductpage';
-import Dashboard from './Pages/Yourproductspage';
-import Newproduct from './Pages/Newproduct';
+import Dashboard from './Pages/Dashboard';
 import Search from './Pages/Search';
 import Mainpage from  './Pages/Accessories/Mainpage';
 import Profile from   './Pages/Productpage';
@@ -42,30 +41,29 @@ function App() {
     
     <BrowserRouter>
     <Routes>
-    <Route path="/"element={<Firstpage/>}/>
-<Route path='/productpage/:slug/:id' element={<Profile />}/>
-<Route path='/yourproductspage/:title/:id' element={<Dashboard />}/>
-<Route path='/newproduct/:title/:id' element={<Newproduct />}/>
+<Route path="/" element={<Firstpage />} />
+<Route path='/productpage/:slug/:id' element={<Profile />} />
+<Route path='/dashboard' element={<Dashboard />} />
         <Route path='/store/:id' element={<Store />}/>
-        <Route path='/webcreate' element={<Sellerregistration />}/>
-        <Route path='/webstore/:webname' element={<Webstore />}/>
-        <Route path='/webproductpage/:title' element={<Productpages />}/>
-        <Route path='/signuplink/:id' element={<Signuplink />}/>
-        <Route path='/editproductpage/:id/:title' element={<Editproductpage />}/>
-        <Route path='/search/:university/:title' element= {<Search />}/>          
-        <Route path='/mainpage/:id' element= {<Mainpage />}/>
-        <Route path='/signup' element= {<Signup />}/>
-        <Route path='/signin' element= {<Signin />}/>
-        <Route path='/forgotpassword' element= {<ForgotPassword />}/>
-        <Route path='/resetpassword' element= {<ResetPassword />}/>
-        <Route path='/about' element= {<About />}/>
-        <Route path='/privacy' element= {<Privacy />}/>
-        <Route path='/deleteaccount' element= {<Deleteaccount />}/>
-        <Route path='/yourreferrals' element= {<Yourreferrals />}/>
-        <Route path='/contact' element= {<Contact />}/>
-        <Route path='/faqs' element= {<FAQs />}/>
-        <Route path='/createproductpage' element= {<Createproductpage />}/>
-        <Route path='/useguide' element= {<EmploymentForm />}/>
+        <Route path='/webcreate' element={<Sellerregistration /> }/>
+        <Route path='/webstore/:webname' element={<Webstore /> }/>
+        <Route path='/webproductpage/:title' element={<Productpages /> }/>
+        <Route path='/signuplink/:id' element={<Signuplink /> }/>
+        <Route path='/editproductpage/:id/:title' element={<Editproductpage /> }/>
+        <Route path='/search/:university/:title' element= {<Search /> }/>          
+        <Route path='/mainpage/:id' element= {<Mainpage /> }/>
+        <Route path='/signup' element= {<Signup /> }/>
+        <Route path='/signin' element= {<Signin /> }/>
+        <Route path='/forgotpassword' element= {<ForgotPassword /> }/>
+        <Route path='/resetpassword' element= {<ResetPassword /> }/>
+        <Route path='/about' element= {<About /> }/>
+        <Route path='/privacy' element= {<Privacy /> }/>
+        <Route path='/deleteaccount' element= {<Deleteaccount /> }/>
+        <Route path='/yourreferrals' element= {<Yourreferrals /> }/>
+        <Route path='/contact' element= {<Contact /> }/>
+        <Route path='/faqs' element= {<FAQs /> }/>
+        <Route path='/createproductpage' element= {<Createproductpage /> }/>
+        <Route path='/useguide' element= {<EmploymentForm /> }/>
     </Routes>
     </BrowserRouter>
     </>

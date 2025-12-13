@@ -14,7 +14,7 @@ import {
   FiBell,
   FiUser 
 } from 'react-icons/fi';
-import exxonLogoWhite from '../assets/exxonmobil-logo-white.png';
+import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -92,16 +92,16 @@ const Footer = () => {
             <p className="text-gray-300 mb-4">
               Get monthly updates on pension payments, health tips, and retiree events.
             </p>
-            <form className="flex flex-col sm:flex-row gap-3 mb-8">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                className="px-4 py-3 rounded-lg text-gray-900 flex-1 focus:outline-none focus:ring-2 focus:ring-[#E30613]"
-              />
-              <button className="bg-[#E30613] hover:bg-[#c20511] px-6 py-3 rounded-lg font-semibold transition whitespace-nowrap">
-                Subscribe
-              </button>
-            </form>
+          <form className="w-full max-w-xs mx-auto sm:mx-0 flex flex-col sm:flex-row gap-2 mb-8">
+  <input 
+    type="email" 
+    placeholder="Email" 
+    className="w-[60%] px-4 py-2 text-sm rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#E30613] transition"
+  />
+  <button className="w-[35%] px-3 py-1 bg-[#E30613] hover:bg-[#c20511] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
+    Subscribe
+  </button>
+</form>
 
             <div className="flex gap-4 text-2xl">
               <a href="#" className="hover:text-[#E30613] transition"><FiFacebook /></a>
