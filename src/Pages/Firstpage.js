@@ -1,62 +1,76 @@
-// pages/Homepage.jsx
-import React from 'react';
+// pages/Homepage.jsx — BEAUTIFIED VERSION
+import React, { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import heroImage from '../assets/retirees-hero.png'; // Replace with actual retiree group photo
-import cacCertificate from '../assets/cac-certificate.jpg'; // Add the CAC certificate image
+import heroImage from '../assets/retirees-hero.png';
+import cacCertificate from '../assets/cac-certificate.jpg';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
 
+  // Fade-in animation on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fadeIn');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+  }, []);
+
   return (
     <>
-      {/* Hero Section - Fixed Mobile Stack, No Overflow */}
-      <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] overflow-hidden">
+      {/* Hero Section - Premium Glow & Animations */}
+      <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] overflow-hidden">
         <Header />
 
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-96 h-96 bg-[#E30613] rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#E30613] rounded-full blur-3xl animate-pulse"></div>
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col lg:flex-row items-center justify-between gap-12">
-          
-          {/* Text Section - Added Details from Constitution */}
-          <div className="text-white text-center lg:text-left max-w-2xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col lg:flex-row items-center justify-between gap-16">
+          {/* Text - Elegant Fade In */}
+          <div className="text-white text-center lg:text-left max-w-2xl animate-on-scroll">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-8 drop-shadow-2xl">
               Welcome Home,<br />
-              <span className="text-[#E30613]">EMRAN Family</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E30613] to-[#ff4444]">EMRAN Family</span>
             </h1>
-            <p className="text-lg sm:text-xl lg:text-2xl text-gray-200 mb-6 leading-relaxed">
-              ExxonMobil Retirees Association of Nigeria (EMRAN) – Advancing Retirees Welfare. 
-              Established to promote peaceful coexistence, social interaction, and welfare among retirees of ExxonMobil Upstream Affiliates in Nigeria.
+            <p className="text-xl lg:text-2xl text-gray-200 mb-8 leading-relaxed opacity-90">
+              ExxonMobil Retirees Association of Nigeria – Advancing welfare, unity, and comradeship for all retirees.
             </p>
-            <p className="text-base text-gray-300 mb-10">
-              Incorporated under CAMA 2020 (Reg. No. 153528). Join us for comradeship, advocacy with ExxonMobil, and maximum pension benefits.
+            <p className="text-lg text-gray-300 mb-12">
+              Incorporated under CAMA 2020 • Reg. No. 153528 • Serving you since 2020
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+            {/* Premium Buttons with Shine & Pulse */}
+            <div className="flex flex-col sm:flex-row gap-8 justify-center lg:justify-start">
               {userData ? (
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg px-10 py-5 rounded-full shadow-2xl transition transform hover:scale-105"
+                  className="group relative overflow-hidden bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-[#E30613]/50"
                 >
-                  Go to My Dashboard
+                  <span className="relative z-10">Go to My Dashboard</span>
+                  <div className="absolute inset-0 bg-white/20 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
                 </button>
               ) : (
                 <>
                   <NavLink
                     to="/signin"
-                    className="bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg px-10 py-5 rounded-full shadow-2xl transition transform hover:scale-105 text-center"
+                    className="group relative overflow-hidden bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-[#E30613]/50 text-center"
                   >
-                    Sign In
+                    <span className="relative z-10">Sign In</span>
+                    <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
                   </NavLink>
                   <NavLink
                     to="/signup"
-                    className="bg-white text-[#001F5B] font-bold text-lg px-10 py-5 rounded-full shadow-2xl hover:bg-gray-100 transition transform hover:scale-105 text-center"
+                    className="group relative bg-white text-[#001F5B] font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-110 hover:bg-gray-50 text-center border-4 border-[#E30613]/20"
                   >
                     Create Account
                   </NavLink>
@@ -65,86 +79,68 @@ const Homepage = () => {
             </div>
           </div>
 
-          {/* Hero Image - Responsive */}
-          <div className="w-full lg:w-1/2 max-w-lg mx-auto lg:mx-0">
-            <img
-              src={heroImage}
-              alt="ExxonMobil Nigeria Retirees"
-              className="w-full h-auto rounded-3xl shadow-2xl border-8 border-white/30 object-cover"
-            />
+          {/* Hero Image - Gentle Zoom */}
+          <div className="w-full lg:w-1/2 max-w-2xl mx-auto lg:mx-0 animate-on-scroll">
+            <div className="relative group">
+              <img
+                src={heroImage}
+                alt="EMRAN Family Gathering"
+                className="w-full h-auto rounded-3xl shadow-2xl border-8 border-white/40 object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
           </div>
         </div>
 
-        {/* Wave Bottom */}
+        {/* Premium Wave */}
         <div className="absolute bottom-0 left-0 right-0">
-          <svg className="w-full h-auto" viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#F8F9FA" d="M0 100L60 120C120 140 240 180 360 170C480 160 600 100 720 90C840 80 960 120 1080 140C1200 160 1320 160 1380 160L1440 160V180H0Z"/>
+          <svg className="w-full h-auto" viewBox="0 0 1440 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#F8F9FA" d="M0 120L48 130C96 140 192 160 288 155C384 150 480 120 576 115C672 110 768 130 864 140C960 150 1056 150 1152 145C1248 140 1344 130 1392 125L1440 120V220H1392C1344 220 1248 220 1152 220C1056 220 960 220 864 220C768 220 672 220 576 220C480 220 384 220 288 220C192 220 96 220 48 220H0V120Z"/>
           </svg>
         </div>
       </div>
 
-      {/* Features Section - Added More Details */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-[#001F5B] mb-4">Our Core Pillars</h2>
-          <p className="text-xl text-gray-600 mb-16">
-            Based on EMRAN Constitution: Welfare, Advocacy, and Community for ExxonMobil Retirees.
-          </p>
+      {/* Features - Card Lift & Glow */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 text-center animate-on-scroll">
+          <h2 className="text-5xl font-bold text-[#001F5B] mb-6">Our Core Pillars</h2>
+          <p className="text-2xl text-gray-600 mb-20">From EMRAN Constitution – Built for You</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div className="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition">
-              <div className="w-20 h-20 bg-[#E30613] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl text-white">₦</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              { icon: "₦", title: "Pension Advocacy", desc: "Maximum benefits, investment income, and terminal payments." },
+              { icon: "❤️", title: "Health & Welfare", desc: "Medical support, death benefits, and family care." },
+              { icon: "👥", title: "Community", desc: "Events, meetings, and lifelong comradeship." }
+            ].map((item, i) => (
+              <div key={i} className="group bg-white p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4">
+                <div className="w-24 h-24 bg-gradient-to-br from-[#E30613] to-[#c20511] rounded-full flex items-center justify-center mx-auto mb-8 text-5xl text-white shadow-lg group-hover:scale-110 transition">
+                  {item.icon}
+                </div>
+                <h3 className="text-3xl font-bold text-[#001F5B] mb-6">{item.title}</h3>
+                <p className="text-gray-600 text-lg mb-8">{item.desc}</p>
+                <span className="text-[#E30613] font-bold text-lg hover:underline cursor-pointer">Learn More →</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#001F5B] mb-4">Pension Advocacy</h3>
-              <p className="text-gray-600 mb-4">
-                Ensure maximum benefits from Pension Funds, including investment incomes and terminal payments.
-              </p>
-              <NavLink to="/pension" className="text-[#E30613] font-bold hover:underline">
-                Learn More
-              </NavLink>
-            </div>
-
-            <div className="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition">
-              <div className="w-20 h-20 bg-[#E30613] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl text-white">❤️</span>
-              </div>
-              <h3 className="text-2xl font-bold text-[#001F5B] mb-4">Health & Welfare</h3>
-              <p className="text-gray-600 mb-4">
-                Access medical plans, welfare support, and death benefits for members and spouses.
-              </p>
-              <NavLink to="/health" className="text-[#E30613] font-bold hover:underline">
-                Learn More
-              </NavLink>
-            </div>
-
-            <div className="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition">
-              <div className="w-20 h-20 bg-[#E30613] rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl text-white">👥</span>
-              </div>
-              <h3 className="text-2xl font-bold text-[#001F5B] mb-4">Community & Events</h3>
-              <p className="text-gray-600 mb-4">
-                Promote comradeship with local/international retirees through meetings, events, and online platforms.
-              </p>
-              <NavLink to="/events" className="text-[#E30613] font-bold hover:underline">
-                Learn More
-              </NavLink>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Trust Section - Added CAC Certificate */}
-      <section className="py-20 bg-[#001F5B] text-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-8">Officially Registered & Trusted</h2>
-          <p className="text-xl mb-8">Incorporated under CAMA 2020 (Reg. No. 153528)</p>
-         <img 
-  src={cacCertificate}
-  alt="CAC Certificate - EMRAN Registration No. 153528"
-  className="w-full max-w-sm sm:max-w-md mx-auto rounded-xl shadow-xl border-4 border-[#E30613] object-contain"
-/>
-          <p className="mt-6 text-lg opacity-80">Serving ExxonMobil retirees since 2020</p>
+      {/* Trust Section - Premium Certificate */}
+      <section className="py-24 bg-[#001F5B] text-white">
+        <div className="max-w-7xl mx-auto px-6 text-center animate-on-scroll">
+          <h2 className="text-5xl font-bold mb-10">Officially Registered & Trusted</h2>
+          <p className="text-2xl mb-12 opacity-90">Incorporated under CAMA 2020 • Reg. No. 153528</p>
+          
+          <div className="relative max-w-4xl mx-auto group">
+            <img 
+              src={cacCertificate}
+              alt="Official CAC Certificate"
+              className="w-full rounded-3xl shadow-2xl border-8 border-[#E30613]/50 object-contain transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-[#E30613]/20 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+          </div>
+
+          <p className="mt-12 text-2xl opacity-90">Proudly serving ExxonMobil retirees since 2020</p>
         </div>
       </section>
 

@@ -32,11 +32,12 @@ const Header = () => {
   return (
     <>
       {/* Desktop Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-white shadow-lg py-3' 
-          : 'bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] py-5'
-      }`}>
+<header className={`hidden lg:block fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+  scrolled 
+    ? 'bg-white shadow-lg py-3' 
+    : 'bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] py-5'
+}`}>
+
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           
           {/* Logo */}
@@ -85,7 +86,7 @@ const Header = () => {
               Resources
             </NavLink>
             <NavLink 
-              to="/news" 
+              to="/newsevents" 
               className={({ isActive }) => 
                 `font-medium transition ${scrolled || isActive ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613]`
               }
@@ -176,7 +177,7 @@ const Header = () => {
               <NavLink to="/resources" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
                 Resources
               </NavLink>
-              <NavLink to="/news" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
+              <NavLink to="/newsevents" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
                 News & Events
               </NavLink>
               <NavLink to="/support" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">

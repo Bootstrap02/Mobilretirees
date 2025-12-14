@@ -1,5 +1,4 @@
 import React, { useEffect, lazy, Suspense} from 'react';
-import { Pageloader } from "./Modals/Loaders";
 import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
 import './App.css';
 import {About} from './Pages/About';
@@ -10,12 +9,13 @@ import Contact from './Pages/Contact';
 import {Signup, Signin, ForgotPassword, ResetPassword} from './Pages/Signup';
 import EmploymentForm from './Pages/Useguide';
 import FAQs from './Pages/FAQs';
-import { Createproductpage } from './Pages/Createproductpage'
-import {  Editproductpage } from './Pages/Editproductpage';
+import Benefits from './Pages/Benefits'
+import  NewsEvents from './Pages/NewsEvents';
 import Dashboard from './Pages/Dashboard';
-import Search from './Pages/Search';
+import Resources from './Pages/Resources';
 import Mainpage from  './Pages/Accessories/Mainpage';
-import Profile from   './Pages/Productpage';
+import Profile from "./Pages/Profile";
+import Support from "./Pages/Support";
 import Store from './Pages/Links/Store';
 import { Signuplink } from './Pages/Links/Signuplink';
 import { Sellerregistration } from './Pages/Links/Sellerregistration';
@@ -49,8 +49,8 @@ function App() {
         <Route path='/webstore/:webname' element={<Webstore /> }/>
         <Route path='/webproductpage/:title' element={<Productpages /> }/>
         <Route path='/signuplink/:id' element={<Signuplink /> }/>
-        <Route path='/editproductpage/:id/:title' element={<Editproductpage /> }/>
-        <Route path='/search/:university/:title' element= {<Search /> }/>          
+        <Route path='/newsevents' element={<NewsEvents /> }/>
+        <Route path='/resources' element= {<Resources /> }/>          
         <Route path='/mainpage/:id' element= {<Mainpage /> }/>
         <Route path='/signup' element= {<Signup /> }/>
         <Route path='/signin' element= {<Signin /> }/>
@@ -58,11 +58,12 @@ function App() {
         <Route path='/resetpassword' element= {<ResetPassword /> }/>
         <Route path='/about' element= {<About /> }/>
         <Route path='/privacy' element= {<Privacy /> }/>
+        <Route path='/support' element= {<Support /> }/>
         <Route path='/deleteaccount' element= {<Deleteaccount /> }/>
         <Route path='/yourreferrals' element= {<Yourreferrals /> }/>
         <Route path='/contact' element= {<Contact /> }/>
         <Route path='/faqs' element= {<FAQs /> }/>
-        <Route path='/createproductpage' element= {<Createproductpage /> }/>
+        <Route path='/benefits' element= {<Benefits /> }/>
         <Route path='/useguide' element= {<EmploymentForm /> }/>
     </Routes>
     </BrowserRouter>
