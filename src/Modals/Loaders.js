@@ -38,7 +38,7 @@ export const PageLoader = () => {
       </div>
 
       <footer className="absolute bottom-6 text-white text-xs opacity-70">
-        © {new Date().getFullYear()} ExxonMobil Nigeria Retirees Association of Nigeria
+        © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria
       </footer>
     </div>
   );

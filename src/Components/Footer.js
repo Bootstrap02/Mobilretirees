@@ -33,14 +33,13 @@ const Footer = () => {
               <img src={exxonLogoWhite} alt="ExxonMobil Nigeria" className="h-16" />
               <div>
                 <h3 className="font-bold text-xl">Retirees Portal</h3>
-                <p className="text-sm opacity-90">Nigeria Chapter</p>
               </div>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Your lifelong partner in retirement. Access your pension, health benefits, community updates, and support — all in one secure place.
             </p>
             <p className="text-sm text-gray-400">
-              Serving generations of dedicated ExxonMobil Nigeria retirees since 1969.
+              Serving generations of dedicated ExxonMobil Nigeria retirees since 2020.
             </p>
           </div>
 
@@ -109,7 +108,7 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t border-gray-700">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>
-              © {new Date().getFullYear()} ExxonMobil Nigeria Retirees Association of Nigeria. All rights reserved.
+              © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>

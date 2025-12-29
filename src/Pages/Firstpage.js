@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import heroImage from '../assets/retirees-hero.png';
+import heroImage from '../assets/exxonmobil-logo-white.jpg';
 import cacCertificate from '../assets/cac-certificate.jpg';
 
 const Homepage = () => {
