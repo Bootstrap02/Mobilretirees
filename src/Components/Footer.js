@@ -65,14 +65,7 @@ const Footer = () => {
                 <FiMapPin className="text-[#E30613] mt-1" />
                 <div>
                   <p className="font-medium">Lagos Office</p>
-                  <p className="text-sm">Mobil House, 1 Lekki Expressway, Victoria Island, Lagos</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <FiMapPin className="text-[#E30613]" />
-                <div>
-                  <p className="font-medium">Port Harcourt</p>
-                  <p className="text-sm">ExxonMobil Complex, Aba Road, Rumuomasi</p>
+                  <p className="text-sm">No. 26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos, Nigeria.</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -81,7 +74,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <FiMail className="text-[#E30613]" />
-                <p>retirees.ng@exxonmobil.com</p>
+                <p>emranannuitants@gmail.com.com</p>
               </div>
             </div>
           </div>
@@ -116,7 +109,7 @@ const Footer = () => {
         <div className="mt-12 pt-8 border-t border-gray-700">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
             <p>
-              © {new Date().getFullYear()} ExxonMobil Nigeria Retirees Club. All rights reserved.
+              © {new Date().getFullYear()} ExxonMobil Nigeria Retirees Association of Nigeria. All rights reserved.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
