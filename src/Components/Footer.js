@@ -1,19 +1,167 @@
-// components/Footer.jsx
+// // components/Footer.jsx
+// import React from 'react';
+// import { NavLink } from 'react-router-dom';
+// import { 
+//   FiPhone, 
+//   FiMail, 
+//   FiMapPin, 
+//   FiFacebook, 
+//   FiTwitter, 
+//   FiLinkedin,
+//   FiYoutube,
+//   FiChevronUp,
+//   FiHeart,
+//   FiBell,
+//   FiUser 
+// } from 'react-icons/fi';
+// import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
+
+// const Footer = () => {
+//   const scrollToTop = () => {
+//     window.scrollTo({ top: 0, behavior: 'smooth' });
+//   };
+
+//   return (
+//     <>
+//       {/* Main Footer - Desktop & Tablet */}
+//       <footer className="bg-[#001F5B] text-white pt-16 pb-8">
+//         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+//           {/* Column 1: Brand & Welcome */}
+//           <div className="space-y-6">
+//             <div className="flex items-center gap-4">
+//               <img src={exxonLogoWhite} alt="ExxonMobil Nigeria" className="h-16" />
+//               <div>
+//                 <h3 className="font-bold text-xl">Retirees Portal</h3>
+//               </div>
+//             </div>
+//             <p className="text-gray-300 leading-relaxed">
+//               Your lifelong partner in retirement. Access your pension, health benefits, community updates, and support — all in one secure place.
+//             </p>
+//             <p className="text-sm text-gray-400">
+//               Serving generations of dedicated ExxonMobil Nigeria retirees since 2020.
+//             </p>
+//           </div>
+
+//           {/* Column 2: Quick Links */}
+//           <div>
+//             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Quick Links</h4>
+//             <ul className="space-y-3 text-gray-300">
+//               <li><NavLink to="/" className="hover:text-[#E30613] transition">Home</NavLink></li>
+//               <li><NavLink to="/benefits" className="hover:text-[#E30613] transition">My Benefits</NavLink></li>
+//               <li><NavLink to="/resources" className="hover:text-[#E30613] transition">Resources & Forms</NavLink></li>
+//               <li><NavLink to="/news" className="hover:text-[#E30613] transition">News & Events</NavLink></li>
+//               <li><NavLink to="/support" className="hover:text-[#E30613] transition">Support Center</NavLink></li>
+//               <li><NavLink to="/faqs" className="hover:text-[#E30613] transition">FAQs</NavLink></li>
+//             </ul>
+//           </div>
+
+//           {/* Column 3: Contact & Support */}
+//           <div>
+//             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Contact Us</h4>
+//             <div className="space-y-4 text-gray-300">
+//               <div className="flex items-start gap-3">
+//                 <FiMapPin className="text-[#E30613] mt-1" />
+//                 <div>
+//                   <p className="font-medium">Lagos Office</p>
+//                   <p className="text-sm">No. 26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos, Nigeria.</p>
+//                 </div>
+//               </div>
+//               <div className="flex items-center gap-3">
+//                 <FiPhone className="text-[#E30613]" />
+//                 <p>+234 1 277 7700 | +234 803 123 4567 (Retirees Hotline)</p>
+//               </div>
+//               <div className="flex items-center gap-3">
+//                 <FiMail className="text-[#E30613]" />
+//                 <p>emranannuitants@gmail.com.com</p>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Column 4: Newsletter & Social */}
+//           <div>
+//             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Stay Connected</h4>
+//             <p className="text-gray-300 mb-4">
+//               Get monthly updates on pension payments, health tips, and retiree events.
+//             </p>
+//           <form className="w-full max-w-xs mx-auto sm:mx-0 flex flex-col sm:flex-row gap-2 mb-8">
+//   <input 
+//     type="email" 
+//     placeholder="Email" 
+//     className="w-[60%] px-4 py-2 text-sm rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#E30613] transition"
+//   />
+//   <button className="w-[35%] px-3 py-1 bg-[#E30613] hover:bg-[#c20511] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
+//     Subscribe
+//   </button>
+// </form>
+
+//             <div className="flex gap-4 text-2xl">
+//               <a href="#" className="hover:text-[#E30613] transition"><FiFacebook /></a>
+//               <a href="#" className="hover:text-[#E30613] transition"><FiTwitter /></a>
+//               <a href="#" className="hover:text-[#E30613] transition"><FiLinkedin /></a>
+//               <a href="#" className="hover:text-[#E30613] transition"><FiYoutube /></a>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Bottom Bar */}
+//         <div className="mt-12 pt-8 border-t border-gray-700">
+//           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+//             <p>
+//               © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
+//             </p>
+//             <div className="flex gap-6 mt-4 md:mt-0">
+//               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
+//               <NavLink to="/terms" className="hover:text-white transition">Terms of Use</NavLink>
+//               <NavLink to="/accessibility" className="hover:text-white transition">Accessibility</NavLink>
+//             </div>
+//           </div>
+//         </div>
+//       </footer>
+
+//       {/* Mobile Bottom Navigation Bar (Fixed) */}
+//       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#001F5B] border-t border-gray-700 z-40">
+//         <div className="flex justify-around items-center py-3">
+//           <NavLink to="/" className="flex flex-col items-center text-white">
+//             <FiMapPin className="text-xl" />
+//             <span className="text-xs mt-1">Home</span>
+//           </NavLink>
+//           <NavLink to="/benefits" className="flex flex-col items-center text-white">
+//             <FiHeart className="text-xl" />
+//             <span className="text-xs mt-1">Benefits</span>
+//           </NavLink>
+//           <NavLink to="/news" className="flex flex-col items-center text-white">
+//             <FiBell className="text-xl" />
+//             <span className="text-xs mt-1">News</span>
+//           </NavLink>
+//           <NavLink to="/support" className="flex flex-col items-center text-white">
+//             <FiPhone className="text-xl" />
+//             <span className="text-xs mt-1">Support</span>
+//           </NavLink>
+//           <NavLink to="/dashboard" className="flex flex-col items-center text-white">
+//             <FiUser className="text-xl" />
+//             <span className="text-xs mt-1">Account</span>
+//           </NavLink>
+//         </div>
+//       </div>
+
+//       {/* Back to Top Button */}
+//       <button
+//         onClick={scrollToTop}
+//         className="fixed bottom-20 right-6 bg-[#E30613] text-white p-4 rounded-full shadow-2xl hover:bg-[#c20511] transition z-50 lg:bottom-8"
+//         aria-label="Back to top"
+//       >
+//         <FiChevronUp className="text-2xl" />
+//       </button>
+//     </>
+//   );
+// };
+
+// export default Footer;
+// components/Footer.jsx — UPDATED
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  FiPhone, 
-  FiMail, 
-  FiMapPin, 
-  FiFacebook, 
-  FiTwitter, 
-  FiLinkedin,
-  FiYoutube,
-  FiChevronUp,
-  FiHeart,
-  FiBell,
-  FiUser 
-} from 'react-icons/fi';
+import { FiPhone, FiMail, FiMapPin, FiFacebook, FiTwitter, FiLinkedin, FiYoutube, FiChevronUp, FiHeart, FiUser, FiUsers,FiStar } from 'react-icons/fi';
 import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
 
 const Footer = () => {
@@ -21,136 +169,109 @@ const Footer = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const quickLinks = [
+    { to: "/", label: "Home" },
+    { to: "/benefits", label: "My Benefits" },
+    { to: "/resources", label: "Resources & Forms" },
+    { to: "/newsevents", label: "News & Events" },
+    { to: "/community", label: "Giving Back" },
+    { to: "/spotlight", label: "Retiree Spotlight" },
+    { to: "/support", label: "Support Center" },
+  ];
+
   return (
     <>
-      {/* Main Footer - Desktop & Tablet */}
       <footer className="bg-[#001F5B] text-white pt-16 pb-8">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-
-          {/* Column 1: Brand & Welcome */}
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <img src={exxonLogoWhite} alt="ExxonMobil Nigeria" className="h-16" />
+              <img src={exxonLogoWhite} alt="EMRAN" className="h-16" />
               <div>
-                <h3 className="font-bold text-xl">Retirees Portal</h3>
+                <h3 className="font-bold text-xl">EMRAN</h3>
+                <p className="text-sm opacity-80">Retirees Portal</p>
               </div>
             </div>
-            <p className="text-gray-300 leading-relaxed">
-              Your lifelong partner in retirement. Access your pension, health benefits, community updates, and support — all in one secure place.
-            </p>
-            <p className="text-sm text-gray-400">
-              Serving generations of dedicated ExxonMobil Nigeria retirees since 2020.
+            <p className="text-gray-300">
+              Your lifelong partner in retirement — pension, health, community, and support.
             </p>
           </div>
 
-          {/* Column 2: Quick Links */}
           <div>
             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Quick Links</h4>
             <ul className="space-y-3 text-gray-300">
-              <li><NavLink to="/" className="hover:text-[#E30613] transition">Home</NavLink></li>
-              <li><NavLink to="/benefits" className="hover:text-[#E30613] transition">My Benefits</NavLink></li>
-              <li><NavLink to="/resources" className="hover:text-[#E30613] transition">Resources & Forms</NavLink></li>
-              <li><NavLink to="/news" className="hover:text-[#E30613] transition">News & Events</NavLink></li>
-              <li><NavLink to="/support" className="hover:text-[#E30613] transition">Support Center</NavLink></li>
-              <li><NavLink to="/faqs" className="hover:text-[#E30613] transition">FAQs</NavLink></li>
+              {quickLinks.map(link => (
+                <li key={link.to}>
+                  <NavLink to={link.to} className="hover:text-[#E30613] transition">
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Column 3: Contact & Support */}
           <div>
-            <h4 className="text-lg font-bold mb-6 text-[#E30613]">Contact Us</h4>
+            <h4 className="text-lg font-bold mb-6 text-[#E30613]">Contact</h4>
             <div className="space-y-4 text-gray-300">
               <div className="flex items-start gap-3">
                 <FiMapPin className="text-[#E30613] mt-1" />
-                <div>
-                  <p className="font-medium">Lagos Office</p>
-                  <p className="text-sm">No. 26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos, Nigeria.</p>
-                </div>
+                <p>26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos</p>
               </div>
               <div className="flex items-center gap-3">
                 <FiPhone className="text-[#E30613]" />
-                <p>+234 1 277 7700 | +234 803 123 4567 (Retirees Hotline)</p>
+                <p>+234 1 277 7700</p>
               </div>
               <div className="flex items-center gap-3">
                 <FiMail className="text-[#E30613]" />
-                <p>emranannuitants@gmail.com.com</p>
+                <p>emran@retirees.org</p>
               </div>
             </div>
           </div>
 
-          {/* Column 4: Newsletter & Social */}
           <div>
             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Stay Connected</h4>
-            <p className="text-gray-300 mb-4">
-              Get monthly updates on pension payments, health tips, and retiree events.
-            </p>
-          <form className="w-full max-w-xs mx-auto sm:mx-0 flex flex-col sm:flex-row gap-2 mb-8">
-  <input 
-    type="email" 
-    placeholder="Email" 
-    className="w-[60%] px-4 py-2 text-sm rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#E30613] transition"
-  />
-  <button className="w-[35%] px-3 py-1 bg-[#E30613] hover:bg-[#c20511] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
-    Subscribe
-  </button>
-</form>
-
+            <p className="text-gray-300 mb-6">Get updates on pension, events, and health tips.</p>
+            <form className="flex gap-2 mb-8">
+              <input type="email" placeholder="Your email" className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-400" />
+              <button className="px-6 py-3 bg-[#E30613] hover:bg-[#c20511] rounded-lg font-bold">
+                Subscribe
+              </button>
+            </form>
             <div className="flex gap-4 text-2xl">
-              <a href="#" className="hover:text-[#E30613] transition"><FiFacebook /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiTwitter /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiLinkedin /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiYoutube /></a>
+              <a href="#" className="hover:text-[#E30613]"><FiFacebook /></a>
+              <a href="#" className="hover:text-[#E30613]"><FiTwitter /></a>
+              <a href="#" className="hover:text-[#E30613]"><FiLinkedin /></a>
+              <a href="#" className="hover:text-[#E30613]"><FiYoutube /></a>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-            <p>
-              © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
-            </p>
-            <div className="flex gap-6 mt-4 md:mt-0">
-              <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
-              <NavLink to="/terms" className="hover:text-white transition">Terms of Use</NavLink>
-              <NavLink to="/accessibility" className="hover:text-white transition">Accessibility</NavLink>
-            </div>
-          </div>
+        <div className="mt-12 pt-8 border-t border-gray-700 text-center text-gray-400 text-sm">
+          <p>© {new Date().getFullYear()} EMRAN. All rights reserved.</p>
         </div>
       </footer>
 
-      {/* Mobile Bottom Navigation Bar (Fixed) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#001F5B] border-t border-gray-700 z-40">
-        <div className="flex justify-around items-center py-3">
-          <NavLink to="/" className="flex flex-col items-center text-white">
-            <FiMapPin className="text-xl" />
-            <span className="text-xs mt-1">Home</span>
+      {/* Mobile Bottom Nav */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#001F5B] border-t border-gray-700 z-50">
+        <div className="grid grid-cols-5 py-3">
+          <NavLink to="/" className="flex flex-col items-center text-white text-xs">
+            <FiMapPin className="text-xl mb-1" /> Home
           </NavLink>
-          <NavLink to="/benefits" className="flex flex-col items-center text-white">
-            <FiHeart className="text-xl" />
-            <span className="text-xs mt-1">Benefits</span>
+          <NavLink to="/benefits" className="flex flex-col items-center text-white text-xs">
+            <FiHeart className="text-xl mb-1" /> Benefits
           </NavLink>
-          <NavLink to="/news" className="flex flex-col items-center text-white">
-            <FiBell className="text-xl" />
-            <span className="text-xs mt-1">News</span>
+          <NavLink to="/community" className="flex flex-col items-center text-white text-xs">
+            <FiUsers className="text-xl mb-1" /> Giving Back
           </NavLink>
-          <NavLink to="/support" className="flex flex-col items-center text-white">
-            <FiPhone className="text-xl" />
-            <span className="text-xs mt-1">Support</span>
+          <NavLink to="/spotlight" className="flex flex-col items-center text-white text-xs">
+            <FiStar className="text-xl mb-1" /> Spotlight
           </NavLink>
-          <NavLink to="/dashboard" className="flex flex-col items-center text-white">
-            <FiUser className="text-xl" />
-            <span className="text-xs mt-1">Account</span>
+          <NavLink to="/dashboard" className="flex flex-col items-center text-white text-xs">
+            <FiUser className="text-xl mb-1" /> Account
           </NavLink>
         </div>
       </div>
 
-      {/* Back to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-20 right-6 bg-[#E30613] text-white p-4 rounded-full shadow-2xl hover:bg-[#c20511] transition z-50 lg:bottom-8"
-        aria-label="Back to top"
-      >
+      <button onClick={scrollToTop} className="fixed bottom-20 right-6 bg-[#E30613] text-white p-4 rounded-full shadow-2xl hover:bg-[#c20511] z-50">
         <FiChevronUp className="text-2xl" />
       </button>
     </>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Conversations } from '../../Components/Productcards';
 import axios from 'axios';
 import { MdAccountCircle } from "react-icons/md";
-import { Newconversationpage } from '../Newconversationpage';
 
 const Messages = () => {
   const storedUserData = JSON.parse(localStorage.getItem('userData')); 
@@ -62,7 +61,6 @@ const Messages = () => {
           <Conversations setChatRoom={setChatRoom} />
         </div>
         <div style={{ height: '400px',  }} className="w-[60%]">
-          {chatRoom ? <Newconversationpage chatRoom={chatRoom} setChatRoom={setChatRoom} /> : null}
         </div>
       </div>
     </div>
@@ -90,7 +88,6 @@ const Messages = () => {
           <Conversations setChatRoom={setChatRoom} />
         </div>
         <div style={{ height: '400px',  }} className="w-[60%]">
-          {chatRoom ? <Newconversationpage chatRoom={chatRoom} setChatRoom={setChatRoom} /> : null}
         </div>
       </div>
     </div>

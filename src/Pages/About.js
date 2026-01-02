@@ -1,102 +1,89 @@
-import React, {useState} from 'react';
-import { NavLink, useNavigate} from 'react-router-dom'
+// pages/AboutUs.jsx
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import Nav from '../Modals/General/Nav';
+import cacCertificate from '../assets/cac-certificate.jpg';
+import trusteesPhoto from '../assets/exxonmobil-logo-white.jpg'; // Add group photo if available
 
+const About = () => {
+  return (
+    <>
+      <Header />
+      <div className="min-h-screen bg-gray-50 pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-6">
 
+          {/* Hero */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl font-bold text-[#001F5B] mb-6">About EMRAN</h1>
+            <p className="text-2xl text-gray-700 max-w-4xl mx-auto">
+              ExxonMobil Retirees Association of Nigeria – A united family of retirees committed to welfare, advocacy, and community impact.
+            </p>
+          </div>
 
-export const About= ()=> {
-    const navigate = useNavigate();
-    const accessedToken =   JSON.parse(localStorage.getItem('userData'));
-const [signin, setSignin] = useState(false);
-  const [nav, setNav] = useState(false);
+          {/* Preamble from Constitution */}
+          <div className="bg-white rounded-3xl shadow-2xl p-12 mb-12">
+            <h2 className="text-3xl font-bold text-[#001F5B] mb-8 text-center">Our Preamble</h2>
+            <p className="text-lg text-gray-700 leading-relaxed text-center max-w-5xl mx-auto italic">
+              "We, the members of ExxonMobil Retirees Association of Nigeria, after a thorough analysis of our shared aspirations, desires, ideas, interests, and needs, and having realized the exigency of a strong unity of purpose and a platform for peaceful co-existence, social interaction and promotion of the welfare of members... do hereby make, enact and give to ourselves this Constitution."
+            </p>
+          </div>
 
-    const postProduct = ()=> {
-      if(accessedToken){
-        navigate('/createproductpage');
-      }else{
-        navigate('/signin')
-      }
-  
-    }
-    const openNav = () => {
-        setNav(true);
-      };
-      const closeNav = () => {
-        setNav(false);
-      };
+          {/* Mission & Aims */}
+          <div className="grid md:grid-cols-3 gap-10 mb-16">
+            <div className="bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white p-10 rounded-3xl shadow-xl">
+              <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+              <p>To promote welfare, peaceful coexistence, and maximum benefits for all ExxonMobil retirees in Nigeria.</p>
+            </div>
+            <div className="bg-white p-10 rounded-3xl shadow-xl border-2 border-[#E30613]">
+              <h3 className="text-2xl font-bold text-[#001F5B] mb-4">Core Values</h3>
+              <ul className="space-y-3 text-gray-700">
+                <li>• Unity & Comradeship</li>
+                <li>• Welfare Advocacy</li>
+                <li>• Community Impact</li>
+                <li>• Transparency</li>
+              </ul>
+            </div>
+            <div className="bg-gradient-to-br from-[#E30613] to-[#c20511] text-white p-10 rounded-3xl shadow-xl">
+              <h3 className="text-2xl font-bold mb-4">Registration</h3>
+              <p>Incorporated under CAMA 2020<br />Reg. No. 153528<br />Certified: 6th February 2025</p>
+            </div>
+          </div>
 
-return(
-    <div className=' w-[100%] '>
-        <Header className='mb-[2rem] bg-black'  openNav={openNav} closeNav={closeNav}/>
-        
-      <div className='w-[100%] bg-black p-4'>
-<div className='my-[6rem] max-lg:m-[3rem]  text-white '>
-<div className=' text-2xl text-center mb-6'> <p><strong> About Us</strong></p></div>
-<div className=' flex justify-center gap-2'><NavLink to='/'>Home ||</NavLink> <NavLink to='/about'>About</NavLink></div>
-</div>
-</div>
-   <div className=' w-[100%] max-lg:mb-6'>
-    <div className='w-[100%]'>
-      
-    
+          {/* CAC Certificate */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#001F5B] mb-8">Official Registration</h2>
+            <img 
+              src={cacCertificate} 
+              alt="CAC Certificate - EMRAN Reg. No. 153528"
+              className="max-w-3xl mx-auto rounded-2xl shadow-2xl border-8 border-[#E30613]/20"
+            />
+          </div>
 
-    <div className='mt-4 p-[4rem] max-lg:mt-2 max-lg:p-[2rem] '>
-        <div className='mb-4 text-2xl max-lg:text-xl max-lg:mb-1'><strong>We bring commerce to your doorstep by 
-connecting trade with your immediate environment
-.</strong> </div>
-        <div>
-        At campusify, we focus on connecting buyers and sellers from the same locality. This means that the seller or buyer are never far away from each other. In this way, we eliminate one of the major hinderances of trade <strong>DISTANCE</strong>. Efficient business to business websites exist and they do a good job. However, Distance in trade is the problem we are trying to solve. Normally, Logistics services look like the perfect answer to distant trading. However, logistics cost more money, wastes time and could develop complications. It is always easier and more convenient for both the buyer and the seller if there is no distance between them. Many times people have gone through the difficulty of buying things far away because they could not find them nearby. It may not mean it was not available nearby, they just could not connect with the sellers. What we wish to solve are the problems associated with distance trading.  We wish to connect buyers and sellers within their locality, together  and our focus is in the tertiary institutions.
-     Also, second hand products trading is a vibing market. It has thrived always in the background looking for an outlet. A lot of people have things they do not need anymore and wish they could sell but have no way of putting it out there for buyers to see. This is another problem we are here to solve. We are launching a platform where people can put things directly to people who really need those items.( The items a student possesses are most likely what another student needs). We are connecting trade between a student and another student. These are people in similar situations. It makes trading likely and when done with us, it becomes possible and easy.
-Campusify.Inc, launched this month, is a pioneering business-to-business platform designed exclusively for tertiary institutions. Our mission is to foster a dynamic environment for students to seamlessly buy and sell goods and services within their academic community. Unlike traditional e-commerce platforms, Campusbuy does not coordinate transactions but rather provides the essential digital space for buyers and sellers to connect, creating a vibrant trading hub on university and other tertiary campuses.
+          {/* Leadership / Trustees */}
+          <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
+            <h2 className="text-4xl font-bold text-[#001F5B] mb-8">Our Leadership</h2>
+            <p className="text-xl text-gray-700 mb-8 max-w-4xl mx-auto">
+              Guided by dedicated trustees and executive committee, including former representatives and industry leaders.
+            </p>
+            {/* Add trusteesPhoto here when available */}
+            <p className="text-lg text-gray-600">Contact: trustees@emran.org.ng</p>
+          </div>
 
+          {/* Back Button */}
+          <div className="text-center mt-12">
+            <NavLink 
+              to="/"
+              className="inline-flex items-center gap-3 text-[#E30613] font-bold text-xl hover:underline"
+            >
+              ← Back to Home
+            </NavLink>
+          </div>
         </div>
+      </div>
+      <Footer />
+    </>
+  );
+};
 
-    </div>
-    <div className='flex flex-col gap-5 p-[4rem]'>
-        <div className=' p-2 text-2xl text-center w-full my-4 '><strong>How to use Campusify</strong></div>
-        <div className='my-2'>
-            <div className='text-xl text-[#FF9000]  '><strong>Sell on Campusify</strong></div>
-            <div className='flex justify-between p-4'>
-            <div className='flex flex-col gap-3 '>
-                <div className='bg-[#FDDFB9] p-3 rounded-lg'><strong>1. </strong>Type in your school and choose it on the homepage</div>
-                <div><strong>2. </strong>Click on  
-          <button className='p-2 text-[#FF9000]' onClick={postProduct}>Sell Something</button>
-                 </div>
-                 <div><strong>3. </strong>Fill the form.</div>
-                 <div><strong>4. </strong>Click Next and continue.</div>
-            </div>
-                <div className='w-[40%]'><img src='https://res.cloudinary.com/djj8xwuzn/image/upload/v1707425271/Default/Rectangle_316-removebg-preview_ryecai.png' alt='sell_on_campusify'/></div>
-    
-            </div>
-        </div>
-
-        <div  className='my-2 '>
-            <div className='text-xl text-[#FF9000] '><strong>Buy on Campusify</strong></div>
-            <div className='flex justify-between p-4'>
-            <div className='w-[40%]'><img src='https://res.cloudinary.com/djj8xwuzn/image/upload/v1707425271/Default/Rectangle_316-removebg-preview_ryecai.png' alt='buy on_campusify'/></div>
-            <div className='flex flex-col gap-3 '>
-            <div className='bg-[#FDDFB9] p-3 rounded-lg'><strong>1. </strong>Type in your school and choose it on the homepage</div>
-                <div><strong>1. </strong>Search for your Product on the search bar</div>
-                 <div><strong>2. </strong>Click on the product you want to buy.</div>
-                 <div><strong>3. </strong>Contact the seller via the seller information.</div>
-                 <div><strong>4. </strong>Meet the seller in a public place and do business.</div>
-            </div>
-    
-            </div>
-        </div>
-    </div>
-    </div>
-   </div>
-   <div className={`nav-slide ${nav ? 'open' : ''}`}>
-  <Nav closeModal={closeNav} setSignin={setSignin}/>
-</div>
-    <div><Footer/></div>
-
-</div>
-)
-}
-
-
-
+export default About;

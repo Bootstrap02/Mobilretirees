@@ -1,19 +1,21 @@
 import React, { useEffect, lazy, Suspense} from 'react';
 import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
 import './App.css';
-import {About} from './Pages/About';
+import About from './Pages/About';
+import Community from './Pages/Community';
+import Spotlight from './Pages/Spotlight';
 import {Privacy} from './Pages/Privacy';
 import {Deleteaccount} from './Pages/Deleteaccount';
 import {Yourreferrals} from './Pages/Accessories/Yourreferrals';
 import Contact from './Pages/Contact';
 import {Signup, Signin, ForgotPassword, ResetPassword} from './Pages/Signup';
-import EmploymentForm from './Pages/Useguide';
+import EmploymentForm from './Pages/Community';
 import FAQs from './Pages/FAQs';
 import Benefits from './Pages/Benefits'
 import  NewsEvents from './Pages/NewsEvents';
 import Dashboard from './Pages/Dashboard';
 import Resources from './Pages/Resources';
-import Mainpage from  './Pages/Accessories/Mainpage';
+// import Mainpage from  './Pages/Accessories/Mainpage';
 import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
 import Store from './Pages/Links/Store';
@@ -51,12 +53,14 @@ function App() {
         <Route path='/signuplink/:id' element={<Signuplink /> }/>
         <Route path='/newsevents' element={<NewsEvents /> }/>
         <Route path='/resources' element= {<Resources /> }/>          
-        <Route path='/mainpage/:id' element= {<Mainpage /> }/>
+        {/* <Route path='/mainpage/:id' element= {<Mainpage /> }/> */}
         <Route path='/signup' element= {<Signup /> }/>
         <Route path='/signin' element= {<Signin /> }/>
         <Route path='/forgotpassword' element= {<ForgotPassword /> }/>
         <Route path='/resetpassword' element= {<ResetPassword /> }/>
         <Route path='/about' element= {<About /> }/>
+        <Route path='/community' element= {<Community /> }/>
+        <Route path='/spotlight' element= {<Spotlight /> }/>
         <Route path='/privacy' element= {<Privacy /> }/>
         <Route path='/support' element= {<Support /> }/>
         <Route path='/deleteaccount' element= {<Deleteaccount /> }/>
@@ -64,7 +68,6 @@ function App() {
         <Route path='/contact' element= {<Contact /> }/>
         <Route path='/faqs' element= {<FAQs /> }/>
         <Route path='/benefits' element= {<Benefits /> }/>
-        <Route path='/useguide' element= {<EmploymentForm /> }/>
     </Routes>
     </BrowserRouter>
     </>
