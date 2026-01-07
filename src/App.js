@@ -13,6 +13,7 @@ import EmploymentForm from './Pages/Community';
 import FAQs from './Pages/FAQs';
 import Benefits from './Pages/Benefits'
 import  NewsEvents from './Pages/NewsEvents';
+import  News from './Pages/News';
 import Dashboard from './Pages/Dashboard';
 import Resources from './Pages/Resources';
 // import Mainpage from  './Pages/Accessories/Mainpage';
@@ -52,8 +53,8 @@ function App() {
         <Route path='/webproductpage/:title' element={<Productpages /> }/>
         <Route path='/signuplink/:id' element={<Signuplink /> }/>
         <Route path='/newsevents' element={<NewsEvents /> }/>
+        <Route path='/news/:id' element={<News /> }/>
         <Route path='/resources' element= {<Resources /> }/>          
-        {/* <Route path='/mainpage/:id' element= {<Mainpage /> }/> */}
         <Route path='/signup' element= {<Signup /> }/>
         <Route path='/signin' element= {<Signin /> }/>
         <Route path='/forgotpassword' element= {<ForgotPassword /> }/>

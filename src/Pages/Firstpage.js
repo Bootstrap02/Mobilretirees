@@ -190,7 +190,7 @@ const Homepage = () => {
           icon: "🤝",
           title: "Our Community",
           desc: "A trusted network built on shared history, transparency, accountability, and mutual respect.",
-          path: "/benefits",
+          path: "/community",
         },
       ].map((item, i) => (
         <div

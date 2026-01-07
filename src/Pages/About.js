@@ -1,18 +1,21 @@
+// pages/AboutUs.jsx — FULL CODE WITH PRESIDENT CARD
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 
-// Placeholders — Replace with your real images
-import emranLogo from '../assets/exxonmobil-logo-white.jpg'; // Your rebuilt logo
-import constitutionCover from '../assets/constitution-cover.png'; // Page 1 of constitution
-import constitutionTOC from '../assets/constitution-toc.jpg'; // Table of contents page
-import cacCertificate from '../assets/cac-certificate.jpg'; // CAC cert
-import tinCertificate from '../assets/tin-certificate.jpg'; // Tax ID cert (add yours)
-import trusteesGroup from '../assets/community-icon.webp'; // Group photo of trustees
-import historicalPhoto1 from '../assets/death-icon2.jpeg'; // Old ExxonMobil retiree event
-import historicalPhoto2 from '../assets/medical-icon.webp'; // Another historical image
-import addressMap from '../assets/address-map.jpg'; // Screenshot of location
-import constitution from '../assets/emran-constitution.pdf'
+// YOUR IMAGES
+import emranLogo from '../assets/exxonmobil-logo-white.jpg';
+import president from '../assets/president.jpg'; // President's photo
+import constitutionCover from '../assets/constitution-cover.png';
+import constitutionTOC from '../assets/constitution-toc.jpg';
+import cacCertificate from '../assets/cac-certificate.jpg';
+import tinCertificate from '../assets/tin-certificate.jpg';
+import trusteesGroup from '../assets/community-icon.webp';
+import historicalPhoto1 from '../assets/death-icon2.jpeg';
+import historicalPhoto2 from '../assets/medical-icon.webp';
+import addressMap from '../assets/address-map.jpg';
+import constitution from '../assets/emran-rules.pdf';
 
 const AboutUs = () => {
   return (
@@ -23,7 +26,7 @@ const AboutUs = () => {
 
           {/* Hero with Logo */}
           <div className="text-center mb-20">
-            <img src={emranLogo} alt="FOGAEC - EMRAN Partner" className="h-60 mx-auto mb-8 drop-shadow-2xl" />
+            <img src={emranLogo} alt="EMRAN Logo" className="h-60 mx-auto mb-8 drop-shadow-2xl" />
             <h1 className="text-5xl md:text-6xl font-extrabold text-[#001F5B] mb-6">
               About EMRAN
             </h1>
@@ -31,6 +34,36 @@ const AboutUs = () => {
               ExxonMobil Retirees Association of Nigeria — A legacy of unity, welfare, and community impact since 2020.
             </p>
           </div>
+
+          {/* NEW: PRESIDENT CARD */}
+          <section className="mb-32">
+            <div className="bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] rounded-3xl shadow-2xl overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-12 items-center p-16">
+                <div className="text-white">
+                  <h2 className="text-5xl font-extrabold mb-6">Message from the President</h2>
+                  <h3 className="text-3xl font-bold mb-8 text-yellow-400">
+                    Adebiyi Aderinto
+                  </h3>
+                  <p className="text-2xl leading-relaxed mb-8">
+                    "Fellow retirees, EMRAN is our shared home — built on the foundation of service, excellence, and family. 
+                    Together, we ensure no member is left behind in retirement. 
+                    Through advocacy, welfare support, and community spirit, we honor our ExxonMobil legacy while building a brighter future."
+                  </p>
+                  <p className="text-xl italic opacity-90">
+                    — Adebiyi Aderinto, President, EMRAN
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <img 
+                    src={president} 
+                    alt="Adebiyi Aderinto - EMRAN President" 
+                    className="w-96 h-96 object-cover rounded-full border-8 border-white shadow-2xl"
+                    onError={(e) => e.target.src = 'https://via.placeholder.com/400?text=President'}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* History Section */}
           <section className="mb-24">
@@ -56,43 +89,33 @@ const AboutUs = () => {
           </section>
 
           {/* Constitution */}
-<section className="mb-24 bg-white rounded-3xl shadow-2xl p-16">
-  <h2 className="text-5xl font-bold text-[#001F5B] text-center mb-16">Our Constitution</h2>
-  <div className="grid md:grid-cols-2 gap-20 items-center">
-    <div className="space-y-12">
-      <img 
-        src={constitutionCover} 
-        alt="Constitution Cover" 
-        className="rounded-3xl shadow-2xl w-full"
-      />
-      <img 
-        src={constitutionTOC} 
-        alt="Table of Contents" 
-        className="rounded-3xl shadow-2xl w-full"
-      />
-    </div>
-    <div className="flex flex-col justify-center space-y-10">
-      <p className="text-2xl text-gray-700 italic leading-relaxed">
-        "We, the members of ExxonMobil Retirees Association of Nigeria... do hereby make, enact and give to ourselves this Constitution."
-      </p>
-      <p className="text-xl text-gray-700 mb-10">
-        Our Constitution is the foundation of EMRAN — ensuring transparent governance, member welfare, and democratic leadership.
-      </p>
-      
-      {/* DOWNLOAD BUTTON - FIXED */}
-      <a 
-        href={constitution}
-        download="EMRAN-Constitution.pdf"
-        className="inline-flex items-center gap-4 bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-2xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 self-start"
-      >
-        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-        Download Full Constitution (PDF)
-      </a>
-    </div>
-  </div>
-</section>
+          <section className="mb-24 bg-white rounded-3xl shadow-2xl p-16">
+            <h2 className="text-5xl font-bold text-[#001F5B] text-center mb-16">Our Constitution</h2>
+            <div className="grid md:grid-cols-2 gap-20 items-center">
+              <div className="space-y-12">
+                <img src={constitutionCover} alt="Constitution Cover" className="rounded-3xl shadow-2xl w-full" />
+                <img src={constitutionTOC} alt="Table of Contents" className="rounded-3xl shadow-2xl w-full" />
+              </div>
+              <div className="flex flex-col justify-center space-y-10">
+                <p className="text-2xl text-gray-700 italic leading-relaxed">
+                  "We, the members of ExxonMobil Retirees Association of Nigeria... do hereby make, enact and give to ourselves this Constitution."
+                </p>
+                <p className="text-xl text-gray-700 mb-10">
+                  Our Constitution is the foundation of EMRAN — ensuring transparent governance, member welfare, and democratic leadership.
+                </p>
+                <a 
+                  href={constitution}
+                  download="EMRAN-Constitution.pdf"
+                  className="inline-flex items-center gap-4 bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-2xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 self-start"
+                >
+                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Download Full Rules & Regulations (PDF)
+                </a>
+              </div>
+            </div>
+          </section>
 
           {/* Official Registration & Certificates */}
           <section className="mb-24">
