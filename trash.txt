@@ -1,0 +1,63 @@
+Dashboard :
+
+Name
+Image
+Dues status (drop down : paid/unpaid, dues history, pay next year dues - all clickable) 
+Constitution 
+My Account (drop down :edit, delete, message, notifications - all clickable) 
+
+
+Backend 
+Admin :
+Users :
+Approve signup 
+Disapprove 
+Edit user
+Delete user
+Find a user by name 
+Find all users
+Change user status to paid or unpaid
+Send message to a user
+
+
+Website :
+Respond to support messages
+Create notifications
+Edit and delete notifications
+Create news and events
+Edit and delete news and event
+Create alerts
+Edit and delete alerts 
+
+Emails :
+Email to an admin when a user registers and seeks approval 
+Email to a user when a user is approved or disapproved by an admin 
+Email to an admin when a user has paid and payment details 
+Email to an admin to create payment of subscriptions dues alert one month to due date (Jan 1st)
+Email to admin of all members who haven't paid their dues on 31 of January 
+
+
+Payment :
+Pay stack id
+Create payment invoice
+Send payment receipts to user history, admin email admin, user email, change user status to paid, change expiry to Jan 31st of next year
+
+User :
+Edit user
+Delete user
+Support
+
+
+
+Admin Portal website :
+Entrance login
+Main Header(
+
+(User section (
+Header with notifications for message
+Header with signup approve or not, message, alert, notification, find users: by name, payment(dates dropdown : 2026,2027...), all users 
+
+User/notification/message/alert/news and events portal with more details and 
+Edit/Delete features
+In all the admin website will be four pages:
+The login page, Homepage where finding of whatever you want is possible, then the details page where reading, editing or deleting takes places 

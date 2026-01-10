@@ -154,7 +154,7 @@ const Homepage = () => {
                   onClick={() => navigate('/news')}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-lg shadow-xl hover:scale-105 transition"
                 >
-                  View All News & Events
+                  Get More Information
                   <span className="group-hover:translate-x-1 transition">→</span>
                 </button>
               </div>

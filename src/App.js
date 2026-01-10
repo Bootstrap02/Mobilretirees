@@ -4,6 +4,9 @@ import './App.css';
 import About from './Pages/About';
 import Community from './Pages/Community';
 import Spotlight from './Pages/Spotlight';
+import Dues from './Pages/Dues';
+import Notifications from './Pages/Notifications';
+import Messages from './Pages/Messages';
 import {Privacy} from './Pages/Privacy';
 import {Deleteaccount} from './Pages/Deleteaccount';
 import {Yourreferrals} from './Pages/Accessories/Yourreferrals';
@@ -45,7 +48,7 @@ function App() {
     <BrowserRouter>
     <Routes>
 <Route path="/" element={<Firstpage />} />
-<Route path='/productpage/:slug/:id' element={<Profile />} />
+<Route path='/profile/:id' element={<Profile />} />
 <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/store/:id' element={<Store />}/>
         <Route path='/webcreate' element={<Sellerregistration /> }/>
@@ -62,6 +65,9 @@ function App() {
         <Route path='/about' element= {<About /> }/>
         <Route path='/community' element= {<Community /> }/>
         <Route path='/spotlight' element= {<Spotlight /> }/>
+        <Route path='/dues' element= {<Dues /> }/>
+        <Route path='/notifications' element= {<Notifications /> }/>
+        <Route path='/messages' element= {<Messages /> }/>
         <Route path='/privacy' element= {<Privacy /> }/>
         <Route path='/support' element= {<Support /> }/>
         <Route path='/deleteaccount' element= {<Deleteaccount /> }/>
