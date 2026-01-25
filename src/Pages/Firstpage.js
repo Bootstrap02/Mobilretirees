@@ -1,14 +1,32 @@
 // pages/Homepage.jsx — BEAUTIFIED VERSION
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import heroImage from '../assets/exxonmobil-logo-white.jpg';
 import cacCertificate from '../assets/cac-certificate.jpg';
+import NotificationsList from '../Components/Notificationslist';
+import AlertModal from '../Components/Alerts';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
+  const [notifications, setNotifications] = useState(false);
+  // Dummy notifications (later: fetch from API)
+  const notification = [
+    { id: 1, title: "AGM Reminder", content: "March 15, 2026...", time: "2h ago", read: false },
+    { id: 2, title: "Pension Update", content: "November credited", time: "1d ago", read: false },
+    { id: 3, title: "Dues Notice", content: "Expires Feb 1, 2027", time: "3d ago", read: true },
+  ];
+const storedNotifications = JSON.parse(localStorage.getItem('notifications'));
+
+  const openNotifications= ()=>{
+    setNotifications(true)
+  }
+  const closeNotifications= ()=>{
+    setNotifications(false)
+  }
+  
 
   // Fade-in animation on scroll
   useEffect(() => {
@@ -32,8 +50,11 @@ const Homepage = () => {
     <>
       {/* Hero Section */}
       <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] overflow-hidden">
-        <Header />
-
+        <Header isOpen={openNotifications} />
+        <Header 
+        isOpen={openNotifications}
+       notifications={notification}
+      />
         {/* Animated Background Orbs */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 left-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse"></div>
@@ -242,7 +263,8 @@ const Homepage = () => {
           </p>
         </div>
       </section>
-
+      <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={notification}/>}</div>
+      <div><AlertModal/></div>
       <Footer />
     </>
   );

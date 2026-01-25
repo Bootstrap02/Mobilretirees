@@ -66,6 +66,8 @@ const NewsEvents = () => {
       type: "news"
     }
   ];
+  const storedNewsEvents = JSON.parse(localStorage.getItem('newevents'));
+
 
   return (
     <>

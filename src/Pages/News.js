@@ -1,14 +1,30 @@
 // pages/NewsDetail.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import axios from "axios";
 
 // Same data — later from API
 const allItems = [ /* same featured + items array from above */ ];
-
+  
 const NewsDetail = () => {
   const { id } = useParams();
+    const [news, setNews] = useState(null);
+  
+  const getNews= async()=>{
+    try {
+      const res = await axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewevents/${id}`);
+      setNews(res.data);
+    } catch (err) {
+      alert('Failed to get News.');
+    }
+  }
+  useEffect(() => {
+      // Simulate fetching single notification by ID
+      getNews()
+      
+    }, [id]);
   const item = allItems.find(i => i.id === parseInt(id));
 
   if (!item) return <div className="text-center py-20 text-3xl">News not found</div>;

@@ -1,69 +1,147 @@
-// pages/Notifications.jsx
+// pages/NotificationsPage.jsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import { FiArrowLeft, FiCheckCircle, FiClock } from 'react-icons/fi';
+import axios from "axios";
 
-const Notifications = () => {
+
+// Dummy data (replace with real API fetch later)
+const dummyNotifications = [
+  {
+    id: 1,
+    title: "Annual General Meeting Reminder",
+    content: "Our AGM is scheduled for March 15, 2026 at Eko Hotel, Victoria Island. RSVP required by February 28, 2026. This is a mandatory meeting for all members. Agenda includes welfare updates, financial reports, and election of new officers.",
+    time: "2 hours ago",
+    read: false,
+    type: "event",
+    category: "Meetings",
+  },
+  {
+    id: 2,
+    title: "November Pension Credited",
+    content: "Your November pension payment of ₦485,000 has been successfully credited to your account ending in 1234. Transaction reference: PEN-2025-1087. If not reflected within 24 hours, contact support.",
+    time: "Yesterday at 09:15 AM",
+    read: false,
+    type: "pension",
+    category: "Finance",
+  },
+  {
+    id: 3,
+    title: "Dues Expiry Notice",
+    content: "Your annual membership dues expire on February 1, 2027. Renew now to maintain full benefits and voting rights. Late payment may incur penalties. Pay via the Dues section in your dashboard.",
+    time: "3 days ago",
+    read: true,
+    type: "dues",
+    category: "Membership",
+  },
+  {
+    id: 4,
+    title: "New Health Partnership Announced",
+    content: "EMRAN has partnered with Reddington Hospital Group for expanded specialist care coverage. Members can now access cardiology, oncology, and orthopedic services at discounted rates.",
+    time: "1 week ago",
+    read: true,
+    type: "health",
+    category: "Health",
+  },
+];
+
+const NotificationsPage = () => {
+  const { id } = useParams(); // Get notification ID from URL
   const navigate = useNavigate();
-  const [notifications] = useState([
-    { id: 1, title: "Pension Payment Credited", message: "Your November pension of ₦485,000 has been paid.", date: "Nov 25, 2025", read: true },
-    { id: 2, title: "Event Reminder", message: "EMRAN End-of-Year Get-Together is in 4 days!", date: "Dec 14, 2025", read: false },
-    { id: 3, title: "Document Pending", message: "Please upload your 2025 life certificate.", date: "Dec 10, 2025", read: false },
-    { id: 4, title: "Health Plan Update", message: "New hospitals added to your Gold plan network.", date: "Oct 30, 2025", read: true },
-    { id: 5, title: "Welcome Back!", message: "You’ve successfully logged into the new retiree portal.", date: "Dec 14, 2025", read: false },
-  ]);
+  const [notification, setNotification] = useState(null);
+
+   const getNotification= async()=>{
+    try {
+      const res = await axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/${id}`);
+      setNotification(res.data);
+    } catch (err) {
+      alert('Failed to get Notification.');
+    }
+  }
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    if (!userData) navigate('/signin');
-  }, [navigate]);
+    // Simulate fetching single notification by ID
+    getNotification()
+    const found = dummyNotifications.find(n => n.id === parseInt(id));
+    if (found) {
+      setNotification(found);
+    } else {
+      // Handle not found (redirect or error)
+      navigate('/dashboard');
+    }
+  }, [id, navigate]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  if (!notification) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-2xl text-gray-600">Loading notification...</div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-10">
-            <h1 className="text-4xl font-bold text-[#001F5B]">
-              Notifications {unreadCount > 0 && <span className="text-[#E30613]">({unreadCount} new)</span>}
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-3 text-[#E30613] hover:text-[#c20511] font-bold text-xl mb-10 transition"
+          >
+            <FiArrowLeft className="text-2xl" />
+            Back to Notifications
+          </button>
+
+          {/* Notification Card */}
+          <div className="bg-white rounded-3xl shadow-2xl p-10 border-t-8 border-[#E30613]">
+            {/* Category Badge */}
+            <span className="inline-block px-5 py-2 rounded-full bg-[#E30613]/10 text-[#E30613] font-bold text-sm mb-6">
+              {notification.category.toUpperCase()}
+            </span>
+
+            {/* Title */}
+            <h1 className="text-4xl md:text-5xl font-extrabold text-[#001F5B] mb-8 leading-tight">
+              {notification.title}
             </h1>
-            {unreadCount > 0 && (
-              <button className="text-[#E30613] font-bold hover:underline">
-                Mark all as read
-              </button>
-            )}
-          </div>
 
-          <div className="space-y-6">
-            {notifications.map((notif) => (
-              <div
-                key={notif.id}
-                className={`bg-white rounded-2xl shadow-lg p-6 transition-all ${
-                  !notif.read ? 'border-l-4 border-[#E30613] shadow-xl' : ''
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className={`text-xl font-bold ${!notif.read ? 'text-[#001F5B]' : 'text-gray-800'}`}>
-                      {notif.title}
-                    </h3>
-                    <p className="text-gray-700 mt-2 text-lg">{notif.message}</p>
-                    <p className="text-sm text-gray-500 mt-4">{notif.date}</p>
-                  </div>
-                  {!notif.read && <div className="w-3 h-3 bg-[#E30613] rounded-full ml-4 mt-2"></div>}
-                </div>
+            {/* Time & Status */}
+            <div className="flex items-center gap-6 text-gray-600 mb-10">
+              <div className="flex items-center gap-2">
+                <FiClock className="text-xl" />
+                <span>{notification.time}</span>
               </div>
-            ))}
-          </div>
-
-          {notifications.length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-2xl text-gray-600">No notifications at this time.</p>
+              {notification.read ? (
+                <div className="flex items-center gap-2 text-green-600">
+                  <FiCheckCircle className="text-xl" />
+                  <span>Read</span>
+                </div>
+              ) : (
+                <div className="text-[#E30613] font-medium">Unread</div>
+              )}
             </div>
-          )}
+
+            {/* Content */}
+            <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
+              <p>{notification.content}</p>
+              {/* You can add more formatted content here */}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-16 flex flex-col sm:flex-row gap-6 justify-center">
+              <button className="bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-xl px-12 py-6 rounded-full shadow-2xl transition transform hover:scale-105">
+                Take Action
+              </button>
+              <button 
+                onClick={() => navigate(-1)}
+                className="border-2 border-[#E30613] hover:bg-[#E30613]/10 text-[#E30613] font-bold text-xl px-12 py-6 rounded-full transition"
+              >
+                Back to List
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <Footer />
@@ -71,4 +149,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default NotificationsPage;

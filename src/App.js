@@ -66,7 +66,7 @@ function App() {
         <Route path='/community' element= {<Community /> }/>
         <Route path='/spotlight' element= {<Spotlight /> }/>
         <Route path='/dues' element= {<Dues /> }/>
-        <Route path='/notifications' element= {<Notifications /> }/>
+        <Route path='/notifications/:id' element= {<Notifications /> }/>
         <Route path='/messages' element= {<Messages /> }/>
         <Route path='/privacy' element= {<Privacy /> }/>
         <Route path='/support' element= {<Support /> }/>
