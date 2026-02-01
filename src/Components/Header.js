@@ -141,7 +141,7 @@ const Header = ({isOpen, notifications = []}) => {
 </button>
 
             {/* User Menu */}
-            {isLoggedIn ? (
+            {isLoggedIn && userData.user.role === "member" ? (
               <div className="flex items-center space-x-4">
                 <button 
                   onClick={() => navigate('/dashboard')}

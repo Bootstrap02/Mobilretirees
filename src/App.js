@@ -11,7 +11,7 @@ import {Privacy} from './Pages/Privacy';
 import {Deleteaccount} from './Pages/Deleteaccount';
 import {Yourreferrals} from './Pages/Accessories/Yourreferrals';
 import Contact from './Pages/Contact';
-import {Signup, Signin, ForgotPassword, ResetPassword} from './Pages/Signup';
+import {Signup, Signin, ForgotPassword, ResetPassword, Payment} from './Pages/Signup';
 import EmploymentForm from './Pages/Community';
 import FAQs from './Pages/FAQs';
 import Benefits from './Pages/Benefits'
@@ -62,6 +62,7 @@ function App() {
         <Route path='/signin' element= {<Signin /> }/>
         <Route path='/forgotpassword' element= {<ForgotPassword /> }/>
         <Route path='/resetpassword' element= {<ResetPassword /> }/>
+        <Route path='/payment/:id' element= {<Payment /> }/>
         <Route path='/about' element= {<About /> }/>
         <Route path='/community' element= {<Community /> }/>
         <Route path='/spotlight' element= {<Spotlight /> }/>

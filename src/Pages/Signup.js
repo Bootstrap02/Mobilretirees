@@ -1,11 +1,12 @@
 // pages/Auth.jsx
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader } from 'react-icons/fi';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { BigLoader } from '../Modals/Loaders';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
+
 
 // Reusable Input Component
 const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, showToggle, toggleShow, ...props }) => (
@@ -74,7 +75,7 @@ export const Signup = () => {
       localStorage.setItem('userData', JSON.stringify(res.data));
       setTimeout(() => {
         setLoading(false);
-        navigate('/dashboard');
+        navigate('/');
       }, 2000);
     } catch (err) {
       setLoading(false);
@@ -193,7 +194,11 @@ export const Signin = () => {
     try {
       const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login', formData);
       localStorage.setItem('userData', JSON.stringify(res.data));
+      if (res.data.user.role === "member"){
       navigate('/dashboard');
+      }else{
+         navigate('/');
+      }
     } catch (err) {
       setLoading(false);
       alert('Invalid credentials');
@@ -446,3 +451,121 @@ export const ResetPassword = () => {
     </AuthLayout>
   );
 };
+
+
+
+export const Payment = () => {
+  const [token, setToken] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+
+  // Get user ID from localStorage (assuming user is logged in)
+  const userId = useParams();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!token.trim() || token.length !== 6 || !/^\d{6}$/.test(token)) {
+      setMessage({ type: 'error', text: 'Please enter a valid 6-digit code' });
+      return;
+    }
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await axios.put(
+        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${userId}`,
+        { token: token.trim() }
+      );
+
+      setMessage({
+        type: 'success',
+        text: response.data.message || 'Payment confirmation submitted successfully. Admin will verify shortly.'
+      });
+
+      setToken(''); // Clear input after success
+    } catch (err) {
+      setMessage({
+        type: 'error',
+        text: err.response?.data?.message || 'Failed to submit confirmation. Please try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] text-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+            Confirm Your Payment
+          </h1>
+          <p className="text-xl opacity-90">
+            Enter the last 6 digits of your bank transfer receipt/reference below
+          </p>
+        </div>
+
+        {/* Payment Confirmation Form */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-10 mb-12 border border-white/20">
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Token Input */}
+            <div>
+              <label className="block text-lg font-medium mb-3">
+                Last 6 Digits of Payment Receipt/Reference
+              </label>
+              <input
+                type="text"
+                maxLength={6}
+                value={token}
+                onChange={(e) => setToken(e.target.value.replace(/\D/g, ''))} // Only digits
+                placeholder="e.g., 483920"
+                className="w-full px-6 py-5 text-3xl font-mono text-center bg-white/20 border border-white/30 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+                required
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-5 rounded-xl font-bold text-xl transition flex items-center justify-center gap-3 ${
+                loading
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-[#E30613] hover:bg-[#c20511] shadow-lg'
+              }`}
+            >
+              {loading ? (
+                <>
+                  <FiLoader className="animate-spin text-2xl" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <FiCheckCircle className="text-2xl" />
+                  Confirm Payment
+                </>
+              )}
+            </button>
+
+            {/* Status Message */}
+            {message.text && (
+              <div
+                className={`mt-6 p-5 rounded-xl text-center text-lg font-medium ${
+                  message.type === 'success'
+                    ? 'bg-green-600/20 border border-green-400 text-green-200'
+                    : 'bg-red-600/20 border border-red-400 text-red-200'
+                }`}
+              >
+                {message.text}
+              </div>
+            )}
+          </form>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
