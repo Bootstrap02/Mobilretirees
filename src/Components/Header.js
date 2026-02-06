@@ -33,6 +33,7 @@ const Header = ({isOpen, notifications = []}) => {
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
   const isLoggedIn = !!userData;
+  console.log(userData)
 
   // Scroll effect: shrink header + add shadow
   useEffect(() => {
@@ -141,7 +142,7 @@ const Header = ({isOpen, notifications = []}) => {
 </button>
 
             {/* User Menu */}
-            {isLoggedIn && userData.user.role === "member" ? (
+            {isLoggedIn && userData.user && userData.user.role === "member" ? (
               <div className="flex items-center space-x-4">
                 <button 
                   onClick={() => navigate('/dashboard')}

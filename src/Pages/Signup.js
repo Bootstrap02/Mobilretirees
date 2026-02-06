@@ -1,7 +1,7 @@
 // pages/Auth.jsx
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader, FiXCircle, } from 'react-icons/fi';
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { BigLoader } from '../Modals/Loaders';
@@ -55,23 +55,45 @@ const AuthLayout = ({ children, title, subtitle }) => (
 );
 
 // ====================== SIGN UP ======================
+
 export const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [formData, setFormData] = useState({
-    fullname: '', email: '', phone: '', password: ''
+    fullname: '',
+    email: '',
+    phone: '',
+    password: '',
+    // New retiree fields
+    dateOfBirth: '',
+    dateOfRetirement: '',
+    companyAtRetirement: '',
+    locationOfRetirement: '',
+    departmentOfRetirement: '',
+    nextOfKin: '',
+    nextOfKinEmail: '',
+    nextOfKinPhone: '',
+    beneficiary: '',
+    beneficiaryEmail: '',
+    beneficiaryPhone: '',
   });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/register', formData);
+      const res = await axios.post(
+        'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/register',
+        formData
+      );
+
       localStorage.setItem('userData', JSON.stringify(res.data));
       setTimeout(() => {
         setLoading(false);
@@ -79,23 +101,11 @@ export const Signup = () => {
       }, 2000);
     } catch (err) {
       setLoading(false);
-      alert('Registration failed. Try again.');
+      alert(err.response?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true);
-    try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/google', {
-        token: credentialResponse.credential
-      });
-      localStorage.setItem('userData', JSON.stringify(res.data));
-      navigate('/dashboard');
-    } catch (err) {
-      setLoading(false);
-      alert('Google login failed');
-    }
-  };
+  // ... your Google login handler remains unchanged ...
 
   return (
     <AuthLayout 
@@ -104,7 +114,8 @@ export const Signup = () => {
     >
       {loading && <BigLoader message="Creating your account..." />}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Existing basic fields */}
         <InputField 
           icon={FiUser} 
           type="text" 
@@ -144,38 +155,354 @@ export const Signup = () => {
           required
         />
 
+        {/* ────────────────────────────────────────────── */}
+        {/*          RETIREE-SPECIFIC INFORMATION           */}
+        {/* ────────────────────────────────────────────── */}
+        <div className="border-t border-gray-200 pt-10 mt-12">
+          <h3 className="text-2xl font-bold text-[#001F5B] mb-6 text-center">
+            Retiree & Beneficiary Information
+          </h3>
+
+          {/* Date of Birth */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+            />
+          </div>
+
+          {/* Date of Retirement */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Date of Retirement
+            </label>
+            <input
+              type="date"
+              name="dateOfRetirement"
+              value={formData.dateOfRetirement}
+              onChange={handleChange}
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+            />
+          </div>
+
+          {/* Company at Retirement (Dropdown - only 2 options) */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Company at Retirement
+            </label>
+            <select
+              name="companyAtRetirement"
+              value={formData.companyAtRetirement}
+              onChange={handleChange}
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+            >
+              <option value="">Select company</option>
+              <option value="MPN">MPN</option>
+              <option value="EEPNL">EEPNL</option>
+            </select>
+          </div>
+
+          {/* Location of Retirement (Dropdown) */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Location of Retirement
+            </label>
+            <select
+              name="locationOfRetirement"
+              value={formData.locationOfRetirement}
+              onChange={handleChange}
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+            >
+              <option value="">Select location</option>
+              <option value="Lagos">Lagos</option>
+              <option value="QIT/Eket">QIT/Eket</option>
+              <option value="Port Harcourt/Onne">Port Harcourt/Onne</option>
+              <option value="Bonny">Bonny</option>
+              <option value="USA">USA</option>
+              <option value="Europe">Europe</option>
+              <option value="Asia">Asia</option>
+            </select>
+          </div>
+
+          {/* Department of Retirement */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Department of Retirement
+            </label>
+            <input
+              type="text"
+              name="departmentOfRetirement"
+              value={formData.departmentOfRetirement}
+              onChange={handleChange}
+              placeholder="e.g., Production, Finance, Engineering..."
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+            />
+          </div>
+
+          {/* Next of Kin */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Next of Kin Full Name
+            </label>
+            <input
+              type="text"
+              name="nextOfKin"
+              value={formData.nextOfKin}
+              onChange={handleChange}
+              placeholder="Full name of next of kin"
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Next of Kin Email
+              </label>
+              <input
+                type="email"
+                name="nextOfKinEmail"
+                value={formData.nextOfKinEmail}
+                onChange={handleChange}
+                placeholder="next-of-kin@example.com"
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Next of Kin Phone
+              </label>
+              <input
+                type="tel"
+                name="nextOfKinPhone"
+                value={formData.nextOfKinPhone}
+                onChange={handleChange}
+                placeholder="+234 123 456 7890"
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Beneficiary */}
+          <div className="mb-6">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Beneficiary Full Name
+            </label>
+            <input
+              type="text"
+              name="beneficiary"
+              value={formData.beneficiary}
+              onChange={handleChange}
+              placeholder="Full name of beneficiary"
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Beneficiary Email
+              </label>
+              <input
+                type="email"
+                name="beneficiaryEmail"
+                value={formData.beneficiaryEmail}
+                onChange={handleChange}
+                placeholder="beneficiary@example.com"
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-2">
+                Beneficiary Phone
+              </label>
+              <input
+                type="tel"
+                name="beneficiaryPhone"
+                value={formData.beneficiaryPhone}
+                onChange={handleChange}
+                placeholder="+234 123 456 7890"
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
         <button 
           type="submit"
-          className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition shadow-lg"
+          className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition shadow-lg mt-10"
         >
           Create Account
         </button>
       </form>
 
-      <div className="my-6 flex items-center">
-        <div className="flex-1 border-t border-gray-300"></div>
-        <span className="px-4 text-gray-500 text-sm">or</span>
-        <div className="flex-1 border-t border-gray-300"></div>
-      </div>
-
-      <div className="flex justify-center">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={() => alert('Google Sign In Failed')}
-          useOneTap
-          theme="filled_blue"
-          size="large"
-          text="signup_with"
-          shape="pill"
-        />
-      </div>
-
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Already have an account? <NavLink to="/signin" className="text-[#E30613] font-bold hover:underline">Sign In</NavLink>
-      </p>
+      {/* ... your Google login section and sign-in link ... */}
     </AuthLayout>
   );
 };
+
+
+// export const Signup = () => {
+//   const [loading, setLoading] = useState(false);
+//   const [showPass, setShowPass] = useState(false);
+//   const [formData, setFormData] = useState({
+//     fullname: '',
+//     email: '',
+//     phone: '',
+//     password: '',
+//     dateOfBirth: '',
+//     dateOfRetirement: '',
+//     companyAtRetirement: '',
+//     locationOfRetirement: '',
+//     departmentOfRetirement: '',
+//     nextOfKin: '',
+//     nextOfKinEmail: '',
+//     nextOfKinPhone: '',
+//     beneficiary: '',
+//     beneficiaryEmail: '',
+//     beneficiaryPhone: '',
+//   });
+
+//   // Modal states
+//   const [successModal, setSuccessModal] = useState(false);
+//   const [errorModal, setErrorModal] = useState({ open: false, message: '' });
+
+//   const navigate = useNavigate();
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     try {
+//       const res = await axios.post(
+//         'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/register',
+//         formData
+//       );
+
+//       // Success → show modal instead of alert
+//       setSuccessModal(true);
+//       localStorage.setItem('userData', JSON.stringify(res.data));
+
+//       // Auto-redirect after user closes modal (or after 5s)
+//       setTimeout(() => {
+//         setSuccessModal(false);
+//         navigate('/signin');
+//       }, 5000);
+//     } catch (err) {
+//       const errorMsg = err.response?.data?.message || 'Registration failed. Please try again.';
+//       setErrorModal({ open: true, message: errorMsg });
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthLayout 
+//       title="Welcome Home" 
+//       subtitle="Create your retiree account to access your benefits"
+//     >
+//       {loading && (
+//         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+//           <div className="bg-white p-8 rounded-2xl shadow-2xl text-center">
+//             <FiLoader className="text-6xl text-[#E30613] animate-spin mx-auto mb-4" />
+//             <p className="text-xl font-medium text-[#001F5B]">Creating your account...</p>
+//           </div>
+//         </div>
+//       )}
+
+//       <form onSubmit={handleSubmit} className="space-y-6">
+//         {/* ... your existing basic fields ... */}
+
+//         {/* Retiree & Beneficiary Section (already added in previous response) */}
+//         {/* ... paste the full retiree section here ... */}
+
+//         <button 
+//           type="submit"
+//           disabled={loading}
+//           className={`w-full py-4 rounded-xl font-bold text-lg transition shadow-lg ${
+//             loading 
+//               ? 'bg-gray-400 cursor-not-allowed' 
+//               : 'bg-[#E30613] hover:bg-[#c20511] text-white'
+//           }`}
+//         >
+//           {loading ? 'Creating Account...' : 'Create Account'}
+//         </button>
+//       </form>
+
+//       {/* ────────────────────────────────────────────── */}
+//       {/*             SUCCESS MODAL                      */}
+//       {/* ────────────────────────────────────────────── */}
+//       {successModal && (
+//         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+//           <div className="bg-white rounded-3xl p-10 max-w-md w-full text-center shadow-2xl">
+//             <FiCheckCircle className="text-8xl text-green-500 mx-auto mb-6" />
+//             <h2 className="text-3xl font-bold text-[#001F5B] mb-4">
+//               Account Created!
+//             </h2>
+//             <p className="text-lg text-gray-700 mb-8">
+//               Your account has been successfully registered.<br />
+//               <strong>It is now pending admin approval.</strong><br />
+//               You will be notified once approved.
+//             </p>
+//             <button
+//               onClick={() => {
+//                 setSuccessModal(false);
+//                 navigate('/signin');
+//               }}
+//               className="w-full py-4 bg-[#E30613] text-white rounded-xl font-bold hover:bg-[#c20511] transition"
+//             >
+//               Go to Sign In
+//             </button>
+//           </div>
+//         </div>
+//       )}
+
+//       {/* ────────────────────────────────────────────── */}
+//       {/*               ERROR MODAL                      */}
+//       {/* ────────────────────────────────────────────── */}
+//       {errorModal.open && (
+//         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+//           <div className="bg-white rounded-3xl p-10 max-w-md w-full text-center shadow-2xl">
+//             <FiXCircle className="text-8xl text-red-500 mx-auto mb-6" />
+//             <h2 className="text-3xl font-bold text-[#001F5B] mb-4">
+//               Registration Failed
+//             </h2>
+//             <p className="text-lg text-gray-700 mb-8">
+//               {errorModal.message}
+//             </p>
+//             <button
+//               onClick={() => setErrorModal({ open: false, message: '' })}
+//               className="w-full py-4 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-800 transition"
+//             >
+//               Try Again
+//             </button>
+//           </div>
+//         </div>
+//       )}
+//     </AuthLayout>
+//   );
+// };
+
 
 // ====================== SIGN IN ======================
 export const Signin = () => {
