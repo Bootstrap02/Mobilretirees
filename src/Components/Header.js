@@ -33,7 +33,6 @@ const Header = ({isOpen, notifications = []}) => {
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
   const isLoggedIn = !!userData;
-  console.log(userData)
 
   // Scroll effect: shrink header + add shadow
   useEffect(() => {

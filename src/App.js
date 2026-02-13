@@ -49,7 +49,7 @@ function App() {
     <Routes>
 <Route path="/" element={<Firstpage />} />
 <Route path='/profile/:id' element={<Profile />} />
-<Route path='/dashboard' element={<Dashboard />} />
+<Route path='/dashboard/:id' element={<Dashboard />} />
         <Route path='/store/:id' element={<Store />}/>
         <Route path='/webcreate' element={<Sellerregistration /> }/>
         <Route path='/webstore/:webname' element={<Webstore /> }/>

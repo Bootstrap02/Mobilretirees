@@ -24,15 +24,15 @@ const Dashboard = () => {
     }
 
     const userData = {
-      fullname: stored.user.fullname || "EMRAN Member",
-      email: stored.user.email || "No email available",
-      staffId: stored.user.id || "N/A",
-      retirementYear: stored.user.retirementYear || "N/A",
-      profilePhoto: stored.user.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.user.fullname || 'U')}&background=001F5B&color=fff&size=128`,
-      duesStatus: stored.user.duesStatus || "Pending Verification",
-      unreadMessages: stored.user.unreadMessages || 0,
-      notifications: stored.user.notifications || 0,
-      upcomingEvents: stored.user.upcomingEvents || 0,
+      fullname: stored.fullname || "EMRAN Member",
+      email: stored.email || "No email available",
+      staffId: stored._id || "N/A",
+      retirementYear: stored.retirementYear || "N/A",
+      profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
+      duesStatus: stored.duesStatus || "Pending Verification",
+      unreadMessages: stored.unreadMessages || 0,
+      notifications: stored.notifications || 0,
+      upcomingEvents: stored.upcomingEvents || 0,
     };
 
     setUser(userData);

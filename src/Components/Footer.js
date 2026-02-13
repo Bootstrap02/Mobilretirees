@@ -138,10 +138,10 @@ const Footer = () => {
             <FiPhone className="text-xl" />
             <span className="text-xs mt-1">Support</span>
           </NavLink>
-          <NavLink to="/dashboard" className="flex flex-col items-center text-white">
+          {/* <NavLink to="/dashboard" className="flex flex-col items-center text-white">
             <FiUser className="text-xl" />
             <span className="text-xs mt-1">Account</span>
-          </NavLink>
+          </NavLink> */}
         </div>
       </div>
 

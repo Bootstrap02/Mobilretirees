@@ -59,6 +59,7 @@ const AuthLayout = ({ children, title, subtitle }) => (
 export const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [feedback, setFeedback] = useState(null); // null | { type, text }
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
@@ -84,6 +85,10 @@ export const Signup = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const showFeedback = (type, text) => {
+    setFeedback({ type, text });
+    setTimeout(() => setFeedback(null), type === 'success' ? 4000 : 5000);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -95,13 +100,14 @@ export const Signup = () => {
       );
 
       localStorage.setItem('userData', JSON.stringify(res.data));
+      showFeedback('success', res.data.message || 'Account created! Pending admin approval.');
       setTimeout(() => {
         setLoading(false);
         navigate('/');
       }, 2000);
     } catch (err) {
       setLoading(false);
-      alert(err.response?.data?.message || 'Registration failed. Please try again.');
+     showFeedback('error', err.response?.data?.message || 'Registration failed. Please try again.');
     }
   };
 
@@ -350,7 +356,23 @@ export const Signup = () => {
           Create Account
         </button>
       </form>
-
+{/* Feedback Modal (top-center) */}
+      {feedback && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full px-4 animate-fade-in-down">
+          <div
+            className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${
+              feedback.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            }`}
+          >
+            {feedback.type === 'success' ? (
+              <FiCheckCircle className="text-4xl flex-shrink-0" />
+            ) : (
+              <FiXCircle className="text-4xl flex-shrink-0" />
+            )}
+            <p className="text-lg font-medium">{feedback.text}</p>
+          </div>
+        </div>
+      )}
       {/* ... your Google login section and sign-in link ... */}
     </AuthLayout>
   );
@@ -372,9 +394,10 @@ export const Signin = () => {
     setLoading(true);
     try {
       const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login', formData);
-      localStorage.setItem('userData', JSON.stringify(res.data));
+      localStorage.setItem('userData', JSON.stringify(res.data.user));
       if (res.data.user.role === "member"){
-      navigate('/dashboard');
+      navigate(`/dashboard/${res.data.user._id}`);
+      console.log(res.data.user)
       }else{
          navigate('/');
       }
@@ -392,7 +415,7 @@ export const Signin = () => {
         token: credentialResponse.credential
       });
       localStorage.setItem('userData', JSON.stringify(res.data));
-      navigate('/dashboard');
+      navigate(`/dashboard/${res.data.user._id}`);
     } catch (err) {
       setLoading(false);
       alert('Google login failed');
@@ -639,8 +662,7 @@ export const Payment = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
 
   // Get user ID from localStorage (assuming user is logged in)
-  const userId = useParams();
-
+const { id } = useParams();   // correct — now id is the actual string
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -653,7 +675,7 @@ export const Payment = () => {
 
     try {
       const response = await axios.put(
-        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${userId}`,
+        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`,
         { token: token.trim() }
       );
 
@@ -661,9 +683,10 @@ export const Payment = () => {
         type: 'success',
         text: response.data.message || 'Payment confirmation submitted successfully. Admin will verify shortly.'
       });
-
+      console.log(response.data)
       setToken(''); // Clear input after success
     } catch (err) {
+              console.log(err)
       setMessage({
         type: 'error',
         text: err.response?.data?.message || 'Failed to submit confirmation. Please try again.'

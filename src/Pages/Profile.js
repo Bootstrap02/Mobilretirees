@@ -1,6 +1,7 @@
 // pages/Profile.jsx — FINAL WITH PASSWORD CHANGE, PRE-FILLED FIELDS & FANCY UI
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+import axios from "axios";
 import { 
   FiUser, FiMail, FiPhone, FiHome, FiCamera, FiSave, FiTrash2, FiAlertTriangle, 
   FiLock, FiEye, FiEyeOff 
@@ -17,6 +18,8 @@ const Profile = () => {
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     fullname: '',
@@ -27,7 +30,7 @@ const Profile = () => {
     retirementYear: 'N/A',
     profilePhoto: ''
   });
-
+const [selectedImage, setSelectedImage] = useState(null); // for preview
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -42,13 +45,13 @@ const Profile = () => {
     }
 
     const initialData = {
-      fullname: stored.user.fullname || '',
-      email: stored.user.email || '',
-      phone: stored.user.phone || '',
-      address: stored.user.address || '',
-      staffId: stored.user.id || 'N/A',
-      retirementYear: stored.user.retirementYear || 'N/A',
-      profilePhoto: stored.user.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`
+      fullname: stored.fullname || '',
+      email: stored.email || '',
+      phone: stored.phone || '',
+      address: stored.address || '',
+      staffId: stored._id || 'N/A',
+      retirementYear: stored.retirementYear || 'N/A',
+      profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`
     };
 
     setFormData(initialData);
@@ -66,37 +69,148 @@ const Profile = () => {
     setPasswordError('');
   };
 
-  const handleSaveProfile = () => {
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validation
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Only JPG, JPEG, PNG, SVG allowed');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      setUploadError('Image too large (max 5MB)');
+      return;
+    }
+
+    setUploadError('');
+    setSelectedImage(file);
+    setFormData(prev => ({ ...prev, profilePhoto: URL.createObjectURL(file) }));
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
+
+
+  const handleSaveProfile = async () => {
     setSaving(true);
-    // Simulate save (replace with real API)
-    setTimeout(() => {
-      localStorage.setItem('userData', JSON.stringify({ ...JSON.parse(localStorage.getItem('userData')), ...formData }));
+    setUploadError('');
+
+    try {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const userId = userData._id;
+
+      // 1. Update profile fields (if you have a separate endpoint)
+      await axios.put(
+        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/profile/${userId}`,
+        formData,
+      );
+
+      // 2. If new image selected, upload it
+      if (selectedImage) {
+        const imageFormData = new FormData();
+        imageFormData.append('images', selectedImage);
+
+        await axios.put(
+          `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/upload-fortune-image/${userId}`,
+          imageFormData,
+        );
+      }
+
+      // Update local storage
+      const updatedUser = { ...userData, ...formData };
+      localStorage.setItem('userData', JSON.stringify(updatedUser));
+
       alert('Profile updated successfully!');
+      setSelectedImage(null); // clear preview
+    } catch (err) {
+      alert('Failed to update profile: ' + (err.response?.data?.message || err.message));
+      console.error(err);
+    } finally {
       setSaving(false);
-    }, 1200);
+    }
   };
 
-  const handleChangePassword = () => {
-    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-      setPasswordError('All fields are required');
-      return;
+
+
+
+
+
+
+
+const handleChangePassword = async () => {
+  // Clear previous errors
+  setPasswordError('');
+
+  // Basic validation
+  if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+    setPasswordError('All password fields are required');
+    return;
+  }
+
+  if (passwordData.newPassword !== passwordData.confirmPassword) {
+    setPasswordError('New passwords do not match');
+    return;
+  }
+
+  if (passwordData.newPassword.length < 6) {
+    setPasswordError('New password must be at least 6 characters');
+    return;
+  }
+
+  setSaving(true); // reuse your saving state or create [passwordSaving]
+
+  try {
+    // Get user ID from localStorage (or wherever you store user data)
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const userId = userData._id;
+
+    if (!userId) {
+      throw new Error('User ID not found. Please login again.');
     }
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordError('New passwords do not match');
-      return;
-    }
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError('New password must be at least 6 characters');
-      return;
+    // Send request to backend
+    const response = await axios.put(
+      `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/change-password/${userId}`,
+      {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      },
+    );
+
+    // Success
+    alert(response.data.message || 'Password changed successfully!');
+    
+    // Clear form
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+
+  } catch (err) {
+    // Handle errors from backend
+    const errorMsg = err.response?.data?.message || err.message || 'Failed to change password';
+    
+    if (err.response?.status === 400) {
+      setPasswordError(errorMsg); // e.g. "Current password is incorrect"
+    } else if (err.response?.status === 401) {
+      setPasswordError('Session expired. Please login again.');
+      // Optional: logout user
+      localStorage.removeItem('userData');
+      localStorage.removeItem('token');
+      navigate('/signin');
+    } else {
+      setPasswordError(errorMsg);
     }
 
-    // Simulate API call for password change
-    setTimeout(() => {
-      alert('Password changed successfully!');
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    }, 1000);
-  };
-
+    console.error('Password change error:', err);
+  } finally {
+    setSaving(false);
+  }
+};
   const handleDelete = () => {
     localStorage.removeItem('userData');
     alert('Account deleted successfully.');
@@ -127,8 +241,8 @@ const Profile = () => {
           {/* Profile Card */}
           <div className="bg-white rounded-3xl shadow-2xl p-12 mb-16 relative">
             {/* Centered Avatar */}
-            <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
-              <div className="relative">
+            {/* <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
+              <div className="relative" >
                 <img
                   src={formData.profilePhoto}
                   alt={formData.fullname}
@@ -139,6 +253,30 @@ const Profile = () => {
                   <FiCamera className="text-2xl" />
                 </button>
               </div>
+            </div> */}
+            <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
+              <div className="relative group cursor-pointer" onClick={triggerFileInput}>
+                <img
+                  src={formData.profilePhoto}
+                  alt={formData.fullname}
+                  className="w-48 h-48 md:w-56 md:h-56 rounded-full object-cover border-8 border-white shadow-2xl ring-4 ring-[#E30613]/40 transition group-hover:opacity-80"
+                  onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname)}&background=001F5B&color=fff&size=256`}
+                />
+                <div className="absolute bottom-2 right-2 bg-[#E30613] p-4 rounded-full text-white shadow-lg hover:bg-[#c20511] transition opacity-90 group-hover:opacity-100">
+                  <FiCamera className="text-2xl" />
+                </div>
+                {/* Hidden file input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/jpeg,image/jpg,image/png,image/svg+xml"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+              </div>
+              {uploadError && (
+                <p className="text-red-600 text-sm mt-2 text-center">{uploadError}</p>
+              )}
             </div>
 
             <div className="pt-40">
@@ -297,6 +435,7 @@ const Profile = () => {
                 <div className="mt-12 text-center">
                   <button
                     onClick={handleChangePassword}
+                    disabled={saving}
                     className="bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transition transform hover:scale-110 flex items-center gap-4 mx-auto"
                   >
                     <FiLock className="text-2xl" />
