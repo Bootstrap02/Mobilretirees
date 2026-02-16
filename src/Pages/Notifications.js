@@ -71,7 +71,7 @@ const NotificationsPage = () => {
       // Handle not found (redirect or error)
       navigate('/dashboard');
     }
-  }, [id, navigate]);
+  }, [id, getNotification]);
 
   if (!notification) {
     return (
