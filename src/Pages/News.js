@@ -6,13 +6,14 @@ import Footer from '../Components/Footer';
 import axios from "axios";
 
 // Same data — later from API
-const allItems = [ /* same featured + items array from above */ ];
-  
 const NewsDetail = () => {
   const { id } = useParams();
     const [news, setNews] = useState(null);
   
-  const getNews= async()=>{
+  
+  useEffect(() => {
+      // Simulate fetching single notification by ID
+     const getNews= async()=>{
     try {
       const res = await axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewevents/${id}`);
       setNews(res.data);
@@ -20,12 +21,10 @@ const NewsDetail = () => {
       alert('Failed to get News.');
     }
   }
-  useEffect(() => {
-      // Simulate fetching single notification by ID
-      getNews()
+  getNews()
       
-    }, [id]);
-  const item = allItems.find(i => i.id === parseInt(id));
+    }, [id,]);
+  const item = news.find(i => i.id === parseInt(id));
 
   if (!item) return <div className="text-center py-20 text-3xl">News not found</div>;
 

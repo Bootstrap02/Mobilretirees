@@ -1,7 +1,7 @@
 // src/components/NotificationsList.jsx (updated)
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom'; // NEW
-import { FiX, FiCheckCircle, FiBell } from 'react-icons/fi';
+import { FiX, FiBell } from 'react-icons/fi';
 
 const NotificationsList = ({ isOpen, onClose, notifications = [] }) => {
   const navigate = useNavigate(); // NEW

@@ -15,13 +15,13 @@ const Header = ({isOpen, notifications = []}) => {
     const fetchData = async () => {
       try {
         const notifRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
-        localStorage.setItem('notifications', JSON.stringify(notifRes.data));
+        localStorage.setItem('notifications', JSON.stringify(notifRes.data.notifications));
 
         const eventsRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
-        localStorage.setItem('newevents', JSON.stringify(eventsRes.data));
+        localStorage.setItem('newevents', JSON.stringify(eventsRes.data.newsevents));
 
         const alertRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
-        localStorage.setItem('alerts', JSON.stringify(alertRes.data));
+        localStorage.setItem('alerts', JSON.stringify(alertRes.data.alerts));
       } catch (err) {
         console.error('Failed to fetch data:', err);
         // Use toast instead of alert in production

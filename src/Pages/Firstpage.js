@@ -18,7 +18,6 @@ const Homepage = () => {
     { id: 2, title: "Pension Update", content: "November credited", time: "1d ago", read: false },
     { id: 3, title: "Dues Notice", content: "Expires Feb 1, 2027", time: "3d ago", read: true },
   ];
-const storedNotifications = JSON.parse(localStorage.getItem('notifications'));
 
   const openNotifications= ()=>{
     setNotifications(true)

@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense} from 'react';
+import React, { lazy} from 'react';
 import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
 import './App.css';
 import About from './Pages/About';
@@ -7,40 +7,19 @@ import Spotlight from './Pages/Spotlight';
 import Dues from './Pages/Dues';
 import Notifications from './Pages/Notifications';
 import Messages from './Pages/Messages';
-import {Privacy} from './Pages/Privacy';
-import {Deleteaccount} from './Pages/Deleteaccount';
-import {Yourreferrals} from './Pages/Accessories/Yourreferrals';
-import Contact from './Pages/Contact';
 import {Signup, Signin, ForgotPassword, ResetPassword, Payment} from './Pages/Signup';
-import EmploymentForm from './Pages/Community';
-import FAQs from './Pages/FAQs';
 import Benefits from './Pages/Benefits'
 import  NewsEvents from './Pages/NewsEvents';
 import  News from './Pages/News';
 import Dashboard from './Pages/Dashboard';
 import Resources from './Pages/Resources';
-// import Mainpage from  './Pages/Accessories/Mainpage';
 import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
-import Store from './Pages/Links/Store';
-import { Signuplink } from './Pages/Links/Signuplink';
-import { Sellerregistration } from './Pages/Links/Sellerregistration';
-import Webstore from './Pages/Links/Website/Webstore';
-import Productpages from './Pages/Links/Website/Components/Products/Productpage';
 
 const Firstpage = lazy(() => import("./Pages/Firstpage"));
 
 
 function App() {
-  let university = JSON.parse(localStorage.getItem("universities"));
-
-  if (!university) {
-      university = {
-        label: "All Universities",
-        value: "All Universities",
-       };
-      localStorage.setItem("universities", JSON.stringify(university));
-  }
  
   return (
     <>
@@ -50,11 +29,6 @@ function App() {
 <Route path="/" element={<Firstpage />} />
 <Route path='/profile/:id' element={<Profile />} />
 <Route path='/dashboard/:id' element={<Dashboard />} />
-        <Route path='/store/:id' element={<Store />}/>
-        <Route path='/webcreate' element={<Sellerregistration /> }/>
-        <Route path='/webstore/:webname' element={<Webstore /> }/>
-        <Route path='/webproductpage/:title' element={<Productpages /> }/>
-        <Route path='/signuplink/:id' element={<Signuplink /> }/>
         <Route path='/newsevents' element={<NewsEvents /> }/>
         <Route path='/news/:id' element={<News /> }/>
         <Route path='/resources' element= {<Resources /> }/>          
@@ -69,12 +43,7 @@ function App() {
         <Route path='/dues' element= {<Dues /> }/>
         <Route path='/notifications/:id' element= {<Notifications /> }/>
         <Route path='/messages' element= {<Messages /> }/>
-        <Route path='/privacy' element= {<Privacy /> }/>
         <Route path='/support' element= {<Support /> }/>
-        <Route path='/deleteaccount' element= {<Deleteaccount /> }/>
-        <Route path='/yourreferrals' element= {<Yourreferrals /> }/>
-        <Route path='/contact' element= {<Contact /> }/>
-        <Route path='/faqs' element= {<FAQs /> }/>
         <Route path='/benefits' element= {<Benefits /> }/>
     </Routes>
     </BrowserRouter>

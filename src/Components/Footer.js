@@ -12,7 +12,6 @@ import {
   FiChevronUp,
   FiHeart,
   FiBell,
-  FiUser 
 } from 'react-icons/fi';
 import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
 
@@ -96,10 +95,10 @@ const Footer = () => {
 </form>
 
             <div className="flex gap-4 text-2xl">
-              <a href="#" className="hover:text-[#E30613] transition"><FiFacebook /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiTwitter /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiLinkedin /></a>
-              <a href="#" className="hover:text-[#E30613] transition"><FiYoutube /></a>
+              <p  className="hover:text-[#E30613] transition"><FiFacebook /></p>
+              <p  className="hover:text-[#E30613] transition"><FiTwitter /></p>
+              <p  className="hover:text-[#E30613] transition"><FiLinkedin /></p>
+              <p  className="hover:text-[#E30613] transition"><FiYoutube /></p>
             </div>
           </div>
         </div>

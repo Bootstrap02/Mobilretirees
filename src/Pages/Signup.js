@@ -4,7 +4,7 @@ import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader, FiXCircle, } from 'react-icons/fi';
 // import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-import { BigLoader } from '../Modals/Loaders';
+import { BigLoader } from './Loaders';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
 
 
