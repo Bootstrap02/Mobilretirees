@@ -13,13 +13,21 @@ const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
   const [notifications, setNotifications] = useState(false);
-  const [allNotifications, setAllNotifications] = useState(false);
+  const [allNotifications, setAllNotifications] = useState();
 
-  useEffect(()=>{
-    const notifRes =  axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
-    setAllNotifications(notifRes.data.notifications);
+ useEffect(() => {
+  const fetchNotifications = async () => {
+    try {
+      const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
+      setAllNotifications(res.data.notifications || []);
+      console.log('Notifications loaded:', res.data.notifications);
+    } catch (err) {
+      console.error('Failed to load notifications:', err);
+    }
+  };
 
-  },[])
+  fetchNotifications();
+}, []);
 
   const openNotifications= ()=>{
     setNotifications(true)

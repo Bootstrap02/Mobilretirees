@@ -13,21 +13,29 @@ const Header = ({isOpen, notifications = []}) => {
 
   // === API CALLS — RUN ONCE ON MOUNT ===
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const eventsRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
-        localStorage.setItem('newevents', JSON.stringify(eventsRes.data.newsevents));
+           const fetchnewsevents = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
+            localStorage.setItem('newevents', JSON.stringify(res.data.newsEvent || []));
+            console.log('newsevents loaded:', res.data.newsEvent);
+          } catch (err) {
+            console.error('Failed to load new/events:', err);
+          }
+        };
+      const fetchalerts = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
+            localStorage.setItem('alerts', JSON.stringify(res.data.alerts || []));
+            console.log('alerts loaded:', res.data.alerts);
 
-        const alertRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
-        localStorage.setItem('alerts', JSON.stringify(alertRes.data.alerts));
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-        // Use toast instead of alert in production
-      }
-    };
-
-    fetchData(); // Runs once
-  }, []); // Empty array = once on mount
+          } catch (err) {
+            console.error('Failed to load alerts:', err);
+          }
+        };
+      
+        fetchnewsevents();
+        fetchalerts();
+    }, []); // Empty array = once on mount
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
   const isLoggedIn = !!userData;
@@ -131,11 +139,11 @@ const Header = ({isOpen, notifications = []}) => {
   className="relative"
 >
   <FiBell className={`text-2xl ${scrolled ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613] transition`} />
-  {notifications.filter(n => !n.read).length > 0 && (
+  {notifications?notifications.filter(n => !n.read).length > 0 && (
     <span className="absolute -top-1 -right-1 bg-[#E30613] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
       {notifications.filter(n => !n.read).length}
     </span>
-  )}
+  ):null}
 </button>
 
             {/* User Menu */}
