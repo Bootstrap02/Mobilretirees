@@ -7,12 +7,7 @@ const NotificationsList = ({ isOpen, onClose, notifications = [] }) => {
   const navigate = useNavigate(); // NEW
 
 
-  const markAsRead = (id) => {
-    // setNotifications(prev =>
-    //   prev.map(n => n.id === id ? { ...n, read: true } : n)
-    // );
-    console.log("api needed here")
-  };
+ 
 
   const handleNotificationClick = (id) => {
     navigate(`/notifications/${id}`); // Navigate to detail page

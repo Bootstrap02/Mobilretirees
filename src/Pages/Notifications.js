@@ -17,7 +17,7 @@ const NotificationsPage = () => {
     const notifRes =  axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/${id}`);
     setNotification(notifRes.data.notification);
 
-  })
+  },[id])
 
 
   

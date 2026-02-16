@@ -19,7 +19,7 @@ const Homepage = () => {
     const notifRes =  axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
     setAllNotifications(notifRes.data.notifications);
 
-  })
+  },[])
 
   const openNotifications= ()=>{
     setNotifications(true)
