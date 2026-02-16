@@ -7,17 +7,19 @@ import heroImage from '../assets/exxonmobil-logo-white.jpg';
 import cacCertificate from '../assets/cac-certificate.jpg';
 import NotificationsList from '../Components/Notificationslist';
 import AlertModal from '../Components/Alerts';
+import axios from "axios";
 
 const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
   const [notifications, setNotifications] = useState(false);
-  // Dummy notifications (later: fetch from API)
-  const notification = [
-    { id: 1, title: "AGM Reminder", content: "March 15, 2026...", time: "2h ago", read: false },
-    { id: 2, title: "Pension Update", content: "November credited", time: "1d ago", read: false },
-    { id: 3, title: "Dues Notice", content: "Expires Feb 1, 2027", time: "3d ago", read: true },
-  ];
+  const [allNotifications, setAllNotifications] = useState(false);
+
+  useEffect(()=>{
+    const notifRes =  axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
+    setAllNotifications(notifRes.data.notifications);
+
+  })
 
   const openNotifications= ()=>{
     setNotifications(true)
@@ -52,7 +54,7 @@ const Homepage = () => {
         <Header isOpen={openNotifications} />
         <Header 
         isOpen={openNotifications}
-       notifications={notification}
+       notifications={allNotifications}
       />
         {/* Animated Background Orbs */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
@@ -262,7 +264,7 @@ const Homepage = () => {
           </p>
         </div>
       </section>
-      <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={notification}/>}</div>
+      <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={allNotifications}/>}</div>
       <div><AlertModal/></div>
       <Footer />
     </>

@@ -47,28 +47,18 @@ const NotificationsList = ({ isOpen, onClose, notifications = [] }) => {
               {notifications.map(notif => (
                 <div 
                   key={notif.id}
-                  onClick={() => handleNotificationClick(notif.id)}
-                  className={`p-6 rounded-2xl border-l-4 transition-all duration-300 cursor-pointer hover:shadow-lg ${
-                    notif.read ? 'bg-gray-50 border-gray-300' : 'bg-red-50 border-[#E30613] shadow-md'
+                  onClick={() => handleNotificationClick(notif._id)}
+                  className={`p-6 rounded-2xl border-l-4 transition-all duration-300 cursor-pointer hover:shadow-lg
+                     'bg-red-50 border-[#E30613] shadow-md'
                   }`}
                 >
-                  <h3 className={`font-bold text-xl ${notif.read ? 'text-gray-800' : 'text-[#001F5B]'}`}>
+                  <h3 className={`font-bold text-xl 'text-[#001F5B]'}`}>
                     {notif.title}
                   </h3>
                   <p className="text-gray-700 mt-2 line-clamp-2">{notif.content}</p>
                   <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-                    <span>{notif.time}</span>
-                    {!notif.read && (
-                      <button
-                        onClick={e => {
-                          e.stopPropagation(); // Prevent card click
-                          markAsRead(notif.id);
-                        }}
-                        className="text-[#E30613] hover:text-[#c20511] transition"
-                      >
-                        Mark as read
-                      </button>
-                    )}
+                    <span>{notif.timestamps}</span>
+                  
                   </div>
                 </div>
               ))}

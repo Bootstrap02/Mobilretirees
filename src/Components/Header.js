@@ -10,13 +10,11 @@ const Header = ({isOpen, notifications = []}) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+
   // === API CALLS — RUN ONCE ON MOUNT ===
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const notifRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
-        localStorage.setItem('notifications', JSON.stringify(notifRes.data.notifications));
-
         const eventsRes = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
         localStorage.setItem('newevents', JSON.stringify(eventsRes.data.newsevents));
 
