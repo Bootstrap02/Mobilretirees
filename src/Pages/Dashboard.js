@@ -54,7 +54,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto">
 
           {/* Welcome Banner */}
-          <div className="bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
+          <div className=" max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex items-center gap-6">
                 <img 
@@ -93,6 +93,52 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* smalls screen */}
+         <div className=" hidden max-lg:block bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 mb-8 sm:mb-12 shadow-xl sm:shadow-2xl">
+  <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 sm:gap-8">
+    {/* Avatar + Text */}
+    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
+      <img
+        src={user.profilePhoto}
+        alt={user.fullname}
+        className="w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full object-cover border-4 border-white/80 shadow-lg"
+        onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullname)}&background=001F5B&color=fff&size=128`}
+      />
+      <div>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
+          Welcome, {user.fullname}
+        </h1>
+        <p className="text-base sm:text-lg lg:text-xl opacity-90 mt-1 sm:mt-2">
+          {user.staffId !== "N/A" && `Staff ID: ${user.staffId} • `}
+          Retired {user.retirementYear !== "N/A" ? user.retirementYear : "Member"}
+        </p>
+      </div>
+    </div>
+
+    {/* Buttons */}
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full sm:w-auto">
+      <NavLink
+        to={`/profile/${user.staffId}`}
+        className="bg-white/20 hover:bg-white/30 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition flex items-center justify-center gap-3 flex-1 sm:flex-none"
+      >
+        <FiUser className="text-xl sm:text-2xl" />
+        My Profile
+      </NavLink>
+
+      <button
+        onClick={() => {
+          localStorage.removeItem('userData');
+          navigate('/signin');
+        }}
+        className="bg-red-600/80 hover:bg-red-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition flex items-center justify-center gap-3 flex-1 sm:flex-none"
+      >
+        <FiLogOut className="text-xl sm:text-2xl" />
+        Logout
+      </button>
+    </div>
+  </div>
+</div>
 
           {/* Quick Status Cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">

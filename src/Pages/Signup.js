@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader, FiXCircle, } from 'react-icons/fi';
-import { GoogleLogin } from '@react-oauth/google';
+// import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { BigLoader } from '../Modals/Loaders';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
@@ -408,20 +408,6 @@ export const Signin = () => {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true);
-    try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/google', {
-        token: credentialResponse.credential
-      });
-      localStorage.setItem('userData', JSON.stringify(res.data));
-      navigate(`/dashboard/${res.data.user._id}`);
-    } catch (err) {
-      setLoading(false);
-      alert('Google login failed');
-    }
-  };
-
   return (
     <AuthLayout 
       title="Welcome Back" 
@@ -469,18 +455,6 @@ export const Signin = () => {
         <div className="flex-1 border-t border-gray-300"></div>
         <span className="px-4 text-gray-500 text-sm">or</span>
         <div className="flex-1 border-t border-gray-300"></div>
-      </div>
-
-      <div className="flex justify-center">
-        <GoogleLogin
-          onSuccess={handleGoogleSuccess}
-          onError={() => alert('Google Sign In Failed')}
-          useOneTap
-          theme="filled_blue"
-          size="large"
-          text="signin_with"
-          shape="pill"
-        />
       </div>
 
       <p className="text-center text-sm text-gray-600 mt-6">

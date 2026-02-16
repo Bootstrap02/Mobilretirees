@@ -63,11 +63,11 @@ const Header = ({isOpen, notifications = []}) => {
           
           {/* Logo */}
           <div className="flex items-center">
-            <NavLink to="/">
+            <NavLink to="/" className="w-24 h-24 border-radius-[50%] object-cover">
               <img 
                 src={exxonLogo} 
                 alt="ExxonMobil Nigeria Retirees" 
-                className="h-12 md:h-14 drop-shadow-md transition-all"
+                className="h-12 md:h-14 drop-shadow-md transition-all rounded-full"
               />
             </NavLink>
             <div className="ml-4 hidden lg:block">
@@ -180,7 +180,7 @@ const Header = ({isOpen, notifications = []}) => {
       <header className="fixed top-0 left-0 right-0 bg-[#001F5B] z-40 lg:hidden">
         <div className="flex items-center justify-between px-5 py-4">
           <NavLink to="/">
-            <img src={exxonLogo} alt="ExxonMobil" className="h-11" />
+            <img src={exxonLogo} alt="ExxonMobil" className="h-11  rounded-full" />
           </NavLink>
 
           <button 
