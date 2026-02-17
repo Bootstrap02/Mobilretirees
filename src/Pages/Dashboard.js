@@ -4,12 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import constitutionPDF from '../assets/emran-constitution.pdf'; // Your imported PDF
-
-// Icons
-import { 
-  FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, 
-  FiFileText 
-} from 'react-icons/fi';
+import { FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, FiFileText } from 'react-icons/fi';
 
 const Dashboard = () => {
   const navigate = useNavigate();

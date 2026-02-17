@@ -20,7 +20,6 @@ const Homepage = () => {
     try {
       const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
       setAllNotifications(res.data.notifications || []);
-      console.log('Notifications loaded:', res.data.notifications);
     } catch (err) {
       console.error('Failed to load notifications:', err);
     }

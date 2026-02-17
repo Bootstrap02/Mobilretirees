@@ -99,7 +99,6 @@ export const Signup = () => {
         formData
       );
 
-      localStorage.setItem('userData', JSON.stringify(res.data));
       showFeedback('success', res.data.message || 'Account created! Pending admin approval.');
       setTimeout(() => {
         setLoading(false);
@@ -390,24 +389,48 @@ export const Signin = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login', formData);
-      localStorage.setItem('userData', JSON.stringify(res.data.user));
-      if (res.data.user.role === "member"){
-      navigate(`/dashboard/${res.data.user._id}`);
-      console.log(res.data.user)
-      }else{
-         navigate('/');
-      }
-    } catch (err) {
-      setLoading(false);
-      alert('Invalid credentials');
-      console.log(err)
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
 
+  try {
+    const res = await axios.post(
+      'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login',
+      formData
+    );
+
+    const { success, token, user, message } = res.data;
+
+    if (!success) {
+      // Non-member case (dues not paid)
+      alert(message || "Please pay your dues to access your dashboard");
+      setLoading(false);
+      navigate('/'); // or wherever you want to send them
+      return;
+    }
+
+    // Successful member login
+    localStorage.setItem('userData', JSON.stringify(user));
+    localStorage.setItem('token', token); // If you need token for future requests
+
+    alert('Login successful! Welcome back.');
+    navigate(`/dashboard/${user._id}`); // or just '/dashboard'
+
+
+  } catch (err) {
+    setLoading(false);
+
+    // Handle different error cases
+    if (err.response?.status === 401) {
+      alert('Invalid email or password');
+    } else if (err.response?.data?.message) {
+      alert(err.response.data.message);
+    } else {
+      alert('Something went wrong. Please try again later.');
+    }
+
+    console.error('Login error:', err.response?.data || err.message);
+  }
+};
   return (
     <AuthLayout 
       title="Welcome Back" 

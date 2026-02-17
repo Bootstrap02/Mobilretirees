@@ -17,7 +17,6 @@ const Header = ({isOpen, notifications = []}) => {
           try {
             const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
             localStorage.setItem('newevents', JSON.stringify(res.data.newsEvent || []));
-            console.log('newsevents loaded:', res.data.newsEvent);
           } catch (err) {
             console.error('Failed to load new/events:', err);
           }
@@ -26,15 +25,34 @@ const Header = ({isOpen, notifications = []}) => {
           try {
             const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
             localStorage.setItem('alerts', JSON.stringify(res.data.alerts || []));
-            console.log('alerts loaded:', res.data.alerts);
 
           } catch (err) {
             console.error('Failed to load alerts:', err);
           }
         };
+      const fetchusers = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateadmin/getusers');
+            localStorage.setItem('allusers', JSON.stringify(res.data.users || []));
+
+          } catch (err) {
+            console.error('Failed to load users:', err);
+          }
+        };
+      const fetchofficials = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getofficials');
+            localStorage.setItem('allofficials', JSON.stringify(res.data.officials || []));
+
+          } catch (err) {
+            console.error('Failed to load officials:', err);
+          }
+        };
       
         fetchnewsevents();
         fetchalerts();
+        fetchusers();
+        fetchofficials();
     }, []); // Empty array = once on mount
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
