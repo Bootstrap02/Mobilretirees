@@ -180,7 +180,7 @@ const Homepage = () => {
                 </p>
 
                 <button
-                  onClick={() => navigate('/news')}
+                  onClick={() => navigate('/newsevents')}
                   className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-lg shadow-xl hover:scale-105 transition"
                 >
                   Get More Information
