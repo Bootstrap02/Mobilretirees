@@ -357,7 +357,8 @@ export const Signup = () => {
       </form>
 {/* Feedback Modal (top-center) */}
       {feedback && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full px-4 animate-fade-in-down">
+        <div>
+        <div className="max-lg:hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full px-4 animate-fade-in-down">
           <div
             className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${
               feedback.type === 'success' ? 'bg-green-600' : 'bg-red-600'
@@ -370,6 +371,23 @@ export const Signup = () => {
             )}
             <p className="text-lg font-medium">{feedback.text}</p>
           </div>
+        </div>
+        <div className="hidden max-lg:block fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in-down px-4">
+  <div className="w-full max-w-sm">
+    <div
+      className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${
+        feedback.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+      }`}
+    >
+      {feedback.type === 'success' ? (
+        <FiCheckCircle className="text-3xl flex-shrink-0" />
+      ) : (
+        <FiXCircle className="text-3xl flex-shrink-0" />
+      )}
+      <p className="text-base sm:text-lg font-medium flex-1">{feedback.text}</p>
+    </div>
+  </div>
+</div>
         </div>
       )}
       {/* ... your Google login section and sign-in link ... */}
