@@ -2,21 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { FiX } from 'react-icons/fi';
 
-const AlertModal = () => {
+const AlertModal = ({ alert }) => { // accept array
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if alert was already shown
-    const hasSeenAlert = localStorage.getItem('hasSeenEMRANAlert');
-
-    if (!hasSeenAlert) {
+    const hasSeen = localStorage.getItem('hasSeenEMRANAlert');
+    if (!hasSeen ) {
       setIsVisible(true);
-      // Mark as seen so it never shows again
       localStorage.setItem('hasSeenEMRANAlert', 'true');
     }
-  }, []);
+  }, [alert]);
 
-  if (!isVisible) return null;
+  if (!isVisible ) return null;
+
 
   return (
     <div 
@@ -44,12 +42,10 @@ const AlertModal = () => {
         {/* Body */}
         <div className="p-8 text-center">
           <h3 className="text-3xl font-bold text-[#001F5B] mb-6">
-            Welcome to EMRAN
+            {alert.title || "Welcome to EMRAN"}
           </h3>
           <p className="text-lg text-gray-700 leading-relaxed mb-8">
-            As a newly registered association under CAC Reg. No. 153528, we are excited to have you here. 
-            Please note that full dashboard access and benefits are subject to admin approval of your membership request. 
-            You will receive a notification once approved. Thank you for your patience!
+            {alert.content || "As a newly registered association under CAC Reg. No. 153528, we are excited to have you here..."}
           </p>
 
           <button 

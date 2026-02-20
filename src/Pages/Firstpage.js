@@ -13,20 +13,48 @@ const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
   const [notifications, setNotifications] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [alerts, setAlerts] = useState({});
+  const [featuredNews, setFeaturedNews] = useState(null);
   const [allNotifications, setAllNotifications] = useState();
 
  useEffect(() => {
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
+      const res = await axios.get('https://campusbuy-backend-nkmx.onrender.comloading');
       setAllNotifications(res.data.notifications || []);
     } catch (err) {
       console.error('Failed to load notifications:', err);
     }
   };
+   const fetchalerts = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
+           setAlerts(res.data.alerts?.[0] || []);
 
+          } catch (err) {
+            console.error('Failed to load alerts:', err);
+          }
+        };
+        const fetchnewsevents = async () => {
+          try {
+            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
+            const newsList = res.data.newsEvent || [];
+            localStorage.setItem('newsevents', JSON.stringify(newsList));
+            if (newsList.length > 0) {
+        await setFeaturedNews(newsList?.[0]); // assume first is latest
+        await setLoading(true); // assume first is latest
+      }
+          } catch (err) {
+            console.error('Failed to load new/events:', err);
+          }
+        };
+    fetchnewsevents();
+        fetchalerts();
   fetchNotifications();
 }, []);
+
+
 
   const openNotifications= ()=>{
     setNotifications(true)
@@ -154,41 +182,47 @@ const Homepage = () => {
               Highlights from recent EMRAN activities and engagements
             </p>
           </div>
+    {featuredNews && loading ? (
+  <div className="relative group animate-fadeInUp bg-white rounded-3xl shadow-2xl overflow-hidden max-w-4xl mx-auto">
+    {/* Image with hover effect */}
+    <div className="relative overflow-hidden">
+      <img 
+        src={featuredNews.image[0]} 
+        alt={featuredNews.title} 
+        className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
 
-          <div className="relative group animate-on-scroll">
-            <div className="absolute -inset-1 bg-gradient-to-r from-[#E30613] to-[#ff4444] rounded-3xl blur opacity-25 group-hover:opacity-40 transition"></div>
+    {/* Content */}
+    <div className="p-8 sm:p-12">
+      {/* Title */}
+      <h3 className="text-3xl font-extrabold text-[#001F5B] mb-4 leading-tight group-hover:text-[#E30613] transition-colors duration-300">
+        {featuredNews.title}
+      </h3>
 
-            <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
-              <img
-                src={heroImage}
-                alt="Recent EMRAN Event"
-                className="w-full h-full object-cover"
-              />
+      {/* Body */}
+      <p className="text-lg text-gray-700 mb-6 leading-relaxed line-clamp-4">
+        {featuredNews.body}
+      </p>
 
-              <div className="p-10 lg:p-14">
-                <span className="inline-block mb-6 px-4 py-1 rounded-full bg-[#E30613]/10 text-[#E30613] font-bold text-sm">
-                  MOST RECENT EVENT
-                </span>
-
-                <h3 className="text-3xl lg:text-4xl font-extrabold text-[#001F5B] mb-6">
-                  EMRAN General Meeting & Welfare Briefing
-                </h3>
-
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Members gathered for discussions on association updates,
-                  welfare structure reviews, and upcoming engagement plans.
-                </p>
-
-                <button
-                  onClick={() => navigate('/newsevents')}
-                  className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-lg shadow-xl hover:scale-105 transition"
-                >
-                  Get More Information
-                  <span className="group-hover:translate-x-1 transition">→</span>
-                </button>
-              </div>
-            </div>
-          </div>
+      {/* Read More Button */}
+      <button 
+        onClick={() => navigate('/newsevents')}
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#E30613] text-white font-bold text-base shadow-md hover:bg-[#c20511] hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+      >
+        Read More <span className="transition-transform group-hover:translate-x-1">→</span>
+      </button>
+    </div>
+  </div>
+): (
+      <div className="text-center py-12">
+        <h3 className="text-2xl font-bold text-[#001F5B] mb-4">No Recent News</h3>
+        <p className="text-xl text-gray-600">
+          Check back soon for updates from EMRAN activities and engagements.
+        </p>
+      </div>
+    )}
         </div>
       </section>
       {/* Core Pillars */}
@@ -272,7 +306,7 @@ const Homepage = () => {
         </div>
       </section>
       <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={allNotifications}/>}</div>
-      <div><AlertModal/></div>
+      <div><AlertModal alert={alerts}/></div>
       <Footer />
     </>
   );

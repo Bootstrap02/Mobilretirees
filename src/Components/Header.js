@@ -13,23 +13,8 @@ const Header = ({isOpen, notifications = []}) => {
 
   // === API CALLS — RUN ONCE ON MOUNT ===
   useEffect(() => {
-           const fetchnewsevents = async () => {
-          try {
-            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
-            localStorage.setItem('newevents', JSON.stringify(res.data.newsEvent || []));
-          } catch (err) {
-            console.error('Failed to load new/events:', err);
-          }
-        };
-      const fetchalerts = async () => {
-          try {
-            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
-            localStorage.setItem('alerts', JSON.stringify(res.data.alerts || []));
-
-          } catch (err) {
-            console.error('Failed to load alerts:', err);
-          }
-        };
+           
+     
       const fetchusers = async () => {
           try {
             const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateadmin/getusers');
@@ -49,8 +34,7 @@ const Header = ({isOpen, notifications = []}) => {
           }
         };
       
-        fetchnewsevents();
-        fetchalerts();
+        
         fetchusers();
         fetchofficials();
     }, []); // Empty array = once on mount

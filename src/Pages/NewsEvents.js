@@ -13,7 +13,7 @@ const NewsEvents = () => {
 
   useEffect(() => {
     try {
-      const storedNewsEvents = JSON.parse(localStorage.getItem('newevents')) || [];
+      const storedNewsEvents = JSON.parse(localStorage.getItem('newsevents')) || [];
 
       if (storedNewsEvents.length > 0) {
         setFeatured(storedNewsEvents[0]);
