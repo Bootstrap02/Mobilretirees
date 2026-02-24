@@ -4,15 +4,24 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import constitutionPDF from '../assets/emran-constitution.pdf'; // Your imported PDF
+import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, FiFileText } from 'react-icons/fi';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [allNotifications, setAllNotifications] = useState();
+  const [notifications, setNotifications] = useState(false);
+  const [news, setNews] = useState();
+  
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('userData'));
+    const notifications = JSON.parse(localStorage.getItem('notifications'));
+    const newsevents = JSON.parse(localStorage.getItem('newsevents'));
+    setAllNotifications(notifications);
+    setNews(newsevents.length);
     if (!stored) {
       navigate('/signin');
       return;
@@ -33,6 +42,13 @@ const Dashboard = () => {
     setUser(userData);
     setLoading(false);
   }, [navigate]);
+
+  const openNotifications= ()=>{
+    setNotifications(true)
+  }
+  const closeNotifications= ()=>{
+    setNotifications(false)
+  }
 
   if (loading) {
     return (
@@ -141,7 +157,7 @@ const Dashboard = () => {
               <FiDollarSign className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Dues Status</h3>
               <p className="text-xl font-medium text-green-600">{user.duesStatus}</p>
-              <NavLink to="/dues" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <NavLink to="/comingsoon" className="text-[#E30613] font-bold mt-4 block hover:underline">
                 View Details →
               </NavLink>
             </div>
@@ -150,16 +166,16 @@ const Dashboard = () => {
               <FiBell className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Notifications</h3>
               <p className="text-3xl font-bold text-gray-800">{user.notifications}</p>
-              <NavLink to="/notifications" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <button onClick={openNotifications} className="text-[#E30613] font-bold mt-4 block hover:underline">
                 View All →
-              </NavLink>
+              </button>
             </div>
 
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiMessageSquare className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Messages</h3>
               <p className="text-3xl font-bold text-gray-800">{user.unreadMessages}</p>
-              <NavLink to="/messages" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <NavLink to="/comingsoon" className="text-[#E30613] font-bold mt-4 block hover:underline">
                 Check Inbox →
               </NavLink>
             </div>
@@ -167,47 +183,16 @@ const Dashboard = () => {
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiCalendar className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Upcoming Events</h3>
-              <p className="text-3xl font-bold text-gray-800">{user.upcomingEvents}</p>
-              <NavLink to="/news-events" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <p className="text-3xl font-bold text-gray-800">{news}</p>
+              <NavLink to="/newsevents" className="text-[#E30613] font-bold mt-4 block hover:underline">
                 See Calendar →
               </NavLink>
             </div>
           </div>
 
-          {/* MAIN SECTION: Pension + Health + Constitution */}
           <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {/* Pension Overview */}
-            <NavLink 
-              to="/pension-history" 
-              className="block bg-white rounded-3xl shadow-2xl p-10 hover:shadow-3xl transition transform hover:-translate-y-2 border-t-8 border-[#E30613]"
-            >
-              <h2 className="text-3xl font-bold text-[#001F5B] mb-6">Pension Overview</h2>
-              <p className="text-xl text-gray-700 mb-6">
-                View your monthly pension, payment history, and next due date.
-              </p>
-              <p className="text-lg text-gray-600 font-medium">Click for full details →</p>
-            </NavLink>
-
-            {/* Health Coverage */}
-            <NavLink 
-              to="/health" 
-              className="block bg-white rounded-3xl shadow-2xl p-10 hover:shadow-3xl transition transform hover:-translate-y-2 border-t-8 border-[#E30613]"
-            >
-              <h2 className="text-3xl font-bold text-[#001F5B] mb-6">Health Coverage</h2>
-              <p className="text-xl text-gray-700 mb-6">
-                Access your medical plan, approved hospitals, and claim status.
-              </p>
-              <p className="text-lg text-gray-600 font-medium">Click to manage benefits →</p>
-            </NavLink>
-
             {/* Constitution Download */}
-            <div className="bg-white rounded-3xl shadow-2xl p-10 border-t-8 border-[#E30613] flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-[#001F5B] mb-6">EMRAN Constitution</h2>
-                <p className="text-xl text-gray-700 mb-8">
-                  Download the official governing document of ExxonMobil Retirees Association of Nigeria.
-                </p>
-              </div>
+            <div className="bg-white rounded-3xl shadow-2xl p-10 max-lg:p-6 border-t-8 border-[#E30613] flex flex-col justify-between">
               <a 
                 href={constitutionPDF}
                 download="EMRAN_Constitution.pdf"
@@ -220,7 +205,7 @@ const Dashboard = () => {
           </div>
 
           {/* Support Section */}
-          <div className="bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
+          <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
             <h3 className="text-4xl font-bold mb-6">Need Assistance?</h3>
             <p className="text-2xl mb-8 opacity-90">
               Our team is available 24/7 for your pension, health, dues, and membership queries.
@@ -235,8 +220,24 @@ const Dashboard = () => {
               Or email: <a href="mailto:retirees.support@exxonmobil.ng" className="text-[#E30613] hover:text-white underline">retirees.support@exxonmobil.ng</a>
             </p>
           </div>
+          <div className="hidden max-lg:block bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
+            <h3 className="text-3xl font-bold mb-6">Need Assistance?</h3>
+            <p className="text-xl mb-8 opacity-90">
+              Our team is available 24/7 for your pension, health, dues, and membership queries.
+            </p>
+            <a 
+              href="tel:+23412777700"
+              className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-3xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 mb-8"
+            >
+              Call +234 1 277 7700
+            </a>
+            <p className="text-lg opacity-90">
+              Or email: <a href="mailto:retirees.support@exxonmobil.ng" className="text-[#E30613] hover:text-white underline">retirees.support@exxonmobil.ng</a>
+            </p>
+          </div>
         </div>
       </div>
+      <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={allNotifications}/>}</div>
       <Footer />
     </>
   );

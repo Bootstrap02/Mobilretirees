@@ -149,10 +149,10 @@ const Header = ({isOpen, notifications = []}) => {
 </button>
 
             {/* User Menu */}
-            {isLoggedIn && userData.user && userData.user.role === "member" ? (
+            {isLoggedIn && userData && userData.role === "member" ? (
               <div className="flex items-center space-x-4">
                 <button 
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate( `/dashboard/${userData._id}`)}
                   className="flex items-center gap-2 bg-[#E30613] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#c20511] transition shadow-md"
                 >
                   <FiUser /> My Dashboard
@@ -202,6 +202,12 @@ const Header = ({isOpen, notifications = []}) => {
         {/* Mobile Menu Overlay */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 bg-[#001F5B] z-50 pt-20 px-6">
+            <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="absolute top-4 right-5 text-white text-3xl"
+          >
+            <FiX />
+            </button>
             <nav className="space-y-6 text-xl">
               <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
                 Home
@@ -222,7 +228,9 @@ const Header = ({isOpen, notifications = []}) => {
               <div className="pt-8 space-y-4">
                 {isLoggedIn ? (
                   <>
-                    <button className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg">
+                    <button 
+                     onClick={() => navigate( `/dashboard/${userData._id}`)}
+                    className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg">
                       My Dashboard
                     </button>
                     <button onClick={handleLogout} className="w-full text-white py-3 text-center border border-white rounded-xl">

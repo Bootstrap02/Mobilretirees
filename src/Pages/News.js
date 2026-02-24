@@ -72,7 +72,7 @@ const NewsDetail = () => {
             <img 
               src={news.image?.[0] || 'https://via.placeholder.com/800x500?text=News+Image'}
               alt={news.title || 'News Image'}
-              className="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-3xl shadow-2xl"
+              className="w-full h-64 sm:h-80 lg:h-96 object-contain rounded-3xl shadow-2xl"
               onError={(e) => e.target.src = 'https://via.placeholder.com/800x500?text=News+Image'}
             />
           </div>

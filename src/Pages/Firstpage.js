@@ -21,8 +21,9 @@ const Homepage = () => {
  useEffect(() => {
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('https://campusbuy-backend-nkmx.onrender.comloading');
+      const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
       setAllNotifications(res.data.notifications || []);
+      localStorage.setItem('notifications', JSON.stringify(res.data.notifications || []));
     } catch (err) {
       console.error('Failed to load notifications:', err);
     }
@@ -120,7 +121,7 @@ const Homepage = () => {
             <div className="flex flex-col sm:flex-row gap-8 justify-center lg:justify-start">
               {userData ? (
                 <button
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate(`/dashboard/${userData._id}`)}
                   className="group relative overflow-hidden bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-[#E30613]/50"
                 >
                   <span className="relative z-10">Go to My Dashboard</span>
@@ -189,7 +190,7 @@ const Homepage = () => {
       <img 
         src={featuredNews.image[0]} 
         alt={featuredNews.title} 
-        className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+        className="w-full h-64 object-contain transition-transform duration-500 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     </div>

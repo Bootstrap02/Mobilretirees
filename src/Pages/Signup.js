@@ -769,7 +769,7 @@ const { id } = useParams();   // correct — now id is the actual string
             {/* Status Message */}
             {message.text && (
               <div
-                className={`mt-6 p-5 rounded-xl text-center text-lg font-medium ${
+                className={`mt-6 p-5 rounded-xl text-center text-lg max-lg:text-md font-medium ${
                   message.type === 'success'
                     ? 'bg-green-600/20 border border-green-400 text-green-200'
                     : 'bg-red-600/20 border border-red-400 text-red-200'

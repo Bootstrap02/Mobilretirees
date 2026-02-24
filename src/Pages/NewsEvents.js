@@ -63,7 +63,7 @@ const NewsEvents = () => {
                 <img 
                   src={featured.image} 
                   alt={featured.title} 
-                  className="w-full h-64 sm:h-80 object-cover"
+                  className="w-full h-64 sm:h-80 object-contain"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 p-6 sm:p-8 text-white">
@@ -91,7 +91,7 @@ const NewsEvents = () => {
                     <img 
                       src={item.image} 
                       alt={item.title} 
-                      className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300 sm:duration-500"
+                      className="w-full h-40 sm:h-48 object-contain group-hover:scale-105 transition-transform duration-300 sm:duration-500"
                     />
                     <div className="p-4 sm:p-5">
                       <span className="text-xs sm:text-sm text-gray-500 mb-1.5 sm:mb-2 block">

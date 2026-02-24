@@ -1,4 +1,4 @@
-import React, { lazy} from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route,  } from 'react-router-dom';
 import './App.css';
 import About from './Pages/About';
@@ -15,8 +15,9 @@ import Dashboard from './Pages/Dashboard';
 import Resources from './Pages/Resources';
 import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
+import Comingsoon from "./Pages/Comingsoon";
+import Firstpage from "./Pages/Firstpage";
 
-const Firstpage = lazy(() => import("./Pages/Firstpage"));
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         <Route path='/messages' element= {<Messages /> }/>
         <Route path='/support' element= {<Support /> }/>
         <Route path='/benefits' element= {<Benefits /> }/>
+        <Route path='/comingsoon' element= {<Comingsoon /> }/>
     </Routes>
     </BrowserRouter>
     </>
