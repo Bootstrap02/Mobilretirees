@@ -41,7 +41,7 @@ const AuthLayout = ({ children, title, subtitle }) => (
   <div className="min-h-screen bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] flex items-center justify-center px-4">
       <NavLink
   to="/"
-  className="absolute top-6 left-6 px-5 py-2 rounded-full 
+  className="absolute top-6 left-6 px-5 py-2 max-lg:left-2 max-lg:px-3 rounded-full 
              bg-white/10 backdrop-blur-md 
              text-white font-medium 
              border border-white/30 
