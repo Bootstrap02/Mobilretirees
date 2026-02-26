@@ -21,6 +21,7 @@ const Footer = () => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  const userData = JSON.parse(localStorage.getItem('userData'));
 
   return (
     <>
@@ -80,7 +81,8 @@ const Footer = () => {
           </div>
 
           {/* Column 4: Newsletter & Social */}
-          <div>
+          { userData ?
+  <div>
             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Stay Connected</h4>
             <p className="text-gray-300 mb-4">
               Get monthly updates on pension payments, health tips, and retiree events.
@@ -103,6 +105,10 @@ const Footer = () => {
               <p  className="hover:text-[#E30613] transition"><FiYoutube /></p>
             </div>
           </div>
+          :
+          null
+          }
+        
         </div>
 
         {/* Bottom Bar */}

@@ -50,9 +50,22 @@ const Homepage = () => {
             console.error('Failed to load new/events:', err);
           }
         };
+        const fetchuser = async (id) => {
+          try {
+            const res = await axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getuser/${id}`);
+            const user = res.data.user || [];
+            localStorage.setItem('userData', JSON.stringify(user));
+          } catch (err) {
+            console.error('Failed to load user:', err);
+          }
+        };
+    const userData = JSON.parse(localStorage.getItem('userData'));
     fetchnewsevents();
         fetchalerts();
   fetchNotifications();
+  if(userData?._id){
+    fetchuser(userData?._id)
+  }
 }, []);
 
 

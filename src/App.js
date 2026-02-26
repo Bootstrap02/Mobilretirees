@@ -17,6 +17,7 @@ import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
 import Comingsoon from "./Pages/Comingsoon";
 import Firstpage from "./Pages/Firstpage";
+import { VotingDashboard, ResultsPage } from "./Pages/Elections";
 
 
 
@@ -47,6 +48,8 @@ function App() {
         <Route path='/support' element= {<Support /> }/>
         <Route path='/benefits' element= {<Benefits /> }/>
         <Route path='/comingsoon' element= {<Comingsoon /> }/>
+        <Route path='/voting/:id' element= {<VotingDashboard /> }/>
+        <Route path='/electionresults/:id' element= {<ResultsPage /> }/>
     </Routes>
     </BrowserRouter>
     </>

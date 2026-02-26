@@ -137,7 +137,7 @@ const Resources = () => {
                 { name: "National Pension Commission (PENCOM)", url: "https://www.pencom.gov.ng", desc: "Official regulator of pensions in Nigeria" },
                 { name: "ExxonMobil Family Portal", url: "https://www.exxonmobilfamily.com", desc: "Global retiree benefits and resources" },
                 { name: "PENGASSAN", url: "https://pengassan.org", desc: "Petroleum and Natural Gas Senior Staff Association" },
-                { name: "Nigeria Union of Pensioners", url: "https://nup.org.ng", desc: "National body representing all pensioners" },
+                { name: "Nigeria Union of Pensioners", url: "https://www.pensionnigeria.com", desc: "National body representing all pensioners" },
               ].map((link, i) => (
                 <a 
                   key={i}

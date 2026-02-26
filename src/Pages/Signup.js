@@ -1,12 +1,13 @@
 // pages/Auth.jsx
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiPhone, FiCheckCircle, FiLoader, FiXCircle, } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiCheckCircle, FiLoader, FiXCircle, } from 'react-icons/fi';
 // import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { BigLoader } from './Loaders';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
-
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
 
 // Reusable Input Component
 const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, showToggle, toggleShow, ...props }) => (
@@ -38,6 +39,17 @@ const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, show
 // Shared Auth Layout
 const AuthLayout = ({ children, title, subtitle }) => (
   <div className="min-h-screen bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] flex items-center justify-center px-4">
+      <NavLink
+  to="/"
+  className="absolute top-6 left-6 px-5 py-2 rounded-full 
+             bg-white/10 backdrop-blur-md 
+             text-white font-medium 
+             border border-white/30 
+             hover:bg-white hover:text-[#001F5B] 
+             transition-all duration-300 shadow-lg"
+>
+  ← Home
+</NavLink>
     <div className="max-w-md w-full">
       <div className="text-center mb-10">
         <img src={exxonLogo} alt="ExxonMobil Nigeria" className="h-20 mx-auto mb-6" />
@@ -139,16 +151,36 @@ export const Signup = () => {
           onChange={handleChange}
           required
         />
-        <InputField 
-          icon={FiPhone} 
-          type="tel" 
-          name="phone"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={handleChange}
-          required
-        />
-        <InputField 
+    <PhoneInput
+  country="ng"
+  value={formData.phone}
+  onChange={(phone) =>
+    setFormData({
+      ...formData,
+      phone: `+${phone}`, // sends +2348164910957
+    })
+  }
+  placeholder="Enter phone number"
+  containerStyle={{ width: "100%" }}
+  inputStyle={{
+    width: "100%",
+    padding: "16px",
+    paddingLeft: "60px", // fixes hidden +234
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    outline: "none",
+    fontSize: "16px",
+  }}
+  buttonStyle={{
+    borderTopLeftRadius: "12px",
+    borderBottomLeftRadius: "12px",
+  }}
+  inputProps={{
+    name: "phone",
+    required: true,
+  }}
+/>
+  <InputField 
           icon={FiLock} 
           type={showPass ? "text" : "password"}
           name="password"
@@ -280,22 +312,41 @@ export const Signup = () => {
                 className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
                 required
               />
-            </div>
-
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">
-                Next of Kin Phone
-              </label>
-              <input
-                type="tel"
-                name="nextOfKinPhone"
-                value={formData.nextOfKinPhone}
-                onChange={handleChange}
-                placeholder="+234 123 456 7890"
-                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
-                required
-              />
-            </div>
+            </div>      
+            <div className="mb-6">
+  <label className="block text-lg font-medium text-gray-700 mb-2">
+    Next of Kin Phone
+  </label>
+  <PhoneInput
+  country="ng"
+    value={formData.nextOfKinPhone}
+  onChange={(phone) =>
+    setFormData({
+      ...formData,
+      nextOfKinPhone: `+${phone}`, // sends +2348164910957
+    })
+  }
+  placeholder="Enter phone number"
+  containerStyle={{ width: "100%" }}
+  inputStyle={{
+    width: "100%",
+    padding: "16px",
+    paddingLeft: "60px", // fixes hidden +234
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    outline: "none",
+    fontSize: "16px",
+  }}
+  buttonStyle={{
+    borderTopLeftRadius: "12px",
+    borderBottomLeftRadius: "12px",
+  }}
+  inputProps={{
+    name: "nextOfKinPhone",
+    required: true,
+  }}
+/>
+</div>
           </div>
 
           {/* Beneficiary */}
@@ -329,21 +380,40 @@ export const Signup = () => {
                 required
               />
             </div>
-
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">
-                Beneficiary Phone
-              </label>
-              <input
-                type="tel"
-                name="beneficiaryPhone"
-                value={formData.beneficiaryPhone}
-                onChange={handleChange}
-                placeholder="+234 123 456 7890"
-                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
-                required
-              />
-            </div>
+<div className="mb-6">
+  <label className="block text-lg font-medium text-gray-700 mb-2">
+    Beneficiary Phone
+  </label>
+  <PhoneInput
+  country="ng"
+    value={formData.beneficiaryPhone}
+  onChange={(phone) =>
+    setFormData({
+      ...formData,
+      beneficiaryPhone: `+${phone}`, // sends +2348164910957
+    })
+  }
+  placeholder="Enter phone number"
+  containerStyle={{ width: "100%" }}
+  inputStyle={{
+    width: "100%",
+    padding: "16px",
+    paddingLeft: "60px", // fixes hidden +234
+    borderRadius: "12px",
+    border: "1px solid #d1d5db",
+    outline: "none",
+    fontSize: "16px",
+  }}
+  buttonStyle={{
+    borderTopLeftRadius: "12px",
+    borderBottomLeftRadius: "12px",
+  }}
+  inputProps={{
+    name: "beneficiaryPhone",
+    required: true,
+  }}
+/>
+</div>
           </div>
         </div>
 
@@ -420,7 +490,7 @@ export const Signin = () => {
 
     if (!success) {
       // Non-member case (dues not paid)
-      alert(message || "Please pay your dues to access your dashboard");
+      alert(message || "Your Account is still pending Administrative approval. Please wait");
       setLoading(false);
       navigate('/'); // or wherever you want to send them
       return;

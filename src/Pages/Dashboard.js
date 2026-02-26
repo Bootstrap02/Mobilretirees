@@ -1,11 +1,13 @@
 // pages/Dashboard.jsx — CONSTITUTION ADDED BESIDE PENSION & HEALTH
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+// import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import constitutionPDF from '../assets/emran-constitution.pdf'; // Your imported PDF
 import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, FiFileText } from 'react-icons/fi';
+import cacCertificate from '../assets/cac-certificate.jpg';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -14,8 +16,7 @@ const Dashboard = () => {
   const [allNotifications, setAllNotifications] = useState();
   const [notifications, setNotifications] = useState(false);
   const [news, setNews] = useState();
-  
-
+  // const { id } = useParams()
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     const notifications = JSON.parse(localStorage.getItem('notifications'));
@@ -34,7 +35,7 @@ const Dashboard = () => {
       retirementYear: stored.retirementYear || "N/A",
       profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
       duesStatus: stored.duesStatus || "Pending Verification",
-      unreadMessages: stored.unreadMessages || 0,
+      unreadMessages: stored.messages || 0,
       notifications: stored.notifications || 0,
       upcomingEvents: stored.upcomingEvents || 0,
     };
@@ -49,6 +50,9 @@ const Dashboard = () => {
   const closeNotifications= ()=>{
     setNotifications(false)
   }
+  // const openElections= ()=>{
+  //   navigate(`/voting/${id}`)
+  // }
 
   if (loading) {
     return (
@@ -170,12 +174,20 @@ const Dashboard = () => {
                 View All →
               </button>
             </div>
+            {/* <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
+              <FiBell className="text-6xl text-[#E30613] mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Elections</h3>
+              <p className="text-3xl font-bold text-gray-800">Cast Votes/View results</p>
+              <button onClick={openElections} className="text-[#E30613] font-bold mt-4 block hover:underline">
+                View All →
+              </button>
+            </div> */}
 
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiMessageSquare className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Messages</h3>
-              <p className="text-3xl font-bold text-gray-800">{user.unreadMessages}</p>
-              <NavLink to="/comingsoon" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <p className="text-3xl font-bold text-gray-800">{user.unreadMessages.length}</p>
+              <NavLink to="/messages" className="text-[#E30613] font-bold mt-4 block hover:underline">
                 Check Inbox →
               </NavLink>
             </div>
@@ -190,19 +202,70 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {/* Constitution Download */}
-            <div className="bg-white rounded-3xl shadow-2xl p-10 max-lg:p-6 border-t-8 border-[#E30613] flex flex-col justify-between">
-              <a 
-                href={constitutionPDF}
-                download="EMRAN_Constitution.pdf"
-                className="mt-6 inline-flex items-center justify-center gap-4 bg-gradient-to-r from-[#E30613] to-[#c20511] hover:from-[#c20511] hover:to-[#E30613] text-white font-bold text-xl py-6 px-12 rounded-2xl shadow-2xl transition transform hover:scale-105"
-              >
-                <FiFileText className="text-3xl" />
-                Download Constitution
-              </a>
-            </div>
-          </div>
+{/* Constitution & CAC Section */}
+<div className="grid md:grid-cols-2 gap-8 mb-12">
+
+  {/* Constitution Card */}
+  <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
+
+    <div>
+      <div className="flex items-center gap-4 mb-4">
+        <FiFileText className="text-4xl text-[#001F5B]" />
+        <h3 className="text-2xl font-bold text-[#001F5B]">
+          EMRAN Constitution
+        </h3>
+      </div>
+
+      <p className="text-gray-600 text-lg">
+        View the official EMRAN Constitution document outlining governance, membership structure, and operational guidelines.
+      </p>
+    </div>
+
+    <a
+      href={constitutionPDF}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-8 inline-flex items-center justify-center gap-3 
+                 bg-gradient-to-r from-[#001F5B] to-[#0A3D6B]
+                 hover:from-[#0A3D6B] hover:to-[#001F5B]
+                 text-white font-bold text-lg py-4 px-8
+                 rounded-xl shadow-lg transition transform hover:scale-105"
+    >
+      View Document
+    </a>
+  </div>
+
+
+  {/* CAC Certificate Card */}
+  <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#E30613] hover:shadow-2xl transition flex flex-col justify-between">
+
+    <div>
+      <div className="flex items-center gap-4 mb-4">
+        <FiFileText className="text-4xl text-[#E30613]" />
+        <h3 className="text-2xl font-bold text-[#001F5B]">
+          CAC Certification
+        </h3>
+      </div>
+
+      <p className="text-gray-600 text-lg">
+        View the official Corporate Affairs Commission certification confirming EMRAN’s legal registration status.
+      </p>
+    </div>
+
+    <a
+      href={cacCertificate}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="mt-8 inline-flex items-center justify-center gap-3 
+                 bg-[#E30613] hover:bg-[#c20511]
+                 text-white font-bold text-lg py-4 px-8
+                 rounded-xl shadow-lg transition transform hover:scale-105"
+    >
+      View Certificate
+    </a>
+  </div>
+
+</div>
 
           {/* Support Section */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
@@ -217,7 +280,7 @@ const Dashboard = () => {
               Call +234 1 277 7700
             </a>
             <p className="text-xl opacity-90">
-              Or email: <a href="mailto:retirees.support@exxonmobil.ng" className="text-[#E30613] hover:text-white underline">retirees.support@exxonmobil.ng</a>
+              Or email: <a href="mailto:emranwebmgt@gmail.com" className="text-[#E30613] hover:text-white underline">emranwebmgt@gmail.com</a>
             </p>
           </div>
           <div className="hidden max-lg:block bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
@@ -232,7 +295,7 @@ const Dashboard = () => {
               Call +234 1 277 7700
             </a>
             <p className="text-lg opacity-90">
-              Or email: <a href="mailto:retirees.support@exxonmobil.ng" className="text-[#E30613] hover:text-white underline">retirees.support@exxonmobil.ng</a>
+              Or email: <a href="emranwebmgt@gmail.com" className="text-[#E30613] hover:text-white underline">emranwebmgt@gmail.com</a>
             </p>
           </div>
         </div>
