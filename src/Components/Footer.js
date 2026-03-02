@@ -113,10 +113,24 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-700">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-white/80">           <div className=" items-center">
             <p>
               © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
             </p>
+           <div className="flex gap-1 items-center">
+  <p>
+    Website Developed by Campusify Enterprise
+  </p>
+  <a 
+    href="https://www.campusify.net" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    className="text-blue-400 hover:underline"
+  >
+    https://www.campusify.net
+  </a>
+</div>
+</div>
             <div className="flex gap-6 mt-4 md:mt-0">
               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
               <NavLink to="/terms" className="hover:text-white transition">Terms of Use</NavLink>
