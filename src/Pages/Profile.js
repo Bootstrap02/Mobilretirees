@@ -44,13 +44,26 @@ const [selectedImage, setSelectedImage] = useState(null); // for preview
       return;
     }
 
+let formattedDate = 'N/A';
+  if (stored.dateOfRetirement) {
+    const dateObj = new Date(stored.dateOfRetirement);
+    // Check if it's a valid date
+    if (!isNaN(dateObj.getTime())) {
+      formattedDate = dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+  }
+
     const initialData = {
       fullname: stored.fullname || '',
       email: stored.email || '',
       phone: stored.phone || '',
       address: stored.address || '',
       staffId: stored._id || 'N/A',
-      dateOfRetirement: stored.dateOfRetirement || 'N/A',
+      dateOfRetirement: formattedDate || 'N/A',
       profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`
     };
 

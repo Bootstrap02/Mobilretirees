@@ -284,7 +284,7 @@ export  const DuesPayment = () => {
     try {
       const response = await axios.put(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`,
-        { token: token.trim(),  year: true }
+        { token: token.trim(),  year: "next" }
       );
 
       setMessage({
