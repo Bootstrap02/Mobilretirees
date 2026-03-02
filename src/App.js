@@ -4,7 +4,7 @@ import './App.css';
 import About from './Pages/About';
 import Community from './Pages/Community';
 import Spotlight from './Pages/Spotlight';
-import Dues from './Pages/Dues';
+import { Dues, DuesPayment }from './Pages/Dues';
 import Notifications from './Pages/Notifications';
 import Messages from './Pages/Messages';
 import {Signup, Signin, ForgotPassword, ResetPassword, Payment} from './Pages/Signup';
@@ -43,6 +43,7 @@ function App() {
         <Route path='/community' element= {<Community /> }/>
         <Route path='/spotlight' element= {<Spotlight /> }/>
         <Route path='/dues' element= {<Dues /> }/>
+        <Route path='/duespayment/:id' element= {<DuesPayment /> }/>
         <Route path='/notifications/:id' element= {<Notifications /> }/>
         <Route path='/messages' element= {<Messages /> }/>
         <Route path='/support' element= {<Support /> }/>

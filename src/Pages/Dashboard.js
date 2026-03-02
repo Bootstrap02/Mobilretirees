@@ -32,7 +32,7 @@ const Dashboard = () => {
       fullname: stored.fullname || "EMRAN Member",
       email: stored.email || "No email available",
       staffId: stored._id || "N/A",
-      retirementYear: stored.retirementYear || "N/A",
+      dateOfRetirement: stored.dateOfRetirement || "N/A",
       profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
       duesStatus: stored.duesStatus || "Pending Verification",
       unreadMessages: stored.messages || 0,
@@ -82,7 +82,7 @@ const Dashboard = () => {
                   <h1 className="text-4xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-xl opacity-90 mt-2">
                     {user.staffId !== "N/A" && `Staff ID: ${user.staffId} • `}
-                    Retired {user.retirementYear !== "N/A" ? user.retirementYear : "Member"}
+                    Retired {user.dateOfRetirement !== "N/A" ? user.dateOfRetirement : "Member"}
                   </p>
                 </div>
               </div>
@@ -126,7 +126,7 @@ const Dashboard = () => {
         </h1>
         <p className="text-base sm:text-lg lg:text-xl opacity-90 mt-1 sm:mt-2">
           {user.staffId !== "N/A" && `Staff ID: ${user.staffId} • `}
-          Retired {user.retirementYear !== "N/A" ? user.retirementYear : "Member"}
+          Retired {user.dateOfRetirement !== "N/A" ? user.dateOfRetirement : "Member"}
         </p>
       </div>
     </div>
@@ -161,7 +161,7 @@ const Dashboard = () => {
               <FiDollarSign className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Dues Status</h3>
               <p className="text-xl font-medium text-green-600">{user.duesStatus}</p>
-              <NavLink to="/comingsoon" className="text-[#E30613] font-bold mt-4 block hover:underline">
+              <NavLink to="/dues" className="text-[#E30613] font-bold mt-4 block hover:underline">
                 View Details →
               </NavLink>
             </div>

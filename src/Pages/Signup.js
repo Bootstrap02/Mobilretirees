@@ -761,7 +761,7 @@ const { id } = useParams();   // correct — now id is the actual string
     try {
       const response = await axios.put(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`,
-        { token: token.trim() }
+        { token: token.trim(), year: false  }
       );
 
       setMessage({

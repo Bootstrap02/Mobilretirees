@@ -27,7 +27,7 @@ const Profile = () => {
     phone: '',
     address: '',
     staffId: 'N/A',
-    retirementYear: 'N/A',
+    dateOfRetirement: 'N/A',
     profilePhoto: ''
   });
 const [selectedImage, setSelectedImage] = useState(null); // for preview
@@ -50,7 +50,7 @@ const [selectedImage, setSelectedImage] = useState(null); // for preview
       phone: stored.phone || '',
       address: stored.address || '',
       staffId: stored._id || 'N/A',
-      retirementYear: stored.retirementYear || 'N/A',
+      dateOfRetirement: stored.dateOfRetirement || 'N/A',
       profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`
     };
 
@@ -334,7 +334,7 @@ const handleChangePassword = async () => {
                 <div className="space-y-4">
                   <label className="block text-sm font-medium text-gray-700">Retirement Year</label>
                   <div className="w-full px-6 py-5 bg-gray-100 border-2 border-gray-200 rounded-2xl text-xl text-gray-700">
-                    {formData.retirementYear}
+                    {formData.dateOfRetirement}
                   </div>
                 </div>
               </div>
@@ -603,7 +603,7 @@ const handleChangePassword = async () => {
         <div className="space-y-3 sm:space-y-4">
           <label className="block text-sm sm:text-base font-medium text-gray-700">Retirement Year</label>
           <div className="w-full px-4 sm:px-6 py-4 sm:py-5 bg-gray-100 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl text-gray-700">
-            {formData.retirementYear}
+            {formData.dateOfRetirement}
           </div>
         </div>
       </div>
