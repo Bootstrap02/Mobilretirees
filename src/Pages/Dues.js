@@ -1,6 +1,6 @@
 // pages/Dues.jsx
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import axios from 'axios';
@@ -94,6 +94,9 @@ export const Dues = () => {
 
   const handlePayNext = () => {
     navigate(`/duespayment/${id}`)
+  };
+  const backToDashboard = () => {
+    navigate(`/dashboard/${id}`)
   };
 
   return (
@@ -238,12 +241,12 @@ export const Dues = () => {
 
           {/* Back Button */}
           <div className="text-center mt-16">
-            <NavLink
-              to="/dashboard"
+            <button
+              onClick={backToDashboard}
               className="inline-flex items-center gap-4 text-[#E30613] font-bold text-2xl hover:underline"
             >
               ← Back to Dashboard
-            </NavLink>
+            </button>
           </div>
         </div>
       </div>
