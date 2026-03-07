@@ -585,10 +585,12 @@ export const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/forgot-password', { email });
+      await axios.post(
+  'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/forgot-password',
+  { email: email.toLowerCase() }
+    );
       setSent(true);
-    } catch (err) {
-      alert('Email not found');
+    } catch (err) { alert(err.response?.data?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -628,6 +630,117 @@ export const ForgotPassword = () => {
 };
 
 // ====================== RESET PASSWORD PAGE ======================
+// export const ResetPassword = () => {
+//   const [password, setPassword] = useState('');
+//   const [confirmPassword, setConfirmPassword] = useState('');
+//   const [showPass, setShowPass] = useState(false);
+//   const [showConfirm, setShowConfirm] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [success, setSuccess] = useState(false);
+//   const [error, setError] = useState('');
+
+//   const { token } = useParams(); // Get token from URL: /reset-password/:token
+//   const navigate = useNavigate();
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setError('');
+//     setLoading(true);
+
+//     if (password !== confirmPassword) {
+//       setError("Passwords do not match");
+//       setLoading(false);
+//       return;
+//     }
+
+//     if (password.length < 8) {
+//       setError("Password must be at least 8 characters");
+//       setLoading(false);
+//       return;
+//     }
+
+//     try {
+//       await axios.post(
+//         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/reset-password/${token}`,
+//         { password }
+//       );
+
+//       setSuccess(true);
+//       setTimeout(() => {
+//         navigate('/signin');
+//       }, 4000);
+//     } catch (err) {
+//       setError(err.response?.data?.message || 'Link expired or invalid. Please request a new one.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <AuthLayout title="Set New Password" subtitle="Create a strong password for your account">
+//       {loading && <BigLoader message="Updating your password..." />}
+
+//       {success ? (
+//         <div className="text-center py-12">
+//           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+//             <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+//             </svg>
+//           </div>
+//           <h3 className="text-2xl font-bold text-[#001F5B]">Password Updated!</h3>
+//           <p className="text-gray-600 mt-3">Your password has been changed successfully.</p>
+//           <p className="text-sm text-gray-500 mt-4">Redirecting to sign in...</p>
+//         </div>
+//       ) : (
+//         <form onSubmit={handleSubmit} className="space-y-6">
+//           {error && (
+//             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+//               {error}
+//             </div>
+//           )}
+
+//           <InputField
+//             icon={FiLock}
+//             type={showPass ? 'text' : 'password'}
+//             placeholder="New Password (min. 8 characters)"
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//             showToggle={true}
+//             toggleShow={() => setShowPass(!showPass)}
+//             required
+//           />
+
+//           <InputField
+//             icon={FiLock}
+//             type={showConfirm ? 'text' : 'password'}
+//             placeholder="Confirm New Password"
+//             value={confirmPassword}
+//             onChange={(e) => setConfirmPassword(e.target.value)}
+//             showToggle={true}
+//             toggleShow={() => setShowConfirm(!showConfirm)}
+//             required
+//           />
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className="w-full bg-[#E30613] hover:bg-[#c20511] disabled:opacity-70 text-white font-bold py-4 rounded-xl transition shadow-lg"
+//           >
+//             {loading ? 'Updating...' : 'Set New Password'}
+//           </button>
+
+//           <p className="text-center text-sm text-gray-600">
+//             Remember your password?{' '}
+//             <NavLink to="/signin" className="text-[#E30613] font-bold hover:underline">
+//               Sign In
+//             </NavLink>
+//           </p>
+//         </form>
+//       )}
+//     </AuthLayout>
+//   );
+// };
+
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -636,39 +749,56 @@ export const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
-  const { token } = useParams(); // Get token from URL: /reset-password/:token
+  const { token } = useParams();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError('');
+    setMessage('');
     setLoading(true);
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");
+      alert("Passwords do not match");
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
+      alert("Password must be at least 8 characters");
       setLoading(false);
       return;
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/reset-password/${token}`,
         { password }
       );
 
+      const apiMessage = response.data?.message || "Password reset successful";
+
+      setMessage(apiMessage);
+      alert(apiMessage);
+
       setSuccess(true);
+
       setTimeout(() => {
         navigate('/signin');
       }, 4000);
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Link expired or invalid. Please request a new one.');
+      const apiError =
+        err.response?.data?.message ||
+        'Link expired or invalid. Please request a new one.';
+
+      setError(apiError);
+      alert(apiError);
     } finally {
       setLoading(false);
     }
@@ -685,9 +815,16 @@ export const ResetPassword = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
+
           <h3 className="text-2xl font-bold text-[#001F5B]">Password Updated!</h3>
-          <p className="text-gray-600 mt-3">Your password has been changed successfully.</p>
-          <p className="text-sm text-gray-500 mt-4">Redirecting to sign in...</p>
+
+          <p className="text-gray-600 mt-3">
+            {message || "Your password has been changed successfully."}
+          </p>
+
+          <p className="text-sm text-gray-500 mt-4">
+            Redirecting to sign in...
+          </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
