@@ -1,6 +1,6 @@
 // pages/Profile.jsx — FINAL WITH PASSWORD CHANGE, PRE-FILLED FIELDS & FANCY UI
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import axios from "axios";
 import { 
   FiUser, FiMail, FiPhone, FiHome, FiCamera, FiSave, FiTrash2, FiAlertTriangle, 
@@ -20,6 +20,7 @@ const Profile = () => {
   const [passwordError, setPasswordError] = useState('');
   const [uploadError, setUploadError] = useState('');
   const fileInputRef = useRef(null);
+  const {id}= useParams();
 
   const [formData, setFormData] = useState({
     fullname: '',
@@ -499,14 +500,14 @@ const handleChangePassword = async () => {
           {/* Back */}
           <div className="text-center mt-16">
             <NavLink
-              to="/dashboard"
+              to={`/dashboard/${id}`}
               className="inline-flex items-center gap-4 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-2xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110"
             >
               ← Back to Dashboard
             </NavLink>
           </div>
         </div>
-<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<div className="hidden max-lg:block max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
   {/* Premium Header – smaller on mobile */}
   <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 lg:p-12 mb-10 sm:mb-12 lg:mb-16 shadow-xl sm:shadow-2xl overflow-hidden">
     <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
@@ -767,7 +768,7 @@ const handleChangePassword = async () => {
     {/* Back Button */}
     <div className="text-center mt-12 sm:mt-16">
       <NavLink
-        to="/dashboard"
+        to={`/dashboard/${id}`}
         className="inline-flex items-center gap-3 sm:gap-4 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-lg sm:text-2xl px-10 sm:px-16 py-5 sm:py-8 rounded-full shadow-xl sm:shadow-2xl transition transform hover:scale-105"
       >
         ← Back to Dashboard
