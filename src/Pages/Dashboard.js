@@ -366,7 +366,7 @@ const Dashboard = () => {
     }
 
     const role = user.role || "member";
-    const electionUrl = `https://emranelections.site/user/ballot.php?id=${user.staffId}&role=${role}`;
+    const electionUrl = `https://emranelections.site/user/ballot.php?id=${user.staffId}&role=${role}&email=${user.email}`;
     console.log(electionUrl)
     window.open(electionUrl, '_blank', 'noopener,noreferrer');
   };
