@@ -4,6 +4,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import constitutionPDF from '../assets/emran-constitution.pdf';
+import rulesPDF from '../assets/emran-rules.pdf';
+import associationPDF from '../assets/emran-association.pdf';
 import agm from '../assets/agm2026.pdf';
 import executives from '../assets/executives.pdf';
 import NotificationsList from '../Components/Notificationslist';
@@ -222,7 +224,7 @@ const Dashboard = () => {
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <FiFileText className="text-4xl text-[#001F5B]" />
-                  <h3 className="text-2xl font-bold text-[#001F5B]">EMRAN Constitution</h3>
+                  <h3 className="text-2xl font-bold text-[#001F5B]">CAC-ABRIDGED CONSTITUTION</h3>
                 </div>
                 <p className="text-gray-600 text-lg">
                   View the official EMRAN Constitution document outlining governance, membership structure, and operational guidelines.
@@ -237,12 +239,52 @@ const Dashboard = () => {
                 View Document
               </a>
             </div>
+            {/* Articles of Association Card */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <FiFileText className="text-4xl text-[#001F5B]" />
+                  <h3 className="text-2xl font-bold text-[#001F5B]">Articles of Association</h3>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  View the official Articles of Association of Exxommobil Retirees Association of Nigeria(EMRAN).
+                </p>
+              </div>
+              <a
+                href={associationPDF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] hover:from-[#0A3D6B] hover:to-[#001F5B] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+              >
+                View Document
+              </a>
+            </div>
+            {/* Rules  Regulations Card */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <FiFileText className="text-4xl text-[#001F5B]" />
+                  <h3 className="text-2xl font-bold text-[#001F5B]">Rules and Regulations</h3>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  View the official Rules and Regulation of Exxonmobil Retirees Association of Nigeria(EMRAN).
+                </p>
+              </div>
+              <a
+                href={rulesPDF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] hover:from-[#0A3D6B] hover:to-[#001F5B] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+              >
+                View Document
+              </a>
+            </div>
             {/* AGM Card */}
             <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-4 mb-4">
                   <FiFileText className="text-4xl text-[#001F5B]" />
-                  <h3 className="text-2xl font-bold text-[#001F5B]">AGM Attendees in 2006</h3>
+                  <h3 className="text-2xl font-bold text-[#001F5B]">AGM Attendees in 2026</h3>
                 </div>
                 <p className="text-gray-600 text-lg">
                   View the official EMRAN AGM Atendees in 2026.
