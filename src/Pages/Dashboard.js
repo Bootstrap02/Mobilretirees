@@ -219,7 +219,28 @@ const Dashboard = () => {
 
           {/* Constitution & CAC Section */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Constitution Card */}
+                       {/* CAC Certificate Card */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#E30613] hover:shadow-2xl transition flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <FiFileText className="text-4xl text-[#E30613]" />
+                  <h3 className="text-2xl font-bold text-[#001F5B]">CAC Certification</h3>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  View the official Corporate Affairs Commission certification confirming EMRAN’s legal registration status.
+                </p>
+              </div>
+              <a
+                href={cacCertificate}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex items-center justify-center gap-3 bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+              >
+                View Certificate
+              </a>
+            </div>
+          
+          {/* Constitution Card */}
             <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-4 mb-4">
@@ -320,26 +341,7 @@ const Dashboard = () => {
               </a>
             </div>
 
-            {/* CAC Certificate Card */}
-            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#E30613] hover:shadow-2xl transition flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-4 mb-4">
-                  <FiFileText className="text-4xl text-[#E30613]" />
-                  <h3 className="text-2xl font-bold text-[#001F5B]">CAC Certification</h3>
-                </div>
-                <p className="text-gray-600 text-lg">
-                  View the official Corporate Affairs Commission certification confirming EMRAN’s legal registration status.
-                </p>
-              </div>
-              <a
-                href={cacCertificate}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-8 inline-flex items-center justify-center gap-3 bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
-              >
-                View Certificate
-              </a>
-            </div>
+
           </div>
 
           {/* Support Section */}
