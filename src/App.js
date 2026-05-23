@@ -18,7 +18,7 @@ import Support from "./Pages/Support";
 import Comingsoon from "./Pages/Comingsoon";
 import Firstpage from "./Pages/Firstpage";
 import { VotingDashboard, ResultsPage } from "./Pages/Elections";
-
+import Faqs from "./Pages/FAQuestions/Buyoncampusbuy";
 
 
 function App() {
@@ -51,6 +51,7 @@ function App() {
         <Route path='/comingsoon' element= {<Comingsoon /> }/>
         <Route path='/voting/:id' element= {<VotingDashboard /> }/>
         <Route path='/electionresults/:id' element= {<ResultsPage /> }/>
+        <Route path='/faqs' element= {<Faqs /> }/>
     </Routes>
     </BrowserRouter>
     </>
