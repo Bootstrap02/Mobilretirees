@@ -38,7 +38,7 @@ export const faqCategories = [
       },
       {
         q: "How do I register as a member?",
-        a: "Applicants can register online through the EMRAN website at EMRAN.center. Alternatively, applicants may request a soft copy registration form and submit it through the Secretariat."
+        a: "Applicants can register online through the EMRAN website at EMRAN.center. Alternatively, applicants may request a hard copy registration form and submit it to the EXCO or send it to the official email: emranannuitants@gmail.com."
       },
       {
         q: "What is the current registration fee?",
@@ -94,6 +94,26 @@ export const faqCategories = [
       {
         q: "Are milestone birthday gifts provided?",
         a: "Yes. EMRAN recognizes milestone birthdays at ages 70, 80, 90, and 100. Eligible members may receive gift items or cash gifts approved by the Association."
+      },
+      {
+        q: "How does the EMRAN Executive Committee support members on pension matters?",
+        a: "The EMRAN Executive Committee actively supports members in resolving pension-related issues, including delayed pension payments, pension computation concerns, clarifications with Pension Fund Administrators (PFAs), and escalation of unresolved pension matters to the appropriate authorities."
+      },
+      {
+        q: "What is Pension Supplementation, and what role does EMRAN play?",
+        a: "EMRAN continually advocates for Pension Supplementation for retirees. The Association engages relevant stakeholders and ExxonMobil management in pursuit of improved post-retirement financial support and welfare enhancement for members."
+      },
+      {
+        q: "Does EMRAN assist members with health insurance matters?",
+        a: "Yes. The Executive Committee, through the Benefits Officer and relevant subcommittees, assists members in processing health insurance claims, resolving HMO-related challenges, clarifying benefits and coverage issues, and escalating unresolved healthcare matters with the Health Maintenance Organization (HMO)."
+      },
+      {
+        q: "Does EMRAN advocate for better healthcare benefits for retirees?",
+        a: "Yes. EMRAN actively advocates for improvements in the health insurance plan available to members and their spouses. This includes engaging stakeholders on improved healthcare coverage, better access to medical services, expanded wellness and preventive care initiatives, and fair and timely processing of medical claims."
+      },
+      {
+        q: "Who should members contact regarding pension or healthcare issues?",
+        a: "Members may contact the EMRAN Executive Committee through the President, the Benefits Officer, the General Secretary, official EMRAN communication platforms, or the official email."
       }
     ]
   },
@@ -130,7 +150,7 @@ export const faqCategories = [
   },
   {
     id: "governance",
-    label: "Governance",
+    label: "Executive Committee & Governance",
     icon: "⚖️",
     faqs: [
       {
@@ -153,7 +173,7 @@ export const faqCategories = [
   },
   {
     id: "platforms",
-    label: "Online Platforms",
+    label: "Online Platforms & Conduct",
     icon: "💬",
     faqs: [
       {
