@@ -631,7 +631,7 @@ const FAQ = () => {
               Reach the EMRAN Secretariat at No. 26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos.
             </p>
             <NavLink
-              to="/contact"
+              to="/support"
               style={{
                 display: 'inline-block',
                 background: '#E30613',
