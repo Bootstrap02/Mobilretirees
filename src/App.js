@@ -18,7 +18,7 @@ import Support from "./Pages/Support";
 import Comingsoon from "./Pages/Comingsoon";
 import Firstpage from "./Pages/Firstpage";
 import { VotingDashboard, ResultsPage } from "./Pages/Elections";
-import Faqs from "./Pages/FAQuestions/Buyoncampusbuy";
+import Faqs from "./Pages/FAQuestions/Faqs";
 
 
 function App() {

@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
-import { faqCategories } from './Customersupport';
+import { faqCategories } from './Questions';
 
 // ─── Animated Chevron ────────────────────────────────────────────────────────
 const Chevron = ({ open }) => (

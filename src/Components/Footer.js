@@ -14,7 +14,6 @@ import {
   FiBell,
 } from 'react-icons/fi';
 import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
-import faqsDocs from '../assets/faqs-doc.pdf';
 
 
 const Footer = () => {
@@ -54,7 +53,7 @@ const Footer = () => {
               <li><NavLink to="/resources" className="hover:text-[#E30613] transition">Resources & Forms</NavLink></li>
               <li><NavLink to="/newsevents" className="hover:text-[#E30613] transition">News & Events</NavLink></li>
               <li><NavLink to="/support" className="hover:text-[#E30613] transition">Support Center</NavLink></li>
-              <li><a href={faqsDocs} download className="hover:text-[#E30613] transition">FAQs</a></li>                    
+              <li><NavLink to="/faqs" className="hover:text-[#E30613] transition">FAQs</NavLink></li>                    
             </ul>
           </div>
 

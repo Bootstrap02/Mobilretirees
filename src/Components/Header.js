@@ -130,6 +130,14 @@ const Header = ({isOpen, notifications = []}) => {
             >
               Support
             </NavLink>
+            <NavLink 
+              to="/faqs" 
+              className={({ isActive }) => 
+                `font-medium transition ${scrolled || isActive ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613]`
+              }
+            >
+              FAQS
+            </NavLink>
           </nav>
 
           {/* Right Side: Auth + Icons */}
@@ -223,6 +231,9 @@ const Header = ({isOpen, notifications = []}) => {
               </NavLink>
               <NavLink to="/support" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
                 Support
+              </NavLink>
+              <NavLink to="/faqs" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
+                FAQS
               </NavLink>
 
               <div className="pt-8 space-y-4">

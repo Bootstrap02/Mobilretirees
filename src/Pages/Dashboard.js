@@ -8,6 +8,8 @@ import rulesPDF from '../assets/emran-rules.pdf';
 import associationPDF from '../assets/emran-association.pdf';
 import agm from '../assets/agm2026.pdf';
 import executives from '../assets/executives.pdf';
+import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
+import whatsapp_rules from '../assets/whatsapp_rules.pdf';
 import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, FiFileText } from 'react-icons/fi';
 import cacCertificate from '../assets/cac-certificate.jpg';
@@ -341,6 +343,48 @@ const Dashboard = () => {
               </a>
             </div>
 
+            {/* 2026 Whatsapp Group Rules */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <FiFileText className="text-4xl text-[#001F5B]" />
+                  <h3 className="text-2xl font-bold text-[#001F5B]">EMRAN Group Whatsapp Rules and Regulations</h3>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  Rules and Regulations for Posting and Commenting on EMRAN Whatsapp Whatsapp.
+                </p>
+              </div>
+              <a
+                href={whatsapp_rules}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] hover:from-[#0A3D6B] hover:to-[#001F5B] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+              >
+                View Document
+              </a>
+            </div>
+
+            
+            {/* 2026 Whatsapp Group Penalties */}
+            <div className="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-[#001F5B] hover:shadow-2xl transition flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-4 mb-4">
+                  <FiFileText className="text-4xl text-[#001F5B]" />
+                  <h3 className="text-2xl font-bold text-[#001F5B]">EMRAN Group Whatsapp Penalties</h3>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  Penalties for offences on EMRAN Whatsapp Group.
+                </p>
+              </div>
+              <a
+                href={whatsapp_penalties}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-8 inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] hover:from-[#0A3D6B] hover:to-[#001F5B] text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+              >
+                View Document
+              </a>
+            </div>
 
           </div>
 
