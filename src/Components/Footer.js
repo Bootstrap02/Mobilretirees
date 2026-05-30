@@ -74,7 +74,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <FiMail className="text-[#E30613]" />
-                <p>emranannuitants@gmail.com.com</p>
+                <p>emranannuitants@gmail.com</p>
               </div>
             </div>
           </div>
