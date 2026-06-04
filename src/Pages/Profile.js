@@ -1,13 +1,62 @@
-// pages/Profile.jsx — FINAL WITH PASSWORD CHANGE, PRE-FILLED FIELDS & FANCY UI
+// pages/Profile.jsx — EXPANDED WITH ALL USER SCHEMA FIELDS
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import axios from "axios";
-import { 
-  FiUser, FiMail, FiPhone, FiHome, FiCamera, FiSave, FiTrash2, FiAlertTriangle, 
-  FiLock, FiEye, FiEyeOff 
+import {
+  FiUser, FiMail, FiPhone, FiHome, FiCamera, FiSave, FiTrash2, FiAlertTriangle,
+  FiLock, FiEye, FiEyeOff, FiBriefcase, FiMapPin, FiCalendar, FiUsers, FiHeart
 } from 'react-icons/fi';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+
+// ── Reusable section header ─────────────────────────────────────────────────
+const SectionHeader = ({ icon: Icon, title, subtitle }) => (
+  <div className="flex items-center gap-4 mb-8 pb-4 border-b-2 border-gray-100">
+    <div className="w-12 h-12 rounded-2xl bg-[#E30613]/10 flex items-center justify-center flex-shrink-0">
+      <Icon className="text-[#E30613] text-2xl" />
+    </div>
+    <div>
+      <h3 className="text-2xl font-bold text-[#001F5B]">{title}</h3>
+      {subtitle && <p className="text-sm text-gray-500 mt-0.5">{subtitle}</p>}
+    </div>
+  </div>
+);
+
+// ── Reusable labelled input ─────────────────────────────────────────────────
+const Field = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2">
+    <label className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wide">
+      {Icon && <Icon className="text-[#E30613]" />}
+      {label}
+    </label>
+    {children}
+  </div>
+);
+
+const inputCls =
+  "w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-base focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/20 transition shadow-sm bg-white";
+const readOnlyCls =
+  "w-full px-5 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-base text-gray-600 cursor-not-allowed";
+const selectCls =
+  "w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-base focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/20 transition shadow-sm bg-white appearance-none";
+
+// ── Phone wrapper for consistent styling ───────────────────────────────────
+const PhoneField = ({ value, onChange }) => (
+  <PhoneInput
+    country="ng"
+    value={value?.replace('+', '') || ''}
+    onChange={(phone) => onChange(`+${phone}`)}
+    containerStyle={{ width: '100%' }}
+    inputStyle={{
+      width: '100%', padding: '16px', paddingLeft: '60px',
+      borderRadius: '16px', border: '2px solid #e5e7eb',
+      outline: 'none', fontSize: '16px', height: '56px'
+    }}
+    buttonStyle={{ borderTopLeftRadius: '14px', borderBottomLeftRadius: '14px' }}
+  />
+);
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,56 +68,62 @@ const Profile = () => {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [uploadError, setUploadError] = useState('');
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const fileInputRef = useRef(null);
-  const {id}= useParams();
+  const { id } = useParams();
 
   const [formData, setFormData] = useState({
-    fullname: '',
-    email: '',
-    phone: '',
-    address: '',
-    staffId: 'N/A',
-    dateOfRetirement: 'N/A',
-    profilePhoto: ''
+    // Basic
+    fullname: '', email: '', phone: '', address: '',
+    // Read-only
+    staffId: 'N/A', dateOfRetirement: 'N/A', profilePhoto: '',
+    // Retirement info
+    companyAtRetirement: '', locationOfRetirement: '', departmentOfRetirement: '',
+    // Spouse
+    spouse: '', spousePhone: '',
+    // Next of Kin
+    nextOfKin: '', nextOfKinEmail: '', nextOfKinPhone: '',
+    // Beneficiary
+    beneficiary: '', beneficiaryEmail: '', beneficiaryPhone: '',
   });
-const [selectedImage, setSelectedImage] = useState(null); // for preview
+
+  const [selectedImage, setSelectedImage] = useState(null);
   const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    currentPassword: '', newPassword: '', confirmPassword: ''
   });
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('userData'));
-    if (!stored) {
-      navigate('/signin');
-      return;
+    if (!stored) { navigate('/signin'); return; }
+
+    let formattedDate = 'N/A';
+    if (stored.dateOfRetirement) {
+      const d = new Date(stored.dateOfRetirement);
+      if (!isNaN(d.getTime())) {
+        formattedDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
     }
 
-let formattedDate = 'N/A';
-  if (stored.dateOfRetirement) {
-    const dateObj = new Date(stored.dateOfRetirement);
-    // Check if it's a valid date
-    if (!isNaN(dateObj.getTime())) {
-      formattedDate = dateObj.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-  }
-
-    const initialData = {
+    setFormData({
       fullname: stored.fullname || '',
       email: stored.email || '',
       phone: stored.phone || '',
       address: stored.address || '',
       staffId: stored._id || 'N/A',
-      dateOfRetirement: formattedDate || 'N/A',
-      profilePhoto: stored.image[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`
-    };
-
-    setFormData(initialData);
+      dateOfRetirement: formattedDate,
+      profilePhoto: stored.image?.[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`,
+      companyAtRetirement: stored.companyAtRetirement || '',
+      locationOfRetirement: stored.locationOfRetirement || '',
+      departmentOfRetirement: stored.departmentOfRetirement || '',
+      spouse: stored.spouse || '',
+      spousePhone: stored.spousePhone || '',
+      nextOfKin: stored.nextOfKin || '',
+      nextOfKinEmail: stored.nextOfKinEmail || '',
+      nextOfKinPhone: stored.nextOfKinPhone || '',
+      beneficiary: stored.beneficiary || '',
+      beneficiaryEmail: stored.beneficiaryEmail || '',
+      beneficiaryPhone: stored.beneficiaryPhone || '',
+    });
     setLoading(false);
   }, [navigate]);
 
@@ -86,145 +141,95 @@ let formattedDate = 'N/A';
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // Validation
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError('Only JPG, JPEG, PNG, SVG allowed');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      setUploadError('Image too large (max 5MB)');
-      return;
-    }
-
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+    if (!allowed.includes(file.type)) { setUploadError('Only JPG, JPEG, PNG, SVG allowed'); return; }
+    if (file.size > 5 * 1024 * 1024) { setUploadError('Image too large (max 5MB)'); return; }
     setUploadError('');
     setSelectedImage(file);
     setFormData(prev => ({ ...prev, profilePhoto: URL.createObjectURL(file) }));
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
-
-
   const handleSaveProfile = async () => {
     setSaving(true);
     setUploadError('');
-
     try {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const userId = userData._id;
 
-      // 1. Update profile fields (if you have a separate endpoint)
       await axios.put(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/profile/${userId}`,
-        formData,
+        {
+          fullname: formData.fullname,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          companyAtRetirement: formData.companyAtRetirement,
+          locationOfRetirement: formData.locationOfRetirement,
+          departmentOfRetirement: formData.departmentOfRetirement,
+          spouse: formData.spouse,
+          spousePhone: formData.spousePhone,
+          nextOfKin: formData.nextOfKin,
+          nextOfKinEmail: formData.nextOfKinEmail,
+          nextOfKinPhone: formData.nextOfKinPhone,
+          beneficiary: formData.beneficiary,
+          beneficiaryEmail: formData.beneficiaryEmail,
+          beneficiaryPhone: formData.beneficiaryPhone,
+        }
       );
 
-      // 2. If new image selected, upload it
       if (selectedImage) {
         const imageFormData = new FormData();
         imageFormData.append('images', selectedImage);
-
         await axios.put(
           `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/upload-fortune-image/${userId}`,
           imageFormData,
         );
       }
 
-      // Update local storage
       const updatedUser = { ...userData, ...formData };
       localStorage.setItem('userData', JSON.stringify(updatedUser));
-
-      alert('Profile updated successfully!');
-      setSelectedImage(null); // clear preview
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+      setSelectedImage(null);
     } catch (err) {
       alert('Failed to update profile: ' + (err.response?.data?.message || err.message));
-      console.error(err);
     } finally {
       setSaving(false);
     }
   };
 
-
-
-
-
-
-
-
-const handleChangePassword = async () => {
-  // Clear previous errors
-  setPasswordError('');
-
-  // Basic validation
-  if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-    setPasswordError('All password fields are required');
-    return;
-  }
-
-  if (passwordData.newPassword !== passwordData.confirmPassword) {
-    setPasswordError('New passwords do not match');
-    return;
-  }
-
-  if (passwordData.newPassword.length < 6) {
-    setPasswordError('New password must be at least 6 characters');
-    return;
-  }
-
-  setSaving(true); // reuse your saving state or create [passwordSaving]
-
-  try {
-    // Get user ID from localStorage (or wherever you store user data)
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const userId = userData._id;
-
-    if (!userId) {
-      throw new Error('User ID not found. Please login again.');
+  const handleChangePassword = async () => {
+    setPasswordError('');
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      setPasswordError('All password fields are required'); return;
     }
-    // Send request to backend
-    const response = await axios.put(
-      `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/change-password/${userId}`,
-      {
-        currentPassword: passwordData.currentPassword,
-        newPassword: passwordData.newPassword,
-      },
-    );
-
-    // Success
-    alert(response.data.message || 'Password changed successfully!');
-    
-    // Clear form
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
-
-  } catch (err) {
-    // Handle errors from backend
-    const errorMsg = err.response?.data?.message || err.message || 'Failed to change password';
-    
-    if (err.response?.status === 400) {
-      setPasswordError(errorMsg); // e.g. "Current password is incorrect"
-    } else if (err.response?.status === 401) {
-      setPasswordError('Session expired. Please login again.');
-      // Optional: logout user
-      localStorage.removeItem('userData');
-      localStorage.removeItem('token');
-      navigate('/signin');
-    } else {
-      setPasswordError(errorMsg);
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match'); return;
     }
+    if (passwordData.newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters'); return;
+    }
+    setSaving(true);
+    try {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const userId = userData._id;
+      if (!userId) throw new Error('User ID not found. Please login again.');
+      const response = await axios.put(
+        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/change-password/${userId}`,
+        { currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword }
+      );
+      alert(response.data.message || 'Password changed successfully!');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to change password';
+      if (err.response?.status === 401) {
+        setPasswordError('Session expired. Please login again.');
+        localStorage.removeItem('userData'); localStorage.removeItem('token');
+        navigate('/signin');
+      } else { setPasswordError(errorMsg); }
+    } finally { setSaving(false); }
+  };
 
-    console.error('Password change error:', err);
-  } finally {
-    setSaving(false);
-  }
-};
   const handleDelete = () => {
     localStorage.removeItem('userData');
     alert('Account deleted successfully.');
@@ -233,556 +238,279 @@ const handleChangePassword = async () => {
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-3xl text-[#001F5B]">Loading...</div>;
 
-  return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20">
-        <div className="max-lg:hidden max-w-5xl mx-auto px-6">
-
-          {/* Premium Header */}
-          <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 mb-16 shadow-2xl overflow-hidden">
-            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
-            <div className="relative z-10 text-center">
-              <h1 className="text-5xl md:text-6xl font-extrabold mb-6 drop-shadow-lg">
-                My Profile
-              </h1>
-              <p className="text-2xl opacity-90">
-                Update your details, change password, and manage your EMRAN account
-              </p>
-            </div>
-          </div>
-
-          {/* Profile Card */}
-          <div className="bg-white rounded-3xl shadow-2xl p-12 mb-16 relative">
-           
-            <div className="absolute -top-24 left-1/2 transform -translate-x-1/2">
-              <div className="relative group cursor-pointer" onClick={triggerFileInput}>
-                <img
-                  src={formData.profilePhoto}
-                  alt={formData.fullname}
-                  className="w-48 h-48 md:w-56 md:h-56 rounded-full object-cover border-8 border-white shadow-2xl ring-4 ring-[#E30613]/40 transition group-hover:opacity-80"
-                  onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname)}&background=001F5B&color=fff&size=256`}
-                />
-                <div className="absolute bottom-2 right-2 bg-[#E30613] p-4 rounded-full text-white shadow-lg hover:bg-[#c20511] transition opacity-90 group-hover:opacity-100">
-                  <FiCamera className="text-2xl" />
-                </div>
-                {/* Hidden file input */}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                />
-              </div>
-              {uploadError && (
-                <p className="text-red-600 text-sm mt-2 text-center">{uploadError}</p>
-              )}
-            </div>
-
-            <div className="pt-40">
-              <h2 className="text-5xl font-extrabold text-[#001F5B] text-center mb-12">
-                {formData.fullname}
-              </h2>
-
-              {/* Personal Details */}
-              <div className="grid md:grid-cols-2 gap-10 mb-16">
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <FiUser className="text-[#E30613] text-xl" /> Full Name
-                  </label>
-                  <input
-                    name="fullname"
-                    value={formData.fullname}
-                    onChange={handleChange}
-                    className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <FiMail className="text-[#E30613] text-xl" /> Email Address
-                  </label>
-                  <input
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <FiPhone className="text-[#E30613] text-xl" /> Phone Number
-                  </label>
-                  <input
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <FiHome className="text-[#E30613] text-xl" /> Residential Address
-                  </label>
-                  <input
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-                  />
-                </div>
-
-                {/* Read-only */}
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">Staff ID</label>
-                  <div className="w-full px-6 py-5 bg-gray-100 border-2 border-gray-200 rounded-2xl text-xl text-gray-700">
-                    {formData.staffId}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-medium text-gray-700">Retirement Year</label>
-                  <div className="w-full px-6 py-5 bg-gray-100 border-2 border-gray-200 rounded-2xl text-xl text-gray-700">
-                    {formData.dateOfRetirement}
-                  </div>
-                </div>
-              </div>
-
-              {/* Change Password Section */}
-              <div className="mt-16 pt-12 border-t-2 border-gray-200">
-                <h3 className="text-3xl font-bold text-[#001F5B] mb-10 text-center">
-                  Change Password
-                </h3>
-                <div className="grid md:grid-cols-3 gap-8">
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <FiLock className="text-[#E30613] text-xl" /> Current Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showCurrentPass ? "text" : "password"}
-                        name="currentPassword"
-                        value={passwordData.currentPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] pr-12"
-                        placeholder="••••••••"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowCurrentPass(!showCurrentPass)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613]"
-                      >
-                        {showCurrentPass ? <FiEyeOff /> : <FiEye />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <FiLock className="text-[#E30613] text-xl" /> New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showNewPass ? "text" : "password"}
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] pr-12"
-                        placeholder="New password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPass(!showNewPass)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613]"
-                      >
-                        {showNewPass ? <FiEyeOff /> : <FiEye />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <FiLock className="text-[#E30613] text-xl" /> Confirm New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showConfirmPass ? "text" : "password"}
-                        name="confirmPassword"
-                        value={passwordData.confirmPassword}
-                        onChange={handlePasswordChange}
-                        className="w-full px-6 py-5 border-2 border-gray-200 rounded-2xl text-xl focus:border-[#E30613] pr-12"
-                        placeholder="Confirm password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPass(!showConfirmPass)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613]"
-                      >
-                        {showConfirmPass ? <FiEyeOff /> : <FiEye />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {passwordError && (
-                  <p className="text-red-600 text-center mt-6 font-medium text-lg">{passwordError}</p>
-                )}
-
-                <div className="mt-12 text-center">
-                  <button
-                    onClick={handleChangePassword}
-                    disabled={saving}
-                    className="bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-xl px-16 py-6 rounded-full shadow-2xl transition transform hover:scale-110 flex items-center gap-4 mx-auto"
-                  >
-                    <FiLock className="text-2xl" />
-                    Change Password
-                  </button>
-                </div>
-              </div>
-
-              {/* Save & Delete */}
-              <div className="mt-20 flex flex-col sm:flex-row gap-6 justify-center">
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={saving}
-                  className="flex-1 bg-gradient-to-r from-[#E30613] to-[#c20511] hover:from-[#c20511] hover:to-[#E30613] text-white font-bold text-2xl py-6 px-12 rounded-2xl shadow-2xl transition transform hover:scale-105 disabled:opacity-70 flex items-center justify-center gap-4"
-                >
-                  <FiSave className="text-3xl" />
-                  {saving ? 'Saving...' : 'Save Changes'}
-                </button>
-
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="flex-1 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-2xl py-6 px-12 rounded-2xl shadow-2xl transition transform hover:scale-105 flex items-center justify-center gap-4"
-                >
-                  <FiTrash2 className="text-3xl" />
-                  Delete Account
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Delete Modal */}
-          {showDeleteModal && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-              <div className="bg-white rounded-3xl p-12 max-w-lg w-full shadow-2xl">
-                <div className="text-center mb-8">
-                  <FiAlertTriangle className="text-8xl text-red-600 mx-auto mb-6" />
-                  <h3 className="text-3xl font-bold text-[#001F5B] mb-4">Delete Account?</h3>
-                  <p className="text-xl text-gray-700 mb-8">
-                    This action is **permanent** and cannot be undone. All your data will be removed.
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-6">
-                  <button
-                    onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-5 rounded-2xl transition text-xl"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-5 rounded-2xl transition text-xl shadow-lg"
-                  >
-                    Yes, Delete My Account
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Back */}
-          <div className="text-center mt-16">
-            <NavLink
-              to={`/dashboard/${id}`}
-              className="inline-flex items-center gap-4 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-2xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110"
-            >
-              ← Back to Dashboard
-            </NavLink>
-          </div>
+  // ── Shared card sections ─────────────────────────────────────────────────
+  const ProfileContent = () => (
+    <div>
+      {/* Save success banner */}
+      {saveSuccess && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold text-lg animate-bounce">
+          ✓ Profile saved successfully!
         </div>
-<div className="hidden max-lg:block max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-  {/* Premium Header – smaller on mobile */}
-  <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 lg:p-12 mb-10 sm:mb-12 lg:mb-16 shadow-xl sm:shadow-2xl overflow-hidden">
-    <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
-    <div className="relative z-10 text-center">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 drop-shadow-lg">
-        My Profile
-      </h1>
-      <p className="text-lg sm:text-xl lg:text-2xl opacity-90">
-        Update your details, change password, and manage your EMRAN account
-      </p>
-    </div>
-  </div>
-
-  {/* Profile Card – reduced padding, stacked on mobile */}
-  <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl p-6 sm:p-8 lg:p-10 mb-10 sm:mb-12 lg:mb-16 relative">
-    {/* Avatar – smaller on mobile */}
-    <div className="absolute -top-16 sm:-top-20 left-1/2 transform -translate-x-1/2">
-      <div className="relative group cursor-pointer" onClick={triggerFileInput}>
-        <img
-          src={formData.profilePhoto}
-          alt={formData.fullname}
-          className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-full object-cover border-6 sm:border-8 border-white shadow-2xl ring-2 sm:ring-4 ring-[#E30613]/40 transition group-hover:opacity-80"
-          onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname)}&background=001F5B&color=fff&size=256`}
-        />
-        <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 bg-[#E30613] p-3 sm:p-4 rounded-full text-white shadow-lg hover:bg-[#c20511] transition opacity-90 group-hover:opacity-100">
-          <FiCamera className="text-xl sm:text-2xl" />
-        </div>
-        {/* Hidden file input */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-          onChange={handleImageSelect}
-          className="hidden"
-        />
-      </div>
-      {uploadError && (
-        <p className="text-red-600 text-xs sm:text-sm mt-2 text-center">{uploadError}</p>
       )}
-    </div>
 
-    <div className="pt-24 sm:pt-32 lg:pt-40">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#001F5B] text-center mb-8 sm:mb-10 lg:mb-12">
-        {formData.fullname}
-      </h2>
-
-      {/* Personal Details – 1 column on mobile, 2 on md+ */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 mb-10 sm:mb-12 lg:mb-16">
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-            <FiUser className="text-[#E30613] text-lg sm:text-xl" /> Full Name
-          </label>
-          <input
-            name="fullname"
-            value={formData.fullname}
-            onChange={handleChange}
-            className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-          />
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-            <FiMail className="text-[#E30613] text-lg sm:text-xl" /> Email Address
-          </label>
-          <input
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-          />
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-            <FiPhone className="text-[#E30613] text-lg sm:text-xl" /> Phone Number
-          </label>
-          <input
-            name="phone"
-            type="tel"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-          />
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-            <FiHome className="text-[#E30613] text-lg sm:text-xl" /> Residential Address
-          </label>
-          <input
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition shadow-sm"
-          />
-        </div>
-
-        {/* Read-only fields */}
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700">Staff ID</label>
-          <div className="w-full px-4 sm:px-6 py-4 sm:py-5 bg-gray-100 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl text-gray-700">
-            {formData.staffId}
-          </div>
-        </div>
-
-        <div className="space-y-3 sm:space-y-4">
-          <label className="block text-sm sm:text-base font-medium text-gray-700">Retirement Year</label>
-          <div className="w-full px-4 sm:px-6 py-4 sm:py-5 bg-gray-100 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl text-gray-700">
-            {formData.dateOfRetirement}
-          </div>
+      {/* ── SECTION 1: Basic Info ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiUser} title="Personal Information" subtitle="Update your basic contact details" />
+        <div className="grid md:grid-cols-2 gap-6">
+          <Field label="Full Name" icon={FiUser}>
+            <input name="fullname" value={formData.fullname} onChange={handleChange} className={inputCls} />
+          </Field>
+          <Field label="Email Address" icon={FiMail}>
+            <input name="email" type="email" value={formData.email} onChange={handleChange} className={inputCls} />
+          </Field>
+          <Field label="Phone Number" icon={FiPhone}>
+            <PhoneField value={formData.phone} onChange={(v) => setFormData(p => ({ ...p, phone: v }))} />
+          </Field>
+          <Field label="Residential Address" icon={FiHome}>
+            <input name="address" value={formData.address} onChange={handleChange} className={inputCls} />
+          </Field>
+          <Field label="Staff ID">
+            <div className={readOnlyCls}>{formData.staffId}</div>
+          </Field>
+          <Field label="Date of Retirement" icon={FiCalendar}>
+            <div className={readOnlyCls}>{formData.dateOfRetirement}</div>
+          </Field>
         </div>
       </div>
 
-      {/* Change Password Section – smaller on mobile */}
-      <div className="mt-10 sm:mt-12 lg:mt-16 pt-8 sm:pt-10 lg:pt-12 border-t-2 border-gray-200">
-        <h3 className="text-2xl sm:text-3xl lg:text-3xl font-bold text-[#001F5B] mb-6 sm:mb-8 lg:mb-10 text-center">
-          Change Password
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-          <div className="space-y-3 sm:space-y-4">
-            <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-              <FiLock className="text-[#E30613] text-lg sm:text-xl" /> Current Password
-            </label>
-            <div className="relative">
-              <input
-                type={showCurrentPass ? "text" : "password"}
-                name="currentPassword"
-                value={passwordData.currentPassword}
-                onChange={handlePasswordChange}
-                className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] pr-10 sm:pr-12"
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                onClick={() => setShowCurrentPass(!showCurrentPass)}
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613] text-lg sm:text-xl"
-              >
-                {showCurrentPass ? <FiEyeOff /> : <FiEye />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-3 sm:space-y-4">
-            <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-              <FiLock className="text-[#E30613] text-lg sm:text-xl" /> New Password
-            </label>
-            <div className="relative">
-              <input
-                type={showNewPass ? "text" : "password"}
-                name="newPassword"
-                value={passwordData.newPassword}
-                onChange={handlePasswordChange}
-                className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] pr-10 sm:pr-12"
-                placeholder="New password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowNewPass(!showNewPass)}
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613] text-lg sm:text-xl"
-              >
-                {showNewPass ? <FiEyeOff /> : <FiEye />}
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-3 sm:space-y-4">
-            <label className="block text-sm sm:text-base font-medium text-gray-700 flex items-center gap-2">
-              <FiLock className="text-[#E30613] text-lg sm:text-xl" /> Confirm New Password
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPass ? "text" : "password"}
-                name="confirmPassword"
-                value={passwordData.confirmPassword}
-                onChange={handlePasswordChange}
-                className="w-full px-4 sm:px-6 py-4 sm:py-5 border-2 border-gray-200 rounded-xl sm:rounded-2xl text-base sm:text-xl focus:border-[#E30613] pr-10 sm:pr-12"
-                placeholder="Confirm password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPass(!showConfirmPass)}
-                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#E30613] text-lg sm:text-xl"
-              >
-                {showConfirmPass ? <FiEyeOff /> : <FiEye />}
-              </button>
-            </div>
-          </div>
+      {/* ── SECTION 2: Retirement Info ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiBriefcase} title="Retirement Details" subtitle="Your company and location at retirement" />
+        <div className="grid md:grid-cols-3 gap-6">
+          <Field label="Company at Retirement" icon={FiBriefcase}>
+            <select name="companyAtRetirement" value={formData.companyAtRetirement} onChange={handleChange} className={selectCls}>
+              <option value="">Select company</option>
+              <option value="MPN">MPN</option>
+              <option value="EEPNL">EEPNL</option>
+            </select>
+          </Field>
+          <Field label="Location at Retirement" icon={FiMapPin}>
+            <select name="locationOfRetirement" value={formData.locationOfRetirement} onChange={handleChange} className={selectCls}>
+              <option value="">Select location</option>
+              {['Lagos','QIT/Eket','Port Harcourt/Onne','Bonny','USA','Europe','Asia'].map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Department at Retirement" icon={FiBriefcase}>
+            <input name="departmentOfRetirement" value={formData.departmentOfRetirement} onChange={handleChange}
+              placeholder="e.g., Production, Finance..." className={inputCls} />
+          </Field>
         </div>
+      </div>
 
+      {/* ── SECTION 3: Spouse ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiHeart} title="Spouse Information" subtitle="Your spouse's contact details (if applicable)" />
+        <div className="grid md:grid-cols-2 gap-6">
+          <Field label="Spouse Full Name" icon={FiHeart}>
+            <input name="spouse" value={formData.spouse} onChange={handleChange}
+              placeholder="Spouse's full name" className={inputCls} />
+          </Field>
+          <Field label="Spouse Phone Number" icon={FiPhone}>
+            <PhoneField value={formData.spousePhone} onChange={(v) => setFormData(p => ({ ...p, spousePhone: v }))} />
+          </Field>
+        </div>
+      </div>
+
+      {/* ── SECTION 4: Next of Kin ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiUsers} title="Next of Kin" subtitle="Emergency contact information" />
+        <div className="grid md:grid-cols-3 gap-6">
+          <Field label="Full Name" icon={FiUser}>
+            <input name="nextOfKin" value={formData.nextOfKin} onChange={handleChange}
+              placeholder="Next of kin name" className={inputCls} />
+          </Field>
+          <Field label="Email Address" icon={FiMail}>
+            <input name="nextOfKinEmail" type="email" value={formData.nextOfKinEmail} onChange={handleChange}
+              placeholder="next-of-kin@email.com" className={inputCls} />
+          </Field>
+          <Field label="Phone Number" icon={FiPhone}>
+            <PhoneField value={formData.nextOfKinPhone} onChange={(v) => setFormData(p => ({ ...p, nextOfKinPhone: v }))} />
+          </Field>
+        </div>
+      </div>
+
+      {/* ── SECTION 5: Beneficiary ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiUsers} title="Beneficiary" subtitle="Who receives benefits on your behalf" />
+        <div className="grid md:grid-cols-3 gap-6">
+          <Field label="Full Name" icon={FiUser}>
+            <input name="beneficiary" value={formData.beneficiary} onChange={handleChange}
+              placeholder="Beneficiary name" className={inputCls} />
+          </Field>
+          <Field label="Email Address" icon={FiMail}>
+            <input name="beneficiaryEmail" type="email" value={formData.beneficiaryEmail} onChange={handleChange}
+              placeholder="beneficiary@email.com" className={inputCls} />
+          </Field>
+          <Field label="Phone Number" icon={FiPhone}>
+            <PhoneField value={formData.beneficiaryPhone} onChange={(v) => setFormData(p => ({ ...p, beneficiaryPhone: v }))} />
+          </Field>
+        </div>
+      </div>
+
+      {/* ── SECTION 6: Change Password ── */}
+      <div className="bg-white rounded-3xl shadow-lg p-8 mb-6">
+        <SectionHeader icon={FiLock} title="Change Password" subtitle="Update your account password" />
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { label: 'Current Password', name: 'currentPassword', show: showCurrentPass, toggle: () => setShowCurrentPass(p => !p) },
+            { label: 'New Password', name: 'newPassword', show: showNewPass, toggle: () => setShowNewPass(p => !p) },
+            { label: 'Confirm New Password', name: 'confirmPassword', show: showConfirmPass, toggle: () => setShowConfirmPass(p => !p) },
+          ].map(({ label, name, show, toggle }) => (
+            <Field key={name} label={label} icon={FiLock}>
+              <div className="relative">
+                <input type={show ? 'text' : 'password'} name={name}
+                  value={passwordData[name]} onChange={handlePasswordChange}
+                  className={inputCls + ' pr-12'}
+                  placeholder="••••••••" />
+                <button type="button" onClick={toggle}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E30613]">
+                  {show ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </div>
+            </Field>
+          ))}
+        </div>
         {passwordError && (
-          <p className="text-red-600 text-center mt-4 sm:mt-6 font-medium text-base sm:text-lg">{passwordError}</p>
+          <p className="text-red-600 font-medium mt-4 text-center">{passwordError}</p>
         )}
-
-        <div className="mt-8 sm:mt-10 lg:mt-12 text-center">
-          <button
-            onClick={handleChangePassword}
-            disabled={saving}
-            className="bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-lg sm:text-xl px-10 sm:px-14 lg:px-16 py-4 sm:py-5 lg:py-6 rounded-full sm:rounded-2xl shadow-xl sm:shadow-2xl transition transform hover:scale-105 flex items-center justify-center gap-3 mx-auto w-full sm:w-auto"
-          >
-            <FiLock className="text-xl sm:text-2xl" />
-            Change Password
+        <div className="mt-6 text-center">
+          <button onClick={handleChangePassword} disabled={saving}
+            className="bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-lg px-12 py-4 rounded-full shadow-lg transition hover:scale-105 inline-flex items-center gap-3 disabled:opacity-60">
+            <FiLock /> Change Password
           </button>
         </div>
       </div>
 
-      {/* Save & Delete – full-width on mobile */}
-      <div className="mt-12 sm:mt-16 lg:mt-20 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
-        <button
-          onClick={handleSaveProfile}
-          disabled={saving}
-          className="flex-1 bg-gradient-to-r from-[#E30613] to-[#c20511] hover:from-[#c20511] hover:to-[#E30613] text-white font-bold text-lg sm:text-2xl py-5 sm:py-6 px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl transition transform hover:scale-105 disabled:opacity-70 flex items-center justify-center gap-3"
-        >
-          <FiSave className="text-2xl sm:text-3xl" />
-          {saving ? 'Saving...' : 'Save Changes'}
+      {/* ── Save & Delete ── */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button onClick={handleSaveProfile} disabled={saving}
+          className="flex-1 bg-gradient-to-r from-[#E30613] to-[#c20511] hover:from-[#c20511] hover:to-[#E30613] text-white font-bold text-xl py-5 px-10 rounded-2xl shadow-xl transition hover:scale-105 disabled:opacity-60 flex items-center justify-center gap-3">
+          <FiSave className="text-2xl" />
+          {saving ? 'Saving...' : 'Save All Changes'}
         </button>
-
-        <button
-          onClick={() => setShowDeleteModal(true)}
-          className="flex-1 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-lg sm:text-2xl py-5 sm:py-6 px-8 sm:px-12 rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl transition transform hover:scale-105 flex items-center justify-center gap-3"
-        >
-          <FiTrash2 className="text-2xl sm:text-3xl" />
-          Delete Account
+        <button onClick={() => setShowDeleteModal(true)}
+          className="flex-1 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-xl py-5 px-10 rounded-2xl shadow-xl transition hover:scale-105 flex items-center justify-center gap-3">
+          <FiTrash2 className="text-2xl" /> Delete Account
         </button>
       </div>
     </div>
+  );
 
-    {/* Delete Modal – responsive */}
-    {showDeleteModal && (
-      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-12 max-w-md sm:max-w-lg w-full shadow-2xl">
-          <div className="text-center mb-6 sm:mb-8">
-            <FiAlertTriangle className="text-6xl sm:text-8xl text-red-600 mx-auto mb-4 sm:mb-6" />
-            <h3 className="text-2xl sm:text-3xl font-bold text-[#001F5B] mb-3 sm:mb-4">Delete Account?</h3>
-            <p className="text-base sm:text-xl text-gray-700">
-              This action is **permanent** and cannot be undone. All your data will be removed.
-            </p>
+  return (
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20">
+
+        {/* ─── DESKTOP ─── */}
+        <div className="max-lg:hidden max-w-5xl mx-auto px-6">
+          {/* Header banner */}
+          <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl overflow-hidden">
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
+            <div className="relative z-10 text-center">
+              <h1 className="text-5xl font-extrabold mb-3">My Profile</h1>
+              <p className="text-xl opacity-90">Manage your EMRAN account details</p>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-            <button
-              onClick={() => setShowDeleteModal(false)}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 sm:py-5 rounded-xl sm:rounded-2xl transition text-lg sm:text-xl"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-4 sm:py-5 rounded-xl sm:rounded-2xl transition text-lg sm:text-xl shadow-lg"
-            >
-              Yes, Delete My Account
-            </button>
+          {/* Avatar card */}
+          <div className="bg-white rounded-3xl shadow-2xl p-10 mb-8 relative">
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2">
+              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
+                <img src={formData.profilePhoto} alt={formData.fullname}
+                  className="w-40 h-40 rounded-full object-cover border-8 border-white shadow-2xl ring-4 ring-[#E30613]/40 group-hover:opacity-80 transition"
+                  onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname)}&background=001F5B&color=fff&size=256`} />
+                <div className="absolute bottom-1 right-1 bg-[#E30613] p-3 rounded-full text-white shadow-lg hover:bg-[#c20511] transition">
+                  <FiCamera className="text-xl" />
+                </div>
+                <input type="file" ref={fileInputRef} accept="image/jpeg,image/jpg,image/png,image/svg+xml"
+                  onChange={handleImageSelect} className="hidden" />
+              </div>
+              {uploadError && <p className="text-red-600 text-sm mt-2 text-center">{uploadError}</p>}
+            </div>
+            <div className="pt-28 text-center">
+              <h2 className="text-4xl font-extrabold text-[#001F5B] mb-1">{formData.fullname}</h2>
+              <p className="text-gray-500 text-lg">EMRAN Member</p>
+            </div>
+          </div>
+
+          <ProfileContent />
+
+          <div className="text-center mt-10">
+            <NavLink to={`/dashboard/${id}`}
+              className="inline-flex items-center gap-3 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-xl px-14 py-6 rounded-full shadow-2xl transition hover:scale-105">
+              ← Back to Dashboard
+            </NavLink>
+          </div>
+        </div>
+
+        {/* ─── MOBILE ─── */}
+        <div className="hidden max-lg:block max-w-5xl mx-auto px-4">
+          <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl p-8 mb-8 shadow-xl overflow-hidden">
+            <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
+            <div className="relative z-10 text-center">
+              <h1 className="text-3xl font-extrabold mb-2">My Profile</h1>
+              <p className="text-base opacity-90">Manage your EMRAN account</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-6 mb-6 relative">
+            <div className="absolute -top-14 left-1/2 -translate-x-1/2">
+              <div className="relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
+                <img src={formData.profilePhoto} alt={formData.fullname}
+                  className="w-28 h-28 rounded-full object-cover border-6 border-white shadow-xl ring-2 ring-[#E30613]/40 group-hover:opacity-80 transition"
+                  onError={(e) => e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname)}&background=001F5B&color=fff&size=256`} />
+                <div className="absolute bottom-0 right-0 bg-[#E30613] p-2 rounded-full text-white shadow-lg">
+                  <FiCamera className="text-base" />
+                </div>
+                <input type="file" ref={fileInputRef} accept="image/jpeg,image/jpg,image/png,image/svg+xml"
+                  onChange={handleImageSelect} className="hidden" />
+              </div>
+              {uploadError && <p className="text-red-600 text-xs mt-2 text-center">{uploadError}</p>}
+            </div>
+            <div className="pt-20 text-center">
+              <h2 className="text-2xl font-extrabold text-[#001F5B]">{formData.fullname}</h2>
+              <p className="text-gray-500">EMRAN Member</p>
+            </div>
+          </div>
+
+          <ProfileContent />
+
+          <div className="text-center mt-8">
+            <NavLink to={`/dashboard/${id}`}
+              className="inline-flex items-center gap-3 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-lg px-10 py-5 rounded-full shadow-xl transition hover:scale-105">
+              ← Back to Dashboard
+            </NavLink>
           </div>
         </div>
       </div>
-    )}
 
-    {/* Back Button */}
-    <div className="text-center mt-12 sm:mt-16">
-      <NavLink
-        to={`/dashboard/${id}`}
-        className="inline-flex items-center gap-3 sm:gap-4 bg-[#001F5B] hover:bg-[#001845] text-white font-bold text-lg sm:text-2xl px-10 sm:px-16 py-5 sm:py-8 rounded-full shadow-xl sm:shadow-2xl transition transform hover:scale-105"
-      >
-        ← Back to Dashboard
-      </NavLink>
-    </div>
-  </div>
-</div>
-
-        
-      </div>
+      {/* ── Delete Modal ── */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl">
+            <div className="text-center mb-6">
+              <FiAlertTriangle className="text-7xl text-red-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-[#001F5B] mb-3">Delete Account?</h3>
+              <p className="text-gray-700">This action is <strong>permanent</strong> and cannot be undone.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button onClick={() => setShowDeleteModal(false)}
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-2xl transition">
+                Cancel
+              </button>
+              <button onClick={handleDelete}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-2xl transition shadow-lg">
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </>
   );
-
 };
 
 export default Profile;
