@@ -207,73 +207,144 @@ const Header = ({isOpen, notifications = []}) => {
           </button>
         </div>
 
-        
-{/* Mobile Menu Overlay */}
-{mobileMenuOpen && (
-  <div className="fixed inset-0 bg-[#001F5B] z-50 pt-20 px-6 overflow-y-auto pb-10">
+        {/* Mobile Header */}
+<header className="fixed top-0 left-0 right-0 bg-[#001F5B] z-40 lg:hidden">
+  <div className="flex items-center justify-between px-5 py-3">
     
+    <NavLink to="/">
+      <img
+        src={exxonLogo}
+        alt="ExxonMobil"
+        className="h-10 rounded-full"
+      />
+    </NavLink>
+
     <button
-      onClick={() => setMobileMenuOpen(false)}
-      className="absolute top-4 right-5 text-white text-3xl"
+      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      className="text-white text-2xl"
     >
-      <FiX />
+      {mobileMenuOpen ? <FiX /> : <FiMenu />}
     </button>
 
-    <nav className="space-y-6 text-xl">
+  </div>
 
-      <NavLink
-        to="/"
+  {/* Mobile Menu Overlay */}
+  {mobileMenuOpen && (
+
+    <div className="fixed inset-0 bg-[#001F5B] z-50 pt-16 px-5 overflow-y-auto">
+
+      {/* Close Button */}
+      <button
         onClick={() => setMobileMenuOpen(false)}
-        className="block text-white py-3 border-b border-gray-700"
+        className="absolute top-4 right-5 text-white text-2xl"
       >
-        Home
-      </NavLink>
+        <FiX />
+      </button>
 
-      {/* remaining links */}
-      
-   <NavLink to="/benefits" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
-            Benefits  
-          </NavLink>  
-          <NavLink to="/resources" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
-            Resources  
-          </NavLink>  
-          <NavLink to="/newsevents" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
-            News & Events  
-          </NavLink>  
-          <NavLink to="/support" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
-            Support  
-          </NavLink>  
-          <NavLink to="/faqs" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
-            FAQS  
-          </NavLink>  
+      <nav className="space-y-3 text-lg">
 
-      <div className="pt-8 space-y-4">
-        {isLoggedIn ? (
-          <>
-            <button
-              onClick={() => navigate(`/dashboard/${userData._id}`)}
-              className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg"
-            >
-              My Dashboard
-            </button>
+        <NavLink
+          to="/"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          Home
+        </NavLink>
 
-            <button
-              onClick={handleLogout}
-              className="w-full text-white py-3 text-center border border-white rounded-xl"
-            >
-              Sign Out
-            </button>
-          </>
-        ) : (
-                  <>
-                    <button onClick={() => { navigate('/signin'); setMobileMenuOpen(false); }} className="w-full bg-white text-[#001F5B] py-4 rounded-xl font-bold text-lg">
-                      Sign In
-                    </button>
-                    <button onClick={() => { navigate('/signup'); setMobileMenuOpen(false); }} className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg">
-                      Register
-                    </button>
-                  </>
-                )}
+        <NavLink
+          to="/benefits"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          Benefits
+        </NavLink>
+
+        <NavLink
+          to="/resources"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          Resources
+        </NavLink>
+
+        <NavLink
+          to="/newsevents"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          News & Events
+        </NavLink>
+
+        <NavLink
+          to="/support"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          Support
+        </NavLink>
+
+        <NavLink
+          to="/faqs"
+          onClick={() => setMobileMenuOpen(false)}
+          className="block text-white py-2 border-b border-gray-700"
+        >
+          FAQS
+        </NavLink>
+
+        {/* Auth Area */}
+
+        <div className="pt-5 space-y-3 pb-10">
+
+          {isLoggedIn ? (
+
+            <>
+
+              <button
+                onClick={() => navigate(`/dashboard/${userData._id}`)}
+                className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+              >
+                My Dashboard
+              </button>
+
+              <button
+                onClick={handleLogout}
+                className="w-full text-white py-3 border border-white rounded-xl text-base"
+              >
+                Sign Out
+              </button>
+
+            </>
+
+          ) : (
+
+            <>
+
+              <button
+                onClick={() => {
+                  navigate('/signin');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-white text-[#001F5B] py-3 rounded-xl font-semibold text-base"
+              >
+                Sign In
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate('/signup');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+              >
+                Register
+              </button>
+
+            </>
+
+          )}
+
+
+
               </div>
             </nav>
           </div>
