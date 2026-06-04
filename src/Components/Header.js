@@ -207,48 +207,48 @@ const Header = ({isOpen, notifications = []}) => {
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 bg-[#001F5B] z-50 pt-20 px-6">
-            <button
-            onClick={() => setMobileMenuOpen(false)}
-            className="absolute top-4 right-5 text-white text-3xl"
-          >
-            <FiX />
-            </button>
-            <nav className="space-y-6 text-xl">
-              <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                Home
-              </NavLink>
-              <NavLink to="/benefits" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                Benefits
-              </NavLink>
-              <NavLink to="/resources" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                Resources
-              </NavLink>
-              <NavLink to="/newsevents" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                News & Events
-              </NavLink>
-              <NavLink to="/support" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                Support
-              </NavLink>
-              <NavLink to="/faqs" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">
-                FAQS
-              </NavLink>
+        
+{/* Mobile Menu Overlay */}
+{mobileMenuOpen && (
+  <div className="fixed inset-0 bg-[#001F5B] z-50 pt-20 px-6 overflow-y-auto pb-10">
+    
+    <button
+      onClick={() => setMobileMenuOpen(false)}
+      className="absolute top-4 right-5 text-white text-3xl"
+    >
+      <FiX />
+    </button>
 
-              <div className="pt-8 space-y-4">
-                {isLoggedIn ? (
-                  <>
-                    <button 
-                     onClick={() => navigate( `/dashboard/${userData._id}`)}
-                    className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg">
-                      My Dashboard
-                    </button>
-                    <button onClick={handleLogout} className="w-full text-white py-3 text-center border border-white rounded-xl">
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
+    <nav className="space-y-6 text-xl">
+
+      <NavLink
+        to="/"
+        onClick={() => setMobileMenuOpen(false)}
+        className="block text-white py-3 border-b border-gray-700"
+      >
+        Home
+      </NavLink>
+
+      {/* remaining links */}
+
+      <div className="pt-8 space-y-4">
+        {isLoggedIn ? (
+          <>
+            <button
+              onClick={() => navigate(`/dashboard/${userData._id}`)}
+              className="w-full bg-[#E30613] text-white py-4 rounded-xl font-bold text-lg"
+            >
+              My Dashboard
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="w-full text-white py-3 text-center border border-white rounded-xl"
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
                   <>
                     <button onClick={() => { navigate('/signin'); setMobileMenuOpen(false); }} className="w-full bg-white text-[#001F5B] py-4 rounded-xl font-bold text-lg">
                       Sign In
