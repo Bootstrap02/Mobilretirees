@@ -1,3 +1,4 @@
+
 // components/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -5,39 +6,35 @@ import { FiMenu, FiX, FiBell, FiUser, FiLogOut } from 'react-icons/fi';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg'; // White logo on transparent
 import axios from "axios";
 
-const Header = ({isOpen, notifications = []}) => {
+const Header = ({ isOpen, notifications = [] }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-
   // === API CALLS — RUN ONCE ON MOUNT ===
   useEffect(() => {
-           
-     
-      const fetchusers = async () => {
-          try {
-            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateadmin/getusers');
-            localStorage.setItem('allusers', JSON.stringify(res.data.users || []));
+    const fetchusers = async () => {
+      try {
+        const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateadmin/getusers');
+        localStorage.setItem('allusers', JSON.stringify(res.data.users || []));
+      } catch (err) {
+        console.error('Failed to load users:', err);
+      }
+    };
+    
+    const fetchofficials = async () => {
+      try {
+        const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getofficials');
+        localStorage.setItem('allofficials', JSON.stringify(res.data.officials || []));
+      } catch (err) {
+        console.error('Failed to load officials:', err);
+      }
+    };
+    
+    fetchusers();
+    fetchofficials();
+  }, []); // Empty array = once on mount
 
-          } catch (err) {
-            console.error('Failed to load users:', err);
-          }
-        };
-      const fetchofficials = async () => {
-          try {
-            const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getofficials');
-            localStorage.setItem('allofficials', JSON.stringify(res.data.officials || []));
-
-          } catch (err) {
-            console.error('Failed to load officials:', err);
-          }
-        };
-      
-        
-        fetchusers();
-        fetchofficials();
-    }, []); // Empty array = once on mount
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
   const isLoggedIn = !!userData;
@@ -50,7 +47,7 @@ const Header = ({isOpen, notifications = []}) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
- 
+
   const handleLogout = () => {
     localStorage.removeItem('userData');
     localStorage.clear(); // Or selectively clear
@@ -61,12 +58,11 @@ const Header = ({isOpen, notifications = []}) => {
   return (
     <>
       {/* Desktop Header */}
-<header className={`hidden lg:block fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-  scrolled 
-    ? 'bg-white shadow-lg py-3' 
-    : 'bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] py-5'
-}`}>
-
+      <header className={`hidden lg:block fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white shadow-lg py-3' 
+          : 'bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] py-5'
+      }`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           
           {/* Logo */}
@@ -143,24 +139,23 @@ const Header = ({isOpen, notifications = []}) => {
           {/* Right Side: Auth + Icons */}
           <div className="flex items-center space-x-6">
             {/* Notifications */}
-         
-<button 
-  onClick={isOpen} // Uses prop from Homepage
-  className="relative"
->
-  <FiBell className={`text-2xl ${scrolled ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613] transition`} />
-  {notifications?notifications.filter(n => !n.read).length > 0 && (
-    <span className="absolute -top-1 -right-1 bg-[#E30613] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
-      {notifications.filter(n => !n.read).length}
-    </span>
-  ):null}
-</button>
+            <button 
+              onClick={isOpen} // Uses prop from Homepage
+              className="relative"
+            >
+              <FiBell className={`text-2xl ${scrolled ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613] transition`} />
+              {notifications && notifications.filter(n => !n.read).length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#E30613] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+                  {notifications.filter(n => !n.read).length}
+                </span>
+              )}
+            </button>
 
             {/* User Menu */}
             {isLoggedIn && userData && userData.role === "member" ? (
               <div className="flex items-center space-x-4">
                 <button 
-                  onClick={() => navigate( `/dashboard/${userData._id}`)}
+                  onClick={() => navigate(`/dashboard/${userData._id}`)}
                   className="flex items-center gap-2 bg-[#E30613] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#c20511] transition shadow-md"
                 >
                   <FiUser /> My Dashboard
@@ -194,157 +189,118 @@ const Header = ({isOpen, notifications = []}) => {
 
       {/* Mobile Header */}
       <header className="fixed top-0 left-0 right-0 bg-[#001F5B] z-40 lg:hidden">
-        <div className="flex items-center justify-between px-5 py-4">
+        <div className="flex items-center justify-between px-5 py-3">
           <NavLink to="/">
-            <img src={exxonLogo} alt="ExxonMobil" className="h-11  rounded-full" />
+            <img src={exxonLogo} alt="ExxonMobil" className="h-10 rounded-full" />
           </NavLink>
 
-          <button 
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white text-3xl"
+            className="text-white text-2xl"
           >
             {mobileMenuOpen ? <FiX /> : <FiMenu />}
           </button>
         </div>
 
-        {/* Mobile Header */}
-<header className="fixed top-0 left-0 right-0 bg-[#001F5B] z-40 lg:hidden">
-  <div className="flex items-center justify-between px-5 py-3">
-    
-    <NavLink to="/">
-      <img
-        src={exxonLogo}
-        alt="ExxonMobil"
-        className="h-10 rounded-full"
-      />
-    </NavLink>
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 bg-[#001F5B] z-50 pt-16 px-5 overflow-y-auto">
+            {/* Close Button */}
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="absolute top-4 right-5 text-white text-2xl"
+            >
+              <FiX />
+            </button>
 
-    <button
-      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      className="text-white text-2xl"
-    >
-      {mobileMenuOpen ? <FiX /> : <FiMenu />}
-    </button>
-
-  </div>
-
-  {/* Mobile Menu Overlay */}
-  {mobileMenuOpen && (
-
-    <div className="fixed inset-0 bg-[#001F5B] z-50 pt-16 px-5 overflow-y-auto">
-
-      {/* Close Button */}
-      <button
-        onClick={() => setMobileMenuOpen(false)}
-        className="absolute top-4 right-5 text-white text-2xl"
-      >
-        <FiX />
-      </button>
-
-      <nav className="space-y-3 text-lg">
-
-        <NavLink
-          to="/"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          Home
-        </NavLink>
-
-        <NavLink
-          to="/benefits"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          Benefits
-        </NavLink>
-
-        <NavLink
-          to="/resources"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          Resources
-        </NavLink>
-
-        <NavLink
-          to="/newsevents"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          News & Events
-        </NavLink>
-
-        <NavLink
-          to="/support"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          Support
-        </NavLink>
-
-        <NavLink
-          to="/faqs"
-          onClick={() => setMobileMenuOpen(false)}
-          className="block text-white py-2 border-b border-gray-700"
-        >
-          FAQS
-        </NavLink>
-
-        {/* Auth Area */}
-
-        <div className="pt-5 space-y-3 pb-10">
-
-          {isLoggedIn ? (
-
-            <>
-
-              <button
-                onClick={() => navigate(`/dashboard/${userData._id}`)}
-                className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+            <nav className="space-y-3 text-lg">
+              <NavLink
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
               >
-                My Dashboard
-              </button>
+                Home
+              </NavLink>
 
-              <button
-                onClick={handleLogout}
-                className="w-full text-white py-3 border border-white rounded-xl text-base"
+              <NavLink
+                to="/benefits"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
               >
-                Sign Out
-              </button>
+                Benefits
+              </NavLink>
 
-            </>
-
-          ) : (
-
-            <>
-
-              <button
-                onClick={() => {
-                  navigate('/signin');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full bg-white text-[#001F5B] py-3 rounded-xl font-semibold text-base"
+              <NavLink
+                to="/resources"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
               >
-                Sign In
-              </button>
+                Resources
+              </NavLink>
 
-              <button
-                onClick={() => {
-                  navigate('/signup');
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+              <NavLink
+                to="/newsevents"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
               >
-                Register
-              </button>
+                News & Events
+              </NavLink>
 
-            </>
+              <NavLink
+                to="/support"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
+              >
+                Support
+              </NavLink>
 
-          )}
+              <NavLink
+                to="/faqs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-white py-2 border-b border-gray-700"
+              >
+                FAQS
+              </NavLink>
 
-
-
+              {/* Auth Area */}
+              <div className="pt-5 space-y-3 pb-10">
+                {isLoggedIn ? (
+                  <>
+                    <button
+                      onClick={() => navigate(`/dashboard/${userData?._id}`)}
+                      className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+                    >
+                      My Dashboard
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-white py-3 border border-white rounded-xl text-base"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        navigate('/signin');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-white text-[#001F5B] py-3 rounded-xl font-semibold text-base"
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate('/signup');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
+                    >
+                      Register
+                    </button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
