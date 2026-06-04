@@ -230,6 +230,22 @@ const Header = ({isOpen, notifications = []}) => {
       </NavLink>
 
       {/* remaining links */}
+      
+   <NavLink to="/benefits" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
+            Benefits  
+          </NavLink>  
+          <NavLink to="/resources" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
+            Resources  
+          </NavLink>  
+          <NavLink to="/newsevents" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
+            News & Events  
+          </NavLink>  
+          <NavLink to="/support" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
+            Support  
+          </NavLink>  
+          <NavLink to="/faqs" onClick={() => setMobileMenuOpen(false)} className="block text-white py-3 border-b border-gray-700">  
+            FAQS  
+          </NavLink>  
 
       <div className="pt-8 space-y-4">
         {isLoggedIn ? (
