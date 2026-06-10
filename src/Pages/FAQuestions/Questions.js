@@ -118,6 +118,41 @@ export const faqCategories = [
     ]
   },
   {
+    id: "healthcare",
+    label: "Healthcare & AXA MANSARD",
+    icon: "🏥",
+    faqs: [
+      {
+        q: "What is Primary Care?",
+        a: "Primary care is the foundation of the healthcare system. It refers to the everyday medical care provided by a professional who acts as the first point of contact for health concerns. Think of your Primary Care Provider (PCP)—who may be a General Practitioner (MD). They coordinate the patient's overall care, maintain the patient's long-term medical history, and help patients navigate the broader medical system by referring them to specialists when necessary. Common examples include preventive screenings, management of chronic conditions (like diabetes or hypertension), treatment of acute illnesses (flu, strep throat), vaccinations, minor injury care, and lifestyle counseling."
+      },
+      {
+        q: "What is Secondary Care?",
+        a: "Secondary care refers to specialized medical services provided by specialists (such as cardiologists, dermatologists, or orthopedists) upon referral from a primary care provider. These services typically require prior approval from AXA MANSARD."
+      },
+      {
+        q: "How do I find my AXA MANSARD Enrollee number?",
+        a: "Search your email inbox for 'MyAXA - HMO Onboarding' and you'll find the initial welcome email sent by AXA when you enrolled. That email contains your enrollee number."
+      },
+      {
+        q: "How does the AXA MANSARD approval process work?",
+        a: "For primary care, approvals are automatically granted. For secondary care, approval times vary on a case-by-case basis. Each request is reviewed carefully to ensure it matches the diagnosis and to prevent potential fraudulent activities by hospitals. Sometimes, hospitals may not be transparent about the real issue, or they may not have sent the request to AXA, leading to delays."
+      },
+      {
+        q: "Why is there a delay in approving my medication request?",
+        a: "Nigeria is currently facing challenges with drug scarcity as many pharmaceutical companies are leaving the country. AXA MANSARD's pharmacy team needs to search for alternative medicines, which can take time — especially when enrollees have specific preferences for certain brands of drugs."
+      },
+      {
+        q: "Is there a dedicated AXA MANSARD contact for EMRAN members?",
+        a: "While a single person dedicated solely to EMRAN requests isn't feasible due to the 24/7 shift schedule of the healthcare team (including doctors and nurses), Onyebuchi Ogwu is available to handle administrative tasks and respond to enquiries and escalations. You can reach him at +234 701 804 6891 or Onyebuchi.Ogwu@axamansard.com."
+      },
+      {
+        q: "What is the official AXA MANSARD contact number?",
+        a: "The official AXA MANSARD contact number for EMRAN members is +234 811 947 5787."
+      }
+    ]
+  },
+  {
     id: "meetings",
     label: "Meetings & Voting",
     icon: "🗳️",
