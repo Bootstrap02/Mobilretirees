@@ -248,6 +248,9 @@ export const Signup = () => {
           {/* ══════════════════════════════════════════════════════════════
               SPOUSE SECTION — fancy conditional question
           ══════════════════════════════════════════════════════════════ */}
+          {/* ══════════════════════════════════════════════════════════════
+            SPOUSE SECTION — fancy conditional question (UPGRADED INPUT SIZE)
+          ══════════════════════════════════════════════════════════════ */}
           <div className="mt-10">
             <div className="rounded-2xl border-2 border-dashed border-[#E30613]/30 bg-rose-50/50 p-6">
               {/* Question */}
@@ -281,14 +284,12 @@ export const Signup = () => {
                 ))}
               </div>
 
-              {/* Conditional spouse fields — animated slide-down */}
-              <div className={`overflow-hidden transition-all duration-500 ${hasSpouse === 'yes' ? 'max-h-96 opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
-                <div className="bg-white rounded-xl p-5 border border-rose-100 shadow-sm space-y-5">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
-                    Spouse Details
-                  </p>
+              {/* Conditional spouse fields — expanded to full comfortable layout */}
+              <div className={`overflow-hidden transition-all duration-500 ${hasSpouse === 'yes' ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
+                <div className="space-y-6">
+                  {/* Full-width Name Field */}
                   <div>
-                    <label className="block text-base font-medium text-gray-700 mb-2">
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
                       Spouse Full Name <span className="text-[#E30613]">*</span>
                     </label>
                     <div className="relative">
@@ -301,19 +302,23 @@ export const Signup = () => {
                         value={formData.spouse}
                         onChange={handleChange}
                         placeholder="Enter spouse's full name"
-                        className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E30613] focus:border-transparent transition"
+                        className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E30613] focus:border-transparent transition text-base"
                       />
                     </div>
                   </div>
+
+                  {/* Full-width Phone Field */}
                   <div>
-                    <label className="block text-base font-medium text-gray-700 mb-2">
+                    <label className="block text-lg font-medium text-gray-700 mb-2">
                       Spouse Phone Number <span className="text-[#E30613]">*</span>
                     </label>
-                    <PhoneField
-                      value={formData.spousePhone}
-                      onChange={(v) => setFormData({ ...formData, spousePhone: v })}
-                      name="spousePhone"
-                    />
+                    <div className="w-full">
+                      <PhoneField
+                        value={formData.spousePhone}
+                        onChange={(v) => setFormData({ ...formData, spousePhone: v })}
+                        name="spousePhone"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,6 +345,10 @@ export const Signup = () => {
               )}
             </div>
           </div>
+          {/* ── END SPOUSE SECTION ── */}
+
+                    
+
           {/* ── END SPOUSE SECTION ── */}
         </div>
 
