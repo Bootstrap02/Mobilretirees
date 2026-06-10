@@ -1,4 +1,5 @@
-// pages/Profile.jsx — EXPANDED WITH ALL USER SCHEMA FIELDS
+
+// pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import axios from "axios";
@@ -77,7 +78,7 @@ const Profile = () => {
 
   const [formData, setFormData] = useState({
     fullname: '', email: '', phone: '', address: '',
-    staffId: 'N/A', dateOfRetirement: 'N/A', profilePhoto: '',
+    staffId: 'N/A', dateOfRetirement: 'N/A', dateOfBirth: '', profilePhoto: '',
     companyAtRetirement: '', locationOfRetirement: '', departmentOfRetirement: '',
     spouse: '', spousePhone: '',
     nextOfKin: '', nextOfKinEmail: '', nextOfKinPhone: '',
@@ -93,11 +94,20 @@ const Profile = () => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
 
-    let formattedDate = 'N/A';
+    let formattedRetirementDate = 'N/A';
     if (stored.dateOfRetirement) {
       const d = new Date(stored.dateOfRetirement);
       if (!isNaN(d.getTime())) {
-        formattedDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        formattedRetirementDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+    }
+
+    // Convert dateOfBirth to YYYY-MM-DD template value for the HTML5 input tag
+    let inputBirthDate = '';
+    if (stored.dateOfBirth) {
+      const d = new Date(stored.dateOfBirth);
+      if (!isNaN(d.getTime())) {
+        inputBirthDate = d.toISOString().split('T')[0];
       }
     }
 
@@ -106,8 +116,9 @@ const Profile = () => {
       email: stored.email || '',
       phone: stored.phone || '',
       address: stored.address || '',
-      staffId: stored._id || 'N/A',
-      dateOfRetirement: formattedDate,
+      staffId: stored.staffId || stored._id || 'N/A',
+      dateOfRetirement: formattedRetirementDate,
+      dateOfBirth: inputBirthDate,
       profilePhoto: stored.image?.[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`,
       companyAtRetirement: stored.companyAtRetirement || '',
       locationOfRetirement: stored.locationOfRetirement || '',
@@ -127,12 +138,6 @@ const Profile = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({ ...prev, [name]: value }));
-    setPasswordError('');
   };
 
   const handleImageSelect = (e) => {
@@ -160,6 +165,7 @@ const Profile = () => {
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
+          dateOfBirth: formData.dateOfBirth, // <-- Sent to API
           companyAtRetirement: formData.companyAtRetirement,
           locationOfRetirement: formData.locationOfRetirement,
           departmentOfRetirement: formData.departmentOfRetirement,
@@ -193,6 +199,12 @@ const Profile = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({ ...prev, [name]: value }));
+    setPasswordError('');
   };
 
   const handleChangePassword = async () => {
@@ -295,6 +307,9 @@ const Profile = () => {
                 </Field>
                 <Field label="Residential Address" icon={FiHome}>
                   <input name="address" value={formData.address} onChange={handleChange} className={inputCls} />
+                </Field>
+                <Field label="Date of Birth" icon={FiCalendar}>
+                  <input name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} className={inputCls} />
                 </Field>
                 <Field label="Staff ID">
                   <div className={readOnlyCls}>{formData.staffId}</div>
