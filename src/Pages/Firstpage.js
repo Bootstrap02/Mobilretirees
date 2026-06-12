@@ -8,6 +8,7 @@ import cacCertificate from '../assets/cac-certificate.jpg';
 import NotificationsList from '../Components/Notificationslist';
 import AlertModal from '../Components/Alerts';
 import axios from "axios";
+import Livechat from './FAQuestions/Livechat';
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -270,6 +271,7 @@ const Homepage = () => {
       <div>{notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={allNotifications}/>}</div>
       <div><AlertModal alert={alerts}/></div>
       <Footer />
+      <Livechat />          
     </>
   );
 };
