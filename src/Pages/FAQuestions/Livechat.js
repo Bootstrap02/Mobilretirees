@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { faqCategories } from './Questions';
 
 const allFaqs = faqCategories.flatMap(cat =>
