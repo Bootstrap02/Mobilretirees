@@ -1,3 +1,4 @@
+
 // components/Footer.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -9,17 +10,14 @@ import {
   FiTwitter, 
   FiLinkedin,
   FiYoutube,
-  FiChevronUp,
   FiHeart,
   FiBell,
 } from 'react-icons/fi';
 import exxonLogoWhite from '../assets/exxonmobil-logo-white.jpg';
+import LiveChat from '../Pages/FAQuestions/Livechat';
 
 
 const Footer = () => {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
   const userData = JSON.parse(localStorage.getItem('userData'));
 
   return (
@@ -81,27 +79,27 @@ const Footer = () => {
 
           {/* Column 4: Newsletter & Social */}
           { userData ?
-  <div>
+          <div>
             <h4 className="text-lg font-bold mb-6 text-[#E30613]">Stay Connected</h4>
             <p className="text-gray-300 mb-4">
               Get monthly updates on pension payments, health tips, and retiree events.
             </p>
-          <form className="w-full max-w-xs mx-auto sm:mx-0 flex flex-col sm:flex-row gap-2 mb-8">
-  <input 
-    type="email" 
-    placeholder="Email" 
-    className="w-[60%] px-4 py-2 text-sm rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#E30613] transition"
-  />
-  <button className="w-[35%] px-3 py-1 bg-[#E30613] hover:bg-[#c20511] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
-    Subscribe
-  </button>
-</form>
+            <form className="w-full max-w-xs mx-auto sm:mx-0 flex flex-col sm:flex-row gap-2 mb-8">
+              <input 
+                type="email" 
+                placeholder="Email" 
+                className="w-[60%] px-4 py-2 text-sm rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-[#E30613] transition"
+              />
+              <button className="w-[35%] px-3 py-1 bg-[#E30613] hover:bg-[#c20511] text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 whitespace-nowrap">
+                Subscribe
+              </button>
+            </form>
 
             <div className="flex gap-4 text-2xl">
-              <p  className="hover:text-[#E30613] transition"><FiFacebook /></p>
-              <p  className="hover:text-[#E30613] transition"><FiTwitter /></p>
-              <p  className="hover:text-[#E30613] transition"><FiLinkedin /></p>
-              <p  className="hover:text-[#E30613] transition"><FiYoutube /></p>
+              <p className="hover:text-[#E30613] transition"><FiFacebook /></p>
+              <p className="hover:text-[#E30613] transition"><FiTwitter /></p>
+              <p className="hover:text-[#E30613] transition"><FiLinkedin /></p>
+              <p className="hover:text-[#E30613] transition"><FiYoutube /></p>
             </div>
           </div>
           :
@@ -112,24 +110,25 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-white/80">           <div className=" items-center">
-            <p>
-              © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
-            </p>
-           <div className="flex gap-1 items-center">
-  <p>
-    Website Developed by Campusify Enterprise
-  </p>
-  <a 
-    href="https://www.campusify.net" 
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="text-blue-400 hover:underline"
-  >
-    https://www.campusify.net
-  </a>
-</div>
-</div>
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm text-white/80">
+            <div className="items-center">
+              <p>
+                © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
+              </p>
+              <div className="flex gap-1 items-center">
+                <p>
+                  Website Developed by Campusify Enterprise
+                </p>
+                <a 
+                  href="https://www.campusify.net" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-400 hover:underline"
+                >
+                  https://www.campusify.net
+                </a>
+              </div>
+            </div>
             <div className="flex gap-6 mt-4 md:mt-0">
               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
               <NavLink to="/terms" className="hover:text-white transition">Terms of Use</NavLink>
@@ -158,21 +157,11 @@ const Footer = () => {
             <FiPhone className="text-xl" />
             <span className="text-xs mt-1">Support</span>
           </NavLink>
-          {/* <NavLink to="/dashboard" className="flex flex-col items-center text-white">
-            <FiUser className="text-xl" />
-            <span className="text-xs mt-1">Account</span>
-          </NavLink> */}
         </div>
       </div>
 
-      {/* Back to Top Button */}
-      <button
-        onClick={scrollToTop}
-        className="fixed bottom-20 right-6 bg-[#E30613] text-white p-4 rounded-full shadow-2xl hover:bg-[#c20511] transition z-50 lg:bottom-8"
-        aria-label="Back to top"
-      >
-        <FiChevronUp className="text-2xl" />
-      </button>
+      {/* Live Chat Widget Setup */}
+      <LiveChat />
     </>
   );
 };
