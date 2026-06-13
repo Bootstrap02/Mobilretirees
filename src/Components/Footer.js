@@ -68,7 +68,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <FiPhone className="text-[#E30613]" />
-                <p>+234 1 277 7700 | +234 803 123 4567 (Retirees Hotline)</p>
+                <p>+234 6 941 2463 | +234 803 123 4567 (Retirees Hotline)</p>
               </div>
               <div className="flex items-center gap-3">
                 <FiMail className="text-[#E30613]" />
