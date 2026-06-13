@@ -198,7 +198,7 @@ const Dashboard = () => {
               </button>
             </div>
 
-            {/* Messages */}
+            {/* Messages
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiMessageSquare className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Messages</h3>
@@ -207,6 +207,7 @@ const Dashboard = () => {
                 Check Inbox →
               </NavLink>
             </div>
+             */}
 
             {/* Upcoming Events */}
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
@@ -414,7 +415,7 @@ const Dashboard = () => {
               href="tel:+23412777700"
               className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-3xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 mb-8"
             >
-              Call +234 1 277 7700
+              Call +234 906 941 2463
             </a>
             <p className="text-lg opacity-90">
               Or email: <a href="mailto:emranwebmgt@gmail.com" className="text-[#E30613] hover:text-white underline">emranwebmgt@gmail.com</a>
