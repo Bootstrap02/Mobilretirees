@@ -11,7 +11,7 @@ import executives from '../assets/executives.pdf';
 import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
 import whatsapp_rules from '../assets/whatsapp_rules.pdf';
 import NotificationsList from '../Components/Notificationslist';
-import { FiUser, FiLogOut, FiDollarSign, FiBell, FiMessageSquare, FiCalendar, FiFileText } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiDollarSign, FiBell, FiCalendar, FiFileText } from 'react-icons/fi';
 import cacCertificate from '../assets/cac-certificate.jpg';
 
 const Dashboard = () => {
