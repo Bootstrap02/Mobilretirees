@@ -1,29 +1,27 @@
 
 // pages/Auth.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiCheckCircle, FiLoader, FiXCircle, FiHeart } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiCheckCircle, FiLoader, FiXCircle, FiHeart, FiCamera } from 'react-icons/fi';
 import axios from 'axios';
 import { BigLoader } from './Loaders';
 import exxonLogo from '../assets/exxonmobil-logo-white.jpg';
 import 'react-phone-input-2/lib/style.css';
 import PhoneInput from 'react-phone-input-2';
 
-// Reusable Input Component
-const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, showToggle, toggleShow, ...props }) => (
+const API = 'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser';
+
+/* ── Required asterisk ── */
+const Req = () => <span style={{ color:'#E30613', marginLeft:2 }}>*</span>;
+
+const InputField = ({ icon: Icon, type, placeholder, value, onChange, name, showToggle, toggleShow, required, ...props }) => (
   <div className="relative">
     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
       <Icon className="text-[#E30613]" />
     </div>
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
+    <input type={type} name={name} value={value} onChange={onChange} placeholder={placeholder} required={required}
       className="w-full pl-12 pr-4 py-4 bg-white border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E30613] focus:border-transparent transition"
-      {...props}
-    />
+      {...props} />
     {showToggle && (
       <button type="button" onClick={toggleShow} className="absolute inset-y-0 right-0 pr-4 flex items-center">
         {type === 'password' ? <FiEyeOff className="text-gray-500" /> : <FiEye className="text-gray-500" />}
@@ -52,41 +50,44 @@ const AuthLayout = ({ children, title, subtitle }) => (
   </div>
 );
 
-// ── Shared phone input style ─────────────────────────────────────────────────
 const PhoneField = ({ value, onChange, name }) => (
-  <PhoneInput
-    country="ng"
-    value={value?.replace('+', '') || ''}
+  <PhoneInput country="ng" value={value?.replace('+', '') || ''}
     onChange={(phone) => onChange(`+${phone}`)}
     placeholder="Enter phone number"
     containerStyle={{ width: '100%' }}
-    inputStyle={{
-      width: '100%', padding: '16px', paddingLeft: '60px',
-      borderRadius: '12px', border: '1px solid #d1d5db',
-      outline: 'none', fontSize: '16px',
-    }}
-    buttonStyle={{ borderTopLeftRadius: '12px', borderBottomLeftRadius: '12px' }}
+    inputStyle={{ width:'100%', padding:'16px', paddingLeft:'60px', borderRadius:'12px', border:'1px solid #d1d5db', outline:'none', fontSize:'16px' }}
+    buttonStyle={{ borderTopLeftRadius:'12px', borderBottomLeftRadius:'12px' }}
     inputProps={{ name, required: true }}
   />
 );
 
+/* ── Label with required asterisk ── */
+const Label = ({ children, required }) => (
+  <label className="block text-lg font-medium text-gray-700 mb-2">
+    {children}{required && <Req />}
+  </label>
+);
+
 // ====================== SIGN UP ======================
 export const Signup = () => {
-  const [loading, setLoading] = useState(false);
-  const [showPass, setShowPass] = useState(false);
-  const [feedback, setFeedback] = useState(null);
-
-  // Spouse question state: null = unanswered, 'yes' | 'no'
+  const [loading, setLoading]     = useState(false);
+  const [showPass, setShowPass]   = useState(false);
+  const [feedback, setFeedback]   = useState(null);
   const [hasSpouse, setHasSpouse] = useState(null);
   const [spouseError, setSpouseError] = useState('');
 
+  /* ── Avatar state ── */
+  const [avatarFile, setAvatarFile]     = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const avatarInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
-    fullname: '', email: '', phone: '', password: '',
-    dateOfBirth: '', dateOfRetirement: '',
-    companyAtRetirement: '', locationOfRetirement: '', departmentOfRetirement: '',
-    nextOfKin: '', nextOfKinEmail: '', nextOfKinPhone: '',
-    beneficiary: '', beneficiaryEmail: '', beneficiaryPhone: '',
-    spouse: '', spousePhone: '',
+    fullname:'', email:'', phone:'', password:'',
+    dateOfBirth:'', dateOfRetirement:'',
+    companyAtRetirement:'', locationOfRetirement:'', departmentOfRetirement:'',
+    nextOfKin:'', nextOfKinEmail:'', nextOfKinPhone:'',
+    beneficiary:'', beneficiaryEmail:'', beneficiaryPhone:'',
+    spouse:'', spousePhone:'',
   });
 
   const navigate = useNavigate();
@@ -94,6 +95,13 @@ export const Signup = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
   };
 
   const showFeedback = (type, text) => {
@@ -105,30 +113,38 @@ export const Signup = () => {
     e.preventDefault();
     setSpouseError('');
 
-    // ── Spouse validation ────────────────────────────────────────────────
     if (hasSpouse === null) {
       setSpouseError('Please answer the spouse question to continue.');
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       return;
     }
     if (hasSpouse === 'yes' && (!formData.spouse.trim() || !formData.spousePhone.trim())) {
-      setSpouseError('Please provide your spouse\'s name and phone number.');
+      setSpouseError("Please provide your spouse's name and phone number.");
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       return;
     }
 
     setLoading(true);
-    const payload = {
-      ...formData,
-      spouse: hasSpouse === 'yes' ? formData.spouse : 'None',
-      spousePhone: hasSpouse === 'yes' ? formData.spousePhone : '',
-    };
 
     try {
-      const res = await axios.post(
-        'https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/register',
-        payload
-      );
+      /* Step 1: Register user */
+      const payload = {
+        ...formData,
+        spouse: hasSpouse === 'yes' ? formData.spouse : 'None',
+        spousePhone: hasSpouse === 'yes' ? formData.spousePhone : '',
+      };
+      const res = await axios.post(`${API}/register`, payload);
+      const userId = res.data?.userId || res.data?.user?._id;
+
+      /* Step 2: Upload avatar if selected */
+      if (avatarFile && userId) {
+        const fd = new FormData();
+        fd.append('images', avatarFile);
+        await axios.put(`${API}/uploadimages/${userId}`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+
       showFeedback('success', res.data.message || 'Account created! Pending admin approval.');
       setTimeout(() => { setLoading(false); navigate('/'); }, 2000);
     } catch (err) {
@@ -141,41 +157,70 @@ export const Signup = () => {
     <AuthLayout title="Welcome Home" subtitle="Create your retiree account to access your benefits">
       {loading && <BigLoader message="Creating your account..." />}
 
+      {/* Required fields note */}
+      <p className="text-xs text-gray-500 mb-4">Fields marked <span className="text-[#E30613] font-bold">*</span> are required.</p>
+
       <form onSubmit={handleSubmit} className="space-y-6">
+
+        {/* ── Avatar upload ── */}
+        <div className="flex flex-col items-center gap-3 mb-2">
+          <div className="relative cursor-pointer" onClick={() => avatarInputRef.current?.click()}>
+            <div className={`w-24 h-24 rounded-full border-4 border-[#E30613]/30 overflow-hidden flex items-center justify-center bg-gray-100 shadow-lg transition hover:opacity-90`}>
+              {avatarPreview
+                ? <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                : <FiUser size={36} className="text-gray-400" />
+              }
+            </div>
+            <div className="absolute bottom-0 right-0 w-8 h-8 bg-[#E30613] rounded-full flex items-center justify-center shadow-md border-2 border-white">
+              <FiCamera size={14} className="text-white" />
+            </div>
+          </div>
+          <button type="button" onClick={() => avatarInputRef.current?.click()}
+            className="text-sm text-[#E30613] font-semibold hover:underline">
+            {avatarPreview ? 'Change photo' : 'Add profile photo'}
+          </button>
+          <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+        </div>
+
         {/* Basic fields */}
-        <InputField icon={FiUser} type="text" name="fullname" placeholder="Full Name (as in service record)"
-          value={formData.fullname} onChange={handleChange} required />
-        <InputField icon={FiMail} type="email" name="email" placeholder="Email Address"
-          value={formData.email} onChange={handleChange} required />
-        <PhoneField value={formData.phone} onChange={(v) => setFormData({ ...formData, phone: v })} name="phone" />
-        <InputField icon={FiLock} type={showPass ? 'text' : 'password'} name="password"
-          placeholder="Create Password (min. 8 characters)" value={formData.password} onChange={handleChange}
-          showToggle toggleShow={() => setShowPass(!showPass)} required />
+        <div>
+          <Label required>Full Name (as in service record)</Label>
+          <InputField icon={FiUser} type="text" name="fullname" placeholder="Full Name" value={formData.fullname} onChange={handleChange} required />
+        </div>
+        <div>
+          <Label required>Email Address</Label>
+          <InputField icon={FiMail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
+        </div>
+        <div>
+          <Label required>Phone Number</Label>
+          <PhoneField value={formData.phone} onChange={(v) => setFormData({ ...formData, phone: v })} name="phone" />
+        </div>
+        <div>
+          <Label required>Password (min. 8 characters)</Label>
+          <InputField icon={FiLock} type={showPass ? 'text' : 'password'} name="password"
+            placeholder="Create Password" value={formData.password} onChange={handleChange}
+            showToggle toggleShow={() => setShowPass(!showPass)} required />
+        </div>
 
         {/* ── Retiree-specific fields ── */}
         <div className="border-t border-gray-200 pt-10 mt-12">
-          <h3 className="text-2xl font-bold text-[#001F5B] mb-6 text-center">
-            Retiree &amp; Beneficiary Information
-          </h3>
+          <h3 className="text-2xl font-bold text-[#001F5B] mb-6 text-center">Retiree &amp; Beneficiary Information</h3>
 
-          {/* Date of Birth */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Date of Birth</label>
-            <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange}
+            <Label required>Date of Birth</Label>
+            <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required
               className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
           </div>
 
-          {/* Date of Retirement */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Date of Retirement</label>
-            <input type="date" name="dateOfRetirement" value={formData.dateOfRetirement} onChange={handleChange}
+            <Label required>Date of Retirement</Label>
+            <input type="date" name="dateOfRetirement" value={formData.dateOfRetirement} onChange={handleChange} required
               className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
           </div>
 
-          {/* Company */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Company at Retirement</label>
-            <select name="companyAtRetirement" value={formData.companyAtRetirement} onChange={handleChange}
+            <Label required>Company at Retirement</Label>
+            <select name="companyAtRetirement" value={formData.companyAtRetirement} onChange={handleChange} required
               className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition">
               <option value="">Select company</option>
               <option value="MPN">MPN</option>
@@ -183,10 +228,9 @@ export const Signup = () => {
             </select>
           </div>
 
-          {/* Location */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Location of Retirement</label>
-            <select name="locationOfRetirement" value={formData.locationOfRetirement} onChange={handleChange}
+            <Label required>Location of Retirement</Label>
+            <select name="locationOfRetirement" value={formData.locationOfRetirement} onChange={handleChange} required
               className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition">
               <option value="">Select location</option>
               {['Lagos','QIT/Eket','Port Harcourt/Onne','Bonny','USA','Europe','Asia'].map(loc => (
@@ -195,161 +239,108 @@ export const Signup = () => {
             </select>
           </div>
 
-          {/* Department */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Department of Retirement</label>
+            <Label required>Department of Retirement</Label>
             <input type="text" name="departmentOfRetirement" value={formData.departmentOfRetirement} onChange={handleChange}
-              placeholder="e.g., Production, Finance, Engineering..."
+              placeholder="e.g., Production, Finance, Engineering..." required
               className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
           </div>
 
           {/* Next of Kin */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Next of Kin Full Name</label>
+            <Label required>Next of Kin Full Name</Label>
             <input type="text" name="nextOfKin" value={formData.nextOfKin} onChange={handleChange}
-              placeholder="Full name of next of kin"
-              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" required />
+              placeholder="Full name of next of kin" required
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Next of Kin Email</label>
+              <Label required>Next of Kin Email</Label>
               <input type="email" name="nextOfKinEmail" value={formData.nextOfKinEmail} onChange={handleChange}
-                placeholder="next-of-kin@example.com"
-                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" required />
+                placeholder="next-of-kin@example.com" required
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
             </div>
             <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Next of Kin Phone</label>
-              <PhoneField value={formData.nextOfKinPhone}
-                onChange={(v) => setFormData({ ...formData, nextOfKinPhone: v })} name="nextOfKinPhone" />
+              <Label required>Next of Kin Phone</Label>
+              <PhoneField value={formData.nextOfKinPhone} onChange={(v) => setFormData({ ...formData, nextOfKinPhone: v })} name="nextOfKinPhone" />
             </div>
           </div>
 
           {/* Beneficiary */}
           <div className="mb-6">
-            <label className="block text-lg font-medium text-gray-700 mb-2">Beneficiary Full Name</label>
+            <Label required>Beneficiary Full Name</Label>
             <input type="text" name="beneficiary" value={formData.beneficiary} onChange={handleChange}
-              placeholder="Full name of beneficiary"
-              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" required />
+              placeholder="Full name of beneficiary" required
+              className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Beneficiary Email</label>
+              <Label required>Beneficiary Email</Label>
               <input type="email" name="beneficiaryEmail" value={formData.beneficiaryEmail} onChange={handleChange}
-                placeholder="beneficiary@example.com"
-                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" required />
+                placeholder="beneficiary@example.com" required
+                className="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" />
             </div>
             <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Beneficiary Phone</label>
-              <PhoneField value={formData.beneficiaryPhone}
-                onChange={(v) => setFormData({ ...formData, beneficiaryPhone: v })} name="beneficiaryPhone" />
+              <Label required>Beneficiary Phone</Label>
+              <PhoneField value={formData.beneficiaryPhone} onChange={(v) => setFormData({ ...formData, beneficiaryPhone: v })} name="beneficiaryPhone" />
             </div>
           </div>
 
-          {/* ══════════════════════════════════════════════════════════════
-              SPOUSE SECTION — fancy conditional question
-          ══════════════════════════════════════════════════════════════ */}
-          {/* ══════════════════════════════════════════════════════════════
-            SPOUSE SECTION — fancy conditional question (UPGRADED INPUT SIZE)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* ── Spouse ── */}
           <div className="mt-10">
             <div className="rounded-2xl border-2 border-dashed border-[#E30613]/30 bg-rose-50/50 p-6">
-              {/* Question */}
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 rounded-full bg-[#E30613]/10 flex items-center justify-center flex-shrink-0">
                   <FiHeart className="text-[#E30613] text-xl" />
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-[#001F5B]">Do you have a spouse?</p>
+                  <p className="text-lg font-bold text-[#001F5B]">Do you have a spouse? <Req /></p>
                   <p className="text-sm text-gray-500">This question is required to complete registration.</p>
                 </div>
               </div>
-
-              {/* Yes / No toggle buttons */}
               <div className="flex gap-4 mb-1">
-                {['yes', 'no'].map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => { setHasSpouse(opt); setSpouseError(''); }}
-                    className={`flex-1 py-3 rounded-xl font-bold text-base border-2 transition-all duration-200
-                      ${hasSpouse === opt
-                        ? opt === 'yes'
-                          ? 'bg-[#E30613] border-[#E30613] text-white shadow-lg scale-105'
-                          : 'bg-[#001F5B] border-[#001F5B] text-white shadow-lg scale-105'
+                {['yes','no'].map((opt) => (
+                  <button key={opt} type="button" onClick={() => { setHasSpouse(opt); setSpouseError(''); }}
+                    className={`flex-1 py-3 rounded-xl font-bold text-base border-2 transition-all duration-200 ${
+                      hasSpouse === opt
+                        ? opt === 'yes' ? 'bg-[#E30613] border-[#E30613] text-white shadow-lg scale-105'
+                                        : 'bg-[#001F5B] border-[#001F5B] text-white shadow-lg scale-105'
                         : 'bg-white border-gray-300 text-gray-600 hover:border-[#E30613] hover:text-[#E30613]'
-                      }`}
-                  >
+                    }`}>
                     {opt === 'yes' ? '❤️ Yes, I do' : '🚫 No'}
                   </button>
                 ))}
               </div>
-
-              {/* Conditional spouse fields — expanded to full comfortable layout */}
               <div className={`overflow-hidden transition-all duration-500 ${hasSpouse === 'yes' ? 'max-h-[500px] opacity-100 mt-6' : 'max-h-0 opacity-0'}`}>
                 <div className="space-y-6">
-                  {/* Full-width Name Field */}
                   <div>
-                    <label className="block text-lg font-medium text-gray-700 mb-2">
-                      Spouse Full Name <span className="text-[#E30613]">*</span>
-                    </label>
+                    <Label required>Spouse Full Name</Label>
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <FiUser className="text-[#E30613]" />
-                      </div>
-                      <input
-                        type="text"
-                        name="spouse"
-                        value={formData.spouse}
-                        onChange={handleChange}
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><FiUser className="text-[#E30613]" /></div>
+                      <input type="text" name="spouse" value={formData.spouse} onChange={handleChange}
                         placeholder="Enter spouse's full name"
-                        className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E30613] focus:border-transparent transition text-base"
-                      />
+                        className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E30613] focus:border-transparent transition text-base" />
                     </div>
                   </div>
-
-                  {/* Full-width Phone Field */}
                   <div>
-                    <label className="block text-lg font-medium text-gray-700 mb-2">
-                      Spouse Phone Number <span className="text-[#E30613]">*</span>
-                    </label>
-                    <div className="w-full">
-                      <PhoneField
-                        value={formData.spousePhone}
-                        onChange={(v) => setFormData({ ...formData, spousePhone: v })}
-                        name="spousePhone"
-                      />
-                    </div>
+                    <Label required>Spouse Phone Number</Label>
+                    <PhoneField value={formData.spousePhone} onChange={(v) => setFormData({ ...formData, spousePhone: v })} name="spousePhone" />
                   </div>
                 </div>
               </div>
-
-              {/* No answer selected — reminder pill */}
-              {hasSpouse === null && (
-                <p className="text-xs text-gray-400 mt-3 text-center italic">
-                  ↑ You must answer this before submitting
-                </p>
-              )}
+              {hasSpouse === null && <p className="text-xs text-gray-400 mt-3 text-center italic">↑ You must answer this before submitting</p>}
               {hasSpouse === 'no' && (
                 <div className="mt-4 flex items-center gap-2 text-sm text-gray-500 bg-white rounded-xl px-4 py-3 border border-gray-200">
-                  <span>✓</span>
-                  <span>Spouse recorded as <strong>None</strong></span>
+                  <span>✓</span><span>Spouse recorded as <strong>None</strong></span>
                 </div>
               )}
-
-              {/* Validation error */}
               {spouseError && (
                 <div className="mt-4 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-medium">
-                  <FiXCircle className="flex-shrink-0" />
-                  {spouseError}
+                  <FiXCircle className="flex-shrink-0" />{spouseError}
                 </div>
               )}
             </div>
           </div>
-          {/* ── END SPOUSE SECTION ── */}
-
-                    
-
-          {/* ── END SPOUSE SECTION ── */}
         </div>
 
         <button type="submit"
@@ -358,19 +349,18 @@ export const Signup = () => {
         </button>
       </form>
 
-      {/* Feedback */}
       {feedback && (
         <div>
           <div className="max-lg:hidden fixed top-6 left-1/2 transform -translate-x-1/2 z-50 max-w-lg w-full px-4">
-            <div className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${feedback.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-              {feedback.type === 'success' ? <FiCheckCircle className="text-4xl flex-shrink-0" /> : <FiXCircle className="text-4xl flex-shrink-0" />}
+            <div className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${feedback.type==='success'?'bg-green-600':'bg-red-600'}`}>
+              {feedback.type==='success' ? <FiCheckCircle className="text-4xl flex-shrink-0"/> : <FiXCircle className="text-4xl flex-shrink-0"/>}
               <p className="text-lg font-medium">{feedback.text}</p>
             </div>
           </div>
           <div className="hidden max-lg:flex fixed inset-0 z-50 items-center justify-center bg-black/40 backdrop-blur-sm px-4">
             <div className="w-full max-w-sm">
-              <div className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${feedback.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-                {feedback.type === 'success' ? <FiCheckCircle className="text-3xl flex-shrink-0" /> : <FiXCircle className="text-3xl flex-shrink-0" />}
+              <div className={`flex items-center gap-4 p-5 rounded-2xl shadow-2xl text-white ${feedback.type==='success'?'bg-green-600':'bg-red-600'}`}>
+                {feedback.type==='success' ? <FiCheckCircle className="text-3xl flex-shrink-0"/> : <FiXCircle className="text-3xl flex-shrink-0"/>}
                 <p className="text-base font-medium flex-1">{feedback.text}</p>
               </div>
             </div>
@@ -383,23 +373,17 @@ export const Signup = () => {
 
 // ====================== SIGN IN ======================
 export const Signin = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading]   = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email:'', password:'' });
   const navigate = useNavigate();
-
   const handleChange = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); setLoading(true);
     try {
-      const res = await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/login', formData);
+      const res = await axios.post(`${API}/login`, formData);
       const { success, token, user, message } = res.data;
-      if (!success) {
-        alert(message || "Your Account is still pending Administrative approval. Please wait");
-        setLoading(false); navigate('/'); return;
-      }
+      if (!success) { alert(message || "Your Account is still pending Administrative approval. Please wait"); setLoading(false); navigate('/'); return; }
       localStorage.setItem('userData', JSON.stringify(user));
       localStorage.setItem('token', token);
       alert('Login successful! Welcome back.');
@@ -410,21 +394,17 @@ export const Signin = () => {
       else alert(err.response?.data?.message || 'Something went wrong. Please try again later.');
     }
   };
-
   return (
     <AuthLayout title="Welcome Back" subtitle="Sign in to access your retiree benefits portal">
       {loading && <BigLoader message="Signing you in securely..." />}
       <form onSubmit={handleSubmit} className="space-y-5">
-        <InputField icon={FiMail} type="email" name="email" placeholder="Email Address"
-          value={formData.email} onChange={handleChange} required />
-        <InputField icon={FiLock} type={showPass ? 'text' : 'password'} name="password" placeholder="Password"
+        <InputField icon={FiMail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
+        <InputField icon={FiLock} type={showPass?'text':'password'} name="password" placeholder="Password"
           value={formData.password} onChange={handleChange} showToggle toggleShow={() => setShowPass(!showPass)} required />
         <div className="flex justify-end">
           <NavLink to="/forgotpassword" className="text-sm text-[#E30613] hover:underline">Forgot Password?</NavLink>
         </div>
-        <button type="submit" className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition shadow-lg">
-          Sign In
-        </button>
+        <button type="submit" className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition shadow-lg">Sign In</button>
       </form>
       <div className="my-6 flex items-center">
         <div className="flex-1 border-t border-gray-300"></div>
@@ -440,41 +420,31 @@ export const Signin = () => {
 
 // ====================== FORGOT PASSWORD ======================
 export const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail]     = useState('');
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-
+  const [sent, setSent]       = useState(false);
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); setLoading(true);
     try {
-      await axios.post('https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/forgot-password', { email: email.toLowerCase() });
+      await axios.post(`${API}/forgot-password`, { email: email.toLowerCase() });
       setSent(true);
     } catch (err) { alert(err.response?.data?.message || 'Something went wrong'); }
     finally { setLoading(false); }
   };
-
   return (
     <AuthLayout title="Reset Password" subtitle="We'll send you a link to reset your password">
       {loading && <BigLoader message="Sending reset link..." />}
       {sent ? (
         <div className="text-center py-10">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FiMail className="text-4xl text-green-600" />
-          </div>
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"><FiMail className="text-4xl text-green-600"/></div>
           <h3 className="text-xl font-bold text-[#001F5B]">Check Your Email</h3>
           <p className="text-gray-600 mt-2">We sent a password reset link to {email}</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
-          <InputField icon={FiMail} type="email" placeholder="Enter your email address"
-            value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <button className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition">
-            Send Reset Link
-          </button>
-          <p className="text-center text-sm">
-            <NavLink to="/signin" className="text-[#E30613] hover:underline">Back to Sign In</NavLink>
-          </p>
+          <InputField icon={FiMail} type="email" placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <button className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-4 rounded-xl transition">Send Reset Link</button>
+          <p className="text-center text-sm"><NavLink to="/signin" className="text-[#E30613] hover:underline">Back to Sign In</NavLink></p>
         </form>
       )}
     </AuthLayout>
@@ -483,24 +453,22 @@ export const ForgotPassword = () => {
 
 // ====================== RESET PASSWORD ======================
 export const ResetPassword = () => {
-  const [password, setPassword] = useState('');
+  const [password, setPassword]             = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPass, setShowPass] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  const [showPass, setShowPass]             = useState(false);
+  const [showConfirm, setShowConfirm]       = useState(false);
+  const [loading, setLoading]               = useState(false);
+  const [success, setSuccess]               = useState(false);
+  const [error, setError]                   = useState('');
+  const [message, setMessage]               = useState('');
   const { token } = useParams();
-  const navigate = useNavigate();
-
+  const navigate  = useNavigate();
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(''); setMessage(''); setLoading(true);
+    e.preventDefault(); setError(''); setMessage(''); setLoading(true);
     if (password !== confirmPassword) { setError("Passwords do not match"); alert("Passwords do not match"); setLoading(false); return; }
     if (password.length < 8) { setError("Password must be at least 8 characters"); alert("Password must be at least 8 characters"); setLoading(false); return; }
     try {
-      const response = await axios.post(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/reset-password/${token}`, { password });
+      const response = await axios.post(`${API}/reset-password/${token}`, { password });
       const apiMessage = response.data?.message || "Password reset successful";
       setMessage(apiMessage); alert(apiMessage); setSuccess(true);
       setTimeout(() => navigate('/signin'), 4000);
@@ -509,16 +477,13 @@ export const ResetPassword = () => {
       setError(apiError); alert(apiError);
     } finally { setLoading(false); }
   };
-
   return (
     <AuthLayout title="Set New Password" subtitle="Create a strong password for your account">
       {loading && <BigLoader message="Updating your password..." />}
       {success ? (
         <div className="text-center py-12">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+            <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
           </div>
           <h3 className="text-2xl font-bold text-[#001F5B]">Password Updated!</h3>
           <p className="text-gray-600 mt-3">{message || "Your password has been changed successfully."}</p>
@@ -527,17 +492,15 @@ export const ResetPassword = () => {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">{error}</div>}
-          <InputField icon={FiLock} type={showPass ? 'text' : 'password'} placeholder="New Password (min. 8 characters)"
+          <InputField icon={FiLock} type={showPass?'text':'password'} placeholder="New Password (min. 8 characters)"
             value={password} onChange={(e) => setPassword(e.target.value)} showToggle toggleShow={() => setShowPass(!showPass)} required />
-          <InputField icon={FiLock} type={showConfirm ? 'text' : 'password'} placeholder="Confirm New Password"
+          <InputField icon={FiLock} type={showConfirm?'text':'password'} placeholder="Confirm New Password"
             value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} showToggle toggleShow={() => setShowConfirm(!showConfirm)} required />
           <button type="submit" disabled={loading}
             className="w-full bg-[#E30613] hover:bg-[#c20511] disabled:opacity-70 text-white font-bold py-4 rounded-xl transition shadow-lg">
             {loading ? 'Updating...' : 'Set New Password'}
           </button>
-          <p className="text-center text-sm text-gray-600">
-            Remember your password? <NavLink to="/signin" className="text-[#E30613] font-bold hover:underline">Sign In</NavLink>
-          </p>
+          <p className="text-center text-sm text-gray-600">Remember your password? <NavLink to="/signin" className="text-[#E30613] font-bold hover:underline">Sign In</NavLink></p>
         </form>
       )}
     </AuthLayout>
@@ -546,29 +509,22 @@ export const ResetPassword = () => {
 
 // ====================== PAYMENT ======================
 export const Payment = () => {
-  const [token, setToken] = useState('');
+  const [token, setToken]   = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [message, setMessage] = useState({ type:'', text:'' });
   const { id } = useParams();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!token.trim() || token.length !== 6 || !/^\d{6}$/.test(token)) {
-      setMessage({ type: 'error', text: 'Please enter a valid 6-digit code' }); return;
-    }
-    setLoading(true); setMessage({ type: '', text: '' });
+    if (!token.trim() || token.length !== 6 || !/^\d{6}$/.test(token)) { setMessage({ type:'error', text:'Please enter a valid 6-digit code' }); return; }
+    setLoading(true); setMessage({ type:'', text:'' });
     try {
-      const response = await axios.put(
-        `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`,
-        { token: token.trim(), year: false }
-      );
-      setMessage({ type: 'success', text: response.data.message || 'Payment confirmation submitted successfully. Admin will verify shortly.' });
+      const response = await axios.put(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`, { token: token.trim(), year: false });
+      setMessage({ type:'success', text: response.data.message || 'Payment confirmation submitted successfully. Admin will verify shortly.' });
       setToken('');
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit confirmation. Please try again.' });
+      setMessage({ type:'error', text: err.response?.data?.message || 'Failed to submit confirmation. Please try again.' });
     } finally { setLoading(false); }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -580,18 +536,15 @@ export const Payment = () => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
               <label className="block text-lg font-medium mb-3">Last 6 Digits of Payment Receipt/Reference</label>
-              <input type="text" maxLength={6} value={token}
-                onChange={(e) => setToken(e.target.value.replace(/\D/g, ''))}
-                placeholder="e.g., 483920"
-                className="w-full px-6 py-5 text-3xl font-mono text-center bg-white/20 border border-white/30 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition"
-                required />
+              <input type="text" maxLength={6} value={token} onChange={(e) => setToken(e.target.value.replace(/\D/g, ''))} placeholder="e.g., 483920"
+                className="w-full px-6 py-5 text-3xl font-mono text-center bg-white/20 border border-white/30 rounded-xl focus:outline-none focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/30 transition" required />
             </div>
             <button type="submit" disabled={loading}
-              className={`w-full py-5 rounded-xl font-bold text-xl transition flex items-center justify-center gap-3 ${loading ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#E30613] hover:bg-[#c20511] shadow-lg'}`}>
-              {loading ? <><FiLoader className="animate-spin text-2xl" /> Submitting...</> : <><FiCheckCircle className="text-2xl" /> Confirm Payment</>}
+              className={`w-full py-5 rounded-xl font-bold text-xl transition flex items-center justify-center gap-3 ${loading?'bg-gray-600 cursor-not-allowed':'bg-[#E30613] hover:bg-[#c20511] shadow-lg'}`}>
+              {loading ? <><FiLoader className="animate-spin text-2xl"/>Submitting...</> : <><FiCheckCircle className="text-2xl"/>Confirm Payment</>}
             </button>
             {message.text && (
-              <div className={`mt-6 p-5 rounded-xl text-center text-lg font-medium ${message.type === 'success' ? 'bg-green-600/20 border border-green-400 text-green-200' : 'bg-red-600/20 border border-red-400 text-red-200'}`}>
+              <div className={`mt-6 p-5 rounded-xl text-center text-lg font-medium ${message.type==='success'?'bg-green-600/20 border border-green-400 text-green-200':'bg-red-600/20 border border-red-400 text-red-200'}`}>
                 {message.text}
               </div>
             )}
