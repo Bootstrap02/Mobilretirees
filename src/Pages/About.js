@@ -206,13 +206,18 @@ const AboutUs = () => {
                 </div>
               ))}
             </div>
-            <div className="text-center mt-10">
-              <a href="https://forms.gle/yPtQegLynybAECMC9" target="_blank" rel="noopener noreferrer"
-                className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold rounded-full shadow-2xl transition transform hover:scale-105"
-                style={{ padding:'clamp(12px,2vw,20px) clamp(24px,5vw,56px)', fontSize:'clamp(14px,2vw,20px)' }}>
-                Complete Membership Form
-              </a>
-            </div>
+            
+                <div className="text-center mt-10">
+  <NavLink 
+    to="/signup" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold rounded-full shadow-2xl transition transform hover:scale-105"
+    style={{ padding: 'clamp(12px,2vw,20px) clamp(24px,5vw,56px)', fontSize: 'clamp(14px,2vw,20px)' }}
+  >
+    Complete Membership Form
+  </NavLink>
+</div>
           </section>
 
           {/* ── Leadership ── */}
