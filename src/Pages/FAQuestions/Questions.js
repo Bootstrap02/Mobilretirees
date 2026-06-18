@@ -9,7 +9,10 @@ export const faqCategories = [
       { q: "What are the main objectives of EMRAN?", a: "EMRAN aims to promote peaceful coexistence and social interaction among members, improve members' welfare, advocate on pension and healthcare matters, encourage comradeship among retirees, serve as a forum for information sharing and mutual support, and engage ExxonMobil and related organizations on retirees' welfare matters." },
       { q: "Is EMRAN affiliated with any political or religious organization?", a: "No. EMRAN is strictly non-political and non-religious. Members are prohibited from promoting political or religious campaigns or debates on EMRAN platforms." },
       { q: "Where is EMRAN headquartered?", a: "EMRAN's headquarters is located at No. 26 Acacia Drive, Osborne Foreshore Estate Phase 2, Ikoyi, Lagos, Nigeria." },
-      { q: "What is EMRAN's official motto?", a: "EMRAN's motto is: \"Advancing Retirees' Welfare.\"" }
+      { q: "What is EMRAN's official motto?", a: "EMRAN's motto is: \"Advancing Retirees' Welfare.\"" },
+      { q: "What are EMRAN's Core Pillars on the homepage?", a: "The homepage features three Core Pillars: Who We Are, Our Purpose, and Our Community. Each section offers more detail about the Association's identity, mission, and people." },
+      { q: "Where can I see all EMRAN members, management, staff, and EXCO?", a: "On the homepage, scroll down to the 'Our Community' section and click on it. This displays the EXCO, staff, and the full EMRAN membership." },
+      { q: "Where can I find EMRAN's resource documents from the homepage?", a: "On the homepage, scroll down to the 'Our Purpose' section and click 'Learn More' to access EMRAN's resource documents, including rules and regulations." }
     ]
   },
   {
@@ -24,7 +27,9 @@ export const faqCategories = [
       { q: "When are annual dues payable?", a: "Annual dues become due on January 1 each year and must be paid on or before March 31 after a 90-day grace period." },
       { q: "Are there concessions for elderly members?", a: "Yes. Members aged 80 years and above pay only 50% of the annual dues." },
       { q: "What happens if a member fails to pay dues?", a: "Members who owe annual dues for two years or more may have their names removed from the membership register until all outstanding amounts are paid." },
-      { q: "Can members facing financial hardship receive consideration?", a: "Yes. Members experiencing extenuating circumstances such as serious illness or bereavement may contact the Secretariat before the due date for consideration by the Executive Committee." }
+      { q: "Can members facing financial hardship receive consideration?", a: "Yes. Members experiencing extenuating circumstances such as serious illness or bereavement may contact the Secretariat before the due date for consideration by the Executive Committee." },
+      { q: "Which fields are mandatory when filling out the registration form?", a: "All registration fields are mandatory except Date of Birth and Residential Address." },
+      { q: "What is the full process for becoming a member, from signup to full membership?", a: "After you fill out the Create Account form, you'll receive a message confirming your signup request has been submitted and is pending. This request goes to the EMRAN admins for approval. Once approved, you'll receive an email with instructions to pay your registration fee (₦20,000) and annual dues (₦40,000). After completing payment, click the link in that email to reach the Confirm Payment page, where you enter the serial number from your payment receipt and submit it. Once the admin verifies this, you're approved as a full member, you'll receive a welcome email, and you can fully log in, edit your profile, and use the platform." }
     ]
   },
   {
@@ -125,7 +130,7 @@ export const faqCategories = [
       { q: "I forgot my password. How do I reset it?", a: "On the login page, click 'Forgot Password'. Enter your registered email address and click Submit. You will receive a password reset link in your email. Click the link, enter a new password, and confirm it to complete the reset." },
       { q: "How do I change my password after logging in?", a: "Once logged in, navigate to your Profile page. Look for the 'Change Password' or 'Security' section. Enter your current password, then enter and confirm your new password. Click 'Save' or 'Update' to apply the change." },
       { q: "How do I edit my profile information?", a: "Log in to your account and click on your name or profile icon at the top of the page. Select 'Edit Profile' or 'My Profile'. Update your details such as phone number, address, or next-of-kin information, then click 'Save Changes'." },
-      { q: "How do I upload a profile photo?", a: "Go to your Profile page and click on the profile photo placeholder or your existing photo. A file picker will appear — select an image from your device. Supported formats are JPG, PNG, and GIF. Click 'Upload' or 'Save' to update your photo." },
+      { q: "How do I upload a profile photo?", a: "Go to your Profile page and click on the profile photo placeholder or your existing photo. A file picker will appear — select an image from your device. Supported formats are JPG, JPEG, PNG, and SVG. Click 'Upload' or 'Save' to update your photo." },
       { q: "How do I update my next-of-kin information?", a: "Log in and navigate to your Profile page. Scroll to the 'Next of Kin' section and click 'Edit'. Enter your next-of-kin's name, relationship, phone number, and address. Click 'Save Changes' to update." },
       { q: "How do I update my designated beneficiary?", a: "Go to your Profile page and find the 'Beneficiary' section. Click 'Edit Beneficiary', fill in the required details, and save. This information is critical for death benefit processing." },
       { q: "How do I send a message to EMRAN support?", a: "Navigate to the 'Support' or 'Contact Us' page from the top menu. Fill in the contact form with your name, email, subject, and message, then click 'Send'. Alternatively, you can email emranannuitants@gmail.com directly." },
@@ -167,7 +172,19 @@ export const faqCategories = [
       { q: "How do I share an EMRAN announcement with others?", a: "On the Announcements page, open the announcement you want to share. Look for the share icon or a 'Copy Link' option. You can then share the link via WhatsApp, email, or any other platform." },
       { q: "What do I do if I cannot see my profile photo after uploading?", a: "Try refreshing the page. If the photo still does not appear, clear your browser cache and reload. If the problem persists, try uploading a different image format (JPG or PNG) or contact support." },
       { q: "Why does the website show that my account is inactive?", a: "Your account may show as inactive if your annual dues are outstanding or if your registration has not been fully verified. Check your dues payment status on your Profile page. Contact the Secretariat if you believe this is an error." },
-      { q: "How do I add or update my spouse's information?", a: "Log in and go to your Profile page. Scroll to the 'Spouse Information' section and click 'Edit'. Fill in your spouse's name, date of birth, and contact details. Save the changes. This information is required for spousal death benefit eligibility." }
+      { q: "How do I add or update my spouse's information?", a: "Log in and go to your Profile page. Scroll to the 'Spouse Information' section and click 'Edit'. Fill in your spouse's name, date of birth, and contact details. Save the changes. This information is required for spousal death benefit eligibility." },
+      { q: "How do I view member benefits on the portal?", a: "Open the 'Benefits' page from the navigation menu to view all available member benefits." },
+      { q: "How long is the password reset link valid for?", a: "The password reset link sent to your email is valid for 30 minutes. If it expires before you use it, simply request a new one through 'Forgot Password'." },
+      { q: "How do I use the 24/7 Live Chat?", a: "Click the chat icon visible on the website at any time and type your question. Live Chat is available 24/7 and will try to match your question to a relevant FAQ answer instantly." },
+      { q: "How do I read my notifications?", a: "Navigate to your dashboard and scroll down to the Notifications section, or click the bell icon on the navigation bar to view your notifications." },
+      { q: "How do I view upcoming and past EMRAN events from my dashboard?", a: "Navigate to your dashboard and scroll down to the Events section. Click on it to see both upcoming and past EMRAN events." },
+      { q: "How do I cast my vote during an EMRAN election?", a: "Navigate to your dashboard and scroll down to the Elections section. Click on the active election to cast your vote." },
+      { q: "How do I access EMRAN's constitution, articles of association, CAC registration, and WhatsApp group rules from my dashboard?", a: "Go to the homepage, navigate to your dashboard, and scroll down to find the Resources section, where these documents are available." },
+      { q: "What is EMRAN's help desk number for phone support?", a: "You can call the EMRAN help desk at +234 90 6941 2463 for customer support assistance." },
+      { q: "What security practices should I follow to keep my account safe?", a: "Never share your password, use a strong password, sign out after using shared or public devices, and keep your registered email account secure since it's used for password resets and important notifications." },
+      { q: "Do I need to be signed in to contact EMRAN support?", a: "Yes. Sign in first, then open the Support page, enter your message, and submit your request." },
+      { q: "Can I sort and filter questions on the FAQ page, not just search them?", a: "Yes. The FAQ page lets you browse by category, search using the search bar, and also sort and filter questions to find what you need faster." },
+      { q: "Will I be redirected anywhere automatically after signing in?", a: "Yes. Once you sign in successfully, you're automatically redirected to your dashboard." }
     ]
   }
 ];
