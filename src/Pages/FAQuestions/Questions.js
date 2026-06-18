@@ -21,7 +21,7 @@ export const faqCategories = [
     icon: "🤝",
     faqs: [
       { q: "Who is eligible to become a member of EMRAN?", a: "Membership is open to Nigerian retirees of ExxonMobil, Mobil Producing Nigeria Unlimited, Esso Exploration and Production Nigeria Limited, and their respective subsidiaries. Applicants must have formally retired and completed the membership registration process." },
-      { q: "How do I register as a member?", a: "Applicants can register online through the EMRAN website at EMRAN.center. Alternatively, applicants may request a hard copy registration form and submit it to the EXCO or send it to the official email: emranannuitants@gmail.com." },
+      { q: "How do I register as a member?", a: "Applicants can register online through the EMRAN website at https://emran.center. " },
       { q: "What is the current registration fee?", a: "The current registration fee is ₦20,000." },
       { q: "What are the annual dues?", a: "The current annual dues are ₦40,000 per year." },
       { q: "When are annual dues payable?", a: "Annual dues become due on January 1 each year and must be paid on or before March 31 after a 90-day grace period." },
