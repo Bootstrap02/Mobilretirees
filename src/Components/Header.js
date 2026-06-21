@@ -1,4 +1,3 @@
-
 // components/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -38,6 +37,9 @@ const Header = ({ isOpen, notifications = [] }) => {
   // Check login status
   const userData = JSON.parse(localStorage.getItem('userData'));
   const isLoggedIn = !!userData;
+  const firstName = userData?.fullname?.split(' ')[0] || 'Member';
+  const avatarUrl = userData?.image?.[0] || null;
+  const avatarInitial = userData?.fullname?.charAt(0)?.toUpperCase() || 'U';
 
   // Scroll effect: shrink header + add shadow
   useEffect(() => {
@@ -147,6 +149,18 @@ const Header = ({ isOpen, notifications = [] }) => {
             {/* User Menu */}
             {isLoggedIn && userData && userData.role === "member" ? (
               <div className="flex items-center space-x-4">
+                {/* Avatar + Welcome greeting */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full overflow-hidden bg-white/20 border-2 border-white/30 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    {avatarUrl
+                      ? <img src={avatarUrl} alt={userData.fullname} className="w-full h-full object-cover" />
+                      : avatarInitial}
+                  </div>
+                  <span className={`hidden xl:inline font-semibold text-sm whitespace-nowrap ${scrolled ? 'text-[#001F5B]' : 'text-white'}`}>
+                    Welcome, {firstName}
+                  </span>
+                </div>
+
                 <button 
                   onClick={() => navigate(`/dashboard/${userData._id}`)}
                   className="flex items-center gap-2 bg-[#E30613] text-white px-5 py-2.5 rounded-full font-medium hover:bg-[#c20511] transition shadow-md"
@@ -253,6 +267,19 @@ const Header = ({ isOpen, notifications = [] }) => {
               <div className="pt-5 space-y-3 pb-10">
                 {isLoggedIn ? (
                   <>
+                    {/* Avatar + Welcome greeting */}
+                    <div className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 mb-1">
+                      <div className="w-11 h-11 rounded-full overflow-hidden bg-white/20 border-2 border-white/30 flex items-center justify-center text-white font-bold flex-shrink-0">
+                        {avatarUrl
+                          ? <img src={avatarUrl} alt={userData?.fullname} className="w-full h-full object-cover" />
+                          : avatarInitial}
+                      </div>
+                      <div>
+                        <p className="text-white font-bold text-base leading-tight">Welcome, {firstName}</p>
+                        <p className="text-gray-300 text-xs">Great to have you back</p>
+                      </div>
+                    </div>
+
                     <button
                       onClick={() => navigate(`/dashboard/${userData?._id}`)}
                       className="w-full bg-[#E30613] text-white py-3 rounded-xl font-semibold text-base"
@@ -301,3 +328,4 @@ const Header = ({ isOpen, notifications = [] }) => {
 };
 
 export default Header;
+
