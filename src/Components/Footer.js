@@ -115,19 +115,17 @@ const Footer = () => {
               <p>
                 © {new Date().getFullYear()} ExxonMobil Retirees Association of Nigeria. All rights reserved.
               </p>
-              <div className="flex gap-1 items-center">
-                <p>
-                  Website Developed by Campusify Enterprise
-                </p>
-                <a 
-                  href="https://www.campusify.net" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-blue-400 hover:underline"
+              <p>
+                Made by{' '}
+                <a
+                  href="https://www.campusify.net"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white font-semibold hover:text-[#E30613] underline underline-offset-2 decoration-white/40 hover:decoration-[#E30613] transition"
                 >
-                  https://www.campusify.net
+                  Campusify
                 </a>
-              </div>
+              </p>
             </div>
             <div className="flex gap-6 mt-4 md:mt-0">
               <NavLink to="/privacy" className="hover:text-white transition">Privacy Policy</NavLink>
