@@ -1,4 +1,4 @@
-// pages/Homepage.jsx — BEAUTIFIED VERSION + NEWS/EVENTS HERO CAROUSEL
+// pages/Homepage.jsx — BEAUTIFIED VERSION
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
@@ -14,12 +14,10 @@ const Homepage = () => {
   const navigate = useNavigate();
   const userData = JSON.parse(localStorage.getItem('userData'));
   const [notifications, setNotifications] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [alerts, setAlerts] = useState({});
+  // const [featuredNews, setFeaturedNews] = useState(null);
   const [allNotifications, setAllNotifications] = useState();
-
-  /* ── News & Events hero carousel ── */
-  const [newsEvents, setNewsEvents] = useState([]);
-  const [activeSlide, setActiveSlide] = useState(0);
 
  useEffect(() => {
   const fetchNotifications = async () => {
@@ -45,7 +43,10 @@ const Homepage = () => {
             const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
             const newsList = res.data.newsEvent || [];
             localStorage.setItem('newsevents', JSON.stringify(newsList));
-            setNewsEvents(newsList);
+            if (newsList.length > 0) {
+        // await setFeaturedNews(newsList?.[0]); // assume first is latest
+        // await setLoading(true); // assume first is latest
+      }
           } catch (err) {
             console.error('Failed to load new/events:', err);
           }
@@ -68,15 +69,6 @@ const Homepage = () => {
   }
 }, []);
 
-  /* ── Auto-advance the hero carousel ── */
-  useEffect(() => {
-    const slideCount = Math.min(newsEvents.length, 6);
-    if (slideCount <= 1) return;
-    const timer = setInterval(() => {
-      setActiveSlide(prev => (prev + 1) % slideCount);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [newsEvents.length]);
 
 
   const openNotifications= ()=>{
@@ -105,80 +97,20 @@ const Homepage = () => {
       .forEach(el => observer.observe(el));
   }, []);
 
-  const carouselSlides = newsEvents.slice(0, 6);
-
   return (
     <>
       {/* Hero Section */}
       <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] overflow-hidden">
-        <Header isOpen={openNotifications} notifications={allNotifications} />
-
+        <Header isOpen={openNotifications} />
+        <Header 
+        isOpen={openNotifications}
+       notifications={allNotifications}
+      />
         {/* Animated Background Orbs */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-0 left-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
-
-        {/* ================= NEWS & EVENTS HERO CAROUSEL ================= */}
-        {carouselSlides.length > 0 && (
-          <div className="relative z-10 max-w-7xl mx-auto px-6 pt-8 animate-on-scroll">
-            <div
-              className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-white/10 cursor-pointer group"
-              style={{ height: 'clamp(180px, 32vw, 320px)' }}
-              onClick={() => navigate('/newsevents')}
-            >
-              {carouselSlides.map((item, i) => {
-                const img = item.image?.[0] || item.images?.[0] || item.coverImage || null;
-                const dateValue = item.date || item.createdAt;
-                return (
-                  <div
-                    key={item._id || i}
-                    className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-                    style={{ opacity: i === activeSlide ? 1 : 0, pointerEvents: i === activeSlide ? 'auto' : 'none' }}
-                  >
-                    {img ? (
-                      <img
-                        src={img}
-                        alt={item.title || item.heading || 'EMRAN News'}
-                        className="w-full h-full object-cover transition-transform duration-[6000ms] ease-out group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] flex items-center justify-center text-6xl opacity-30">📰</div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
-                      <span className="inline-block bg-[#E30613] text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full mb-2 uppercase tracking-wide shadow-lg">
-                        News &amp; Events
-                      </span>
-                      <h3 className="text-white text-lg sm:text-2xl font-bold drop-shadow-lg leading-snug" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {item.title || item.heading || 'EMRAN Update'}
-                      </h3>
-                      {dateValue && (
-                        <p className="text-gray-300 text-xs sm:text-sm mt-1">
-                          {new Date(dateValue).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Slide indicators */}
-              {carouselSlides.length > 1 && (
-                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
-                  {carouselSlides.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => { e.stopPropagation(); setActiveSlide(i); }}
-                      aria-label={`Go to slide ${i + 1}`}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${i === activeSlide ? 'bg-white w-6' : 'bg-white/40 w-1.5 hover:bg-white/70'}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col lg:flex-row items-center justify-between gap-16">
           {/* Text */}
@@ -254,6 +186,8 @@ const Homepage = () => {
         </div>
       </div>
 
+      {/* ================= NEWS & EVENTS SECTION ================= */}
+      
       {/* Core Pillars */}
 <section className="py-24 bg-gray-50">
   <div className="max-w-7xl mx-auto px-6 text-center animate-on-scroll">
@@ -343,4 +277,3 @@ const Homepage = () => {
 };
 
 export default Homepage;
-
