@@ -1,6 +1,6 @@
 // pages/Homepage.jsx — BEAUTIFIED VERSION + NEWS/EVENTS HERO CAROUSEL
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import heroImage from '../assets/exxonmobil-logo-white.jpg';
