@@ -1,401 +1,341 @@
-import React, { useState, useEffect, useRef } from "react";
+
+// pages/Homepage.jsx — FULL, UNCUT & FIXED DEPLOYMENT VERSION
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import Header from '../Components/Header';
+import Footer from '../Components/Footer';
+import heroImage from '../assets/exxonmobil-logo-white.jpg';
+import cacCertificate from '../assets/cac-certificate.jpg';
+import NotificationsList from '../Components/Notificationslist';
+import AlertModal from '../Components/Alerts';
 import axios from "axios";
-import { odds, smallOdds } from "./Scores";
-import { FiRefreshCw } from "react-icons/fi";
-
-/* ---------------- UTILS ---------------- */
-const sanitizeTeam = (value) => value.toLowerCase().replace(/[^a-z]/g, "");
-const API_BASE = "https://campusbuy-backend-nkmx.onrender.com/betking";
-
-// Array 1 (Small Array) — targets the SMALL deficit. Stakes always flow into BIG deficit.
-const ARRAY_1_KEYS = ["oneZero", "twoZero", "twoOne", "threeZero", "threeOne", "threeTwo"];
-const ARRAY_1_LABELS = {
-  oneZero: "1–0", twoZero: "2–0", twoOne: "2–1",
-  threeZero: "3–0", threeOne: "3–1", threeTwo: "3–2"
-};
-
-// Array 2 (Big Array) — targets (BIG + FINAL) deficit combined. Its FULL ladder
-// (including the winner/6-0 rung) flows into FINAL deficit. The 5 odds-based
-// rungs use the big-array formula; "winner" always uses the winner formula.
-const ARRAY_2_ODDS_KEYS = ["fourZero", "fourOne", "fourTwo", "fiveZero", "fiveOne"];
-const ARRAY_2_KEYS = [...ARRAY_2_ODDS_KEYS, "winner"];
-const ARRAY_2_LABELS = {
-  fourZero: "4–0", fourOne: "4–1", fourTwo: "4–2",
-  fiveZero: "5–0", fiveOne: "5–1", winner: "6–0"
-};
-
-// Normal (HDA) game keys — winner is calculated and shown first, HDA follows.
-const NORMAL_KEYS = ["winner", "home", "draw", "away"];
-const NORMAL_LABELS = { winner: "6–0 Winner", home: "Home (H)", draw: "Draw (D)", away: "Away (A)" };
-
-const emptyStakesMap = () => {
-  const obj = {};
-  [...ARRAY_1_KEYS, ...ARRAY_2_KEYS, ...NORMAL_KEYS].forEach(k => { obj[k] = 0; });
-  return obj;
-};
 
 const Homepage = () => {
-  /* ---------- INPUTS ---------- */
-  const [inputA, setInputA] = useState("");
-  const [inputB, setInputB] = useState("");
-  const [isReloading, setIsReloading] = useState(false);
-
-  /* ---------- FIXTURE ---------- */
-  const [fixture, setFixture] = useState(null);
-  const [isSmallOddsGame, setIsSmallOddsGame] = useState(false);
-
-  /* ---------- THE THREE-DEFICIT SYSTEM (small odds games) ---------- */
-  const [baseStake, setBaseStake] = useState(10000);
-  const [smallDeficit, setSmallDeficit] = useState(0);
-  const [bigDeficit, setBigDeficit] = useState(0);
-  const [finalDeficit, setFinalDeficit] = useState(0);
-
-  /* ---------- CALCULATED LIVE STAKES ---------- */
-  const [gameStakes, setGameStakes] = useState(emptyStakesMap());
-  const [winnerKey, setWinnerKey] = useState(null);
-
-  /* ---------- REF FOR AUTOSAVE ---------- */
-  const baseRef = useRef(baseStake);
-  useEffect(() => { baseRef.current = baseStake; }, [baseStake]);
-
-  /* ================================================================
-     DATABASE SYNC
-     ================================================================ */
-  const fetchBase = async () => {
-    setIsReloading(true);
-    try {
-      const res = await axios.get(API_BASE);
-      if (res.data) {
-        setBaseStake(res.data.base || 10000);
-        setSmallDeficit(res.data.smallDeficit || 0);
-        setBigDeficit(res.data.bigDeficit || 0);
-        setFinalDeficit(res.data.finalDeficit || 0);
-      }
-    } catch (err) {
-      console.error("❌ Sync read failure:", err.message);
-    } finally {
-      setIsReloading(false);
-    }
-  };
-
-  const saveBase = async (overrides = {}) => {
-    try {
-      await axios.put(API_BASE, {
-        base: overrides.baseStake ?? baseRef.current,
-        smallDeficit: overrides.smallDeficit ?? smallDeficit,
-        bigDeficit: overrides.bigDeficit ?? bigDeficit,
-        finalDeficit: overrides.finalDeficit ?? finalDeficit,
-      });
-      console.log("✅ State synced successfully");
-    } catch (err) {
-      console.error("❌ Sync save failure:", err.message);
-    }
-  };
+  const navigate = useNavigate();
+  
+  // Safely grab local storage attributes once upfront globally for the component
+  const userData = JSON.parse(localStorage.getItem('userData') || 'null');
+  
+  const [notifications, setNotifications] = useState(false);
+  const [alerts, setAlerts] = useState(null); // Fallback to null instead of array to prevent ref comparisons loops
+  const [allNotifications, setAllNotifications] = useState([]); // Safely default to an array
 
   useEffect(() => {
-    fetchBase();
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications');
+        const list = res.data.notifications || [];
+        setAllNotifications(list);
+        localStorage.setItem('notifications', JSON.stringify(list));
+      } catch (err) {
+        console.error('Failed to load notifications:', err);
+      }
+    };
+
+    const fetchalerts = async () => {
+      try {
+        const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatealert');
+        if (res.data.alerts && res.data.alerts.length > 0) {
+          setAlerts(res.data.alerts[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load alerts:', err);
+      }
+    };
+
+    const fetchnewsevents = async () => {
+      try {
+        const res = await axios.get('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenewsevents');
+        const newsList = res.data.newsEvent || [];
+        localStorage.setItem('newsevents', JSON.stringify(newsList));
+      } catch (err) {
+        console.error('Failed to load new/events:', err);
+      }
+    };
+
+    const fetchuser = async (id) => {
+      try {
+        const res = await axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getuser/${id}`);
+        const user = res.data.user || null;
+        if (user) {
+          localStorage.setItem('userData', JSON.stringify(user));
+        }
+      } catch (err) {
+        console.error('Failed to load user:', err);
+      }
+    };
+
+    // Triggering data fetch
+    fetchnewsevents();
+    fetchalerts();
+    fetchNotifications();
+    
+    if (userData?._id) {
+      fetchuser(userData._id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ================================================================
-     SUBMIT AND LIVE CALCULATIONS ENGINE
-     ================================================================ */
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const openNotifications = () => setNotifications(true);
+  const closeNotifications = () => setNotifications(false);
 
-    const home = sanitizeTeam(inputA) || "liv";
-    const away = sanitizeTeam(inputB) || "liv";
-
-    let found = smallOdds.find((o) => o.home === home && o.away === away);
-    const isSmall = !!found;
-    if (!found) found = odds.find((o) => o.home === home && o.away === away);
-
-    if (!found) {
-      alert(`No tactical odds mapped for "${home}" vs "${away}"`);
-      return;
-    }
-
-    setIsSmallOddsGame(isSmall);
-    setFixture(found);
-    setWinnerKey(null);
-
-    const calculatedStakes = emptyStakesMap();
-
-    if (isSmall) {
-      // STEP 1 — Winner (6-0): same formula everywhere, no minus one.
-      const winnerOdd = found.winner || 0;
-      const winnerStake = winnerOdd > 1.01 ? Math.max(Math.round(baseStake / winnerOdd), 10) : 0;
-      calculatedStakes.winner = winnerStake;
-
-      // STEP 2 — Winner stake piles into SMALL deficit, every small-odds game.
-      const updatedSmallDeficit = smallDeficit + winnerStake;
-
-      // STEP 3 — Small array (Array 1) targets the updated small deficit.
-      ARRAY_1_KEYS.forEach((key) => {
-        const odd = found[key] || 0;
-        if (odd > 1.01) {
-          calculatedStakes[key] = Math.max(Math.round(updatedSmallDeficit / (odd - 1)), 10);
-        }
-      });
-
-      // STEP 4 — Small array's stakes are pushed into BIG deficit, every game.
-      const array1Total = ARRAY_1_KEYS.reduce((sum, key) => sum + (calculatedStakes[key] || 0), 0);
-      const updatedBigDeficit = bigDeficit + array1Total;
-
-      // STEP 5 — Big array (the 5 odds-based rungs) targets (BIG + FINAL) deficit combined.
-      ARRAY_2_ODDS_KEYS.forEach((key) => {
-        const odd = found[key] || 0;
-        if (odd > 1.01) {
-          calculatedStakes[key] = Math.max(Math.round((updatedBigDeficit + finalDeficit) / (odd - 1)), 10);
-        }
-      });
-
-      // STEP 6 — Big array's FULL ladder (5 odds-based rungs + the winner rung)
-      // is pushed into FINAL deficit, every game.
-      const array2Total = ARRAY_2_ODDS_KEYS.reduce((sum, key) => sum + (calculatedStakes[key] || 0), 0) + winnerStake;
-      const updatedFinalDeficit = finalDeficit + array2Total;
-
-      // Commit immediate deficit transformations to state.
-      setSmallDeficit(updatedSmallDeficit);
-      setBigDeficit(updatedBigDeficit);
-      setFinalDeficit(updatedFinalDeficit);
-    } else {
-      // --- NORMAL (HDA) GAME: winner first, no minus one; HDA follows it, minus one as before ---
-      const winnerOdd = found.winner || 0;
-      if (winnerOdd > 1.01) {
-        calculatedStakes.winner = Math.max(Math.round(baseStake / winnerOdd), 10);
-      }
-      ["home", "draw", "away"].forEach((key) => {
-        const odd = found[key] || 0;
-        if (odd > 1.01) {
-          calculatedStakes[key] = Math.max(Math.round(baseStake / (odd - 1)), 10);
-        }
-      });
-    }
-
-    setGameStakes(calculatedStakes);
-  };
-
-  /* ================================================================
-     SETTLEMENT ENGINE
-     ================================================================ */
-  const handleNext = () => {
-    if (!fixture) return;
-
-    let nextSmallDeficit = smallDeficit;
-    let nextBigDeficit = bigDeficit;
-    let nextFinalDeficit = finalDeficit;
-    let nextBaseStake = baseStake;
-
-    if (isSmallOddsGame) {
-      if (winnerKey) {
-        if (ARRAY_1_KEYS.includes(winnerKey)) {
-          // Small array wins: small deficit instantly zero. Deduct before-assets from big deficit.
-          nextSmallDeficit = 0;
-
-          const targetIndex = ARRAY_1_KEYS.indexOf(winnerKey);
-          let deductionSum = 0;
-          for (let i = 0; i < targetIndex; i++) {
-            deductionSum += gameStakes[ARRAY_1_KEYS[i]] || 0;
+  // Fade-in animation on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fadeIn');
           }
-          nextBigDeficit = Math.max(0, nextBigDeficit - deductionSum);
-        } else if (ARRAY_2_KEYS.includes(winnerKey)) {
-          // Big array wins (including the winner/6-0 rung): big deficit instantly zero.
-          // Deduct before-assets from final deficit.
-          const targetIndex = ARRAY_2_KEYS.indexOf(winnerKey);
-          let deductionSum = 0;
-          for (let i = 0; i < targetIndex; i++) {
-            deductionSum += gameStakes[ARRAY_2_KEYS[i]] || 0;
-          }
-          nextFinalDeficit = Math.max(0, nextFinalDeficit - deductionSum);
-          nextBigDeficit = 0;
-        }
-      }
-      // No win (total loss): nothing further to do here — the small array's
-      // stakes already flowed into big deficit, and the big array's full
-      // ladder already flowed into final deficit, both during handleSubmit.
-      // The deficits simply stay at the values already set there.
-    } else {
-      // --- NORMAL ODDS GAME SETTLEMENT (unchanged) ---
-      if (winnerKey && NORMAL_KEYS.includes(winnerKey)) {
-        nextBaseStake = 10000; // Reset Martingale sequence anchor on win
-      } else {
-        const totalNormalStakes = NORMAL_KEYS.reduce((sum, k) => sum + (gameStakes[k] || 0), 0);
-        nextBaseStake = baseStake + totalNormalStakes;
-      }
-    }
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-    // Update state blocks
-    setSmallDeficit(nextSmallDeficit);
-    setBigDeficit(nextBigDeficit);
-    setFinalDeficit(nextFinalDeficit);
-    setBaseStake(nextBaseStake);
+    document
+      .querySelectorAll('.animate-on-scroll')
+      .forEach(el => observer.observe(el));
 
-    // Save complete metrics to DB
-    saveBase({
-      baseStake: nextBaseStake,
-      smallDeficit: nextSmallDeficit,
-      bigDeficit: nextBigDeficit,
-      finalDeficit: nextFinalDeficit
-    });
-
-    clearForNext();
-  };
-
-  const clearForNext = () => {
-    setInputA("");
-    setInputB("");
-    setFixture(null);
-    setIsSmallOddsGame(false);
-    setWinnerKey(null);
-    setGameStakes(emptyStakesMap());
-  };
-
-  const teamA = sanitizeTeam(inputA) || "HME";
-  const teamB = sanitizeTeam(inputB) || "AWY";
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-950 via-black to-red-900 text-white flex flex-col">
-
-      {/* HEADER BAR */}
-      <div className="flex items-center justify-between px-5 pt-6 pb-3 shrink-0">
-        <h1 className="text-base font-extrabold text-red-400 tracking-tight">
-          Virtual EPL
-          <span className={`ml-2 text-[10px] px-2 py-0.5 rounded-full font-bold align-middle ${isSmallOddsGame ? "bg-emerald-500 text-black" : "bg-blue-500 text-white"}`}>
-            {isSmallOddsGame ? "SMALL ODDS MODE" : "REGULAR HDA MODE"}
-          </span>
-        </h1>
-        <div className="flex rounded-full overflow-hidden shadow">
-          <button onClick={() => saveBase()} className="px-4 py-2 bg-green-600 font-bold text-white text-xs hover:bg-green-700 transition">
-            💾 Save
-          </button>
-          <button onClick={fetchBase} disabled={isReloading} className="flex items-center gap-1.5 px-4 py-2 bg-red-600 font-bold text-white text-xs hover:bg-red-700 transition disabled:opacity-50">
-            <FiRefreshCw className={isReloading ? "animate-spin" : ""} />
-            {isReloading ? "…" : "Reload"}
-          </button>
-        </div>
-      </div>
-
-      {/* CORE FRAMEWORK INTERFACE */}
-      <div className="flex-1 flex flex-col justify-center px-4 pb-6 gap-4 overflow-y-auto">
-
-        {/* RUNTIME CLOSURE ACTION */}
-        <div className="w-full">
-          <button onClick={handleNext} disabled={!fixture} className={`w-full py-4 rounded-2xl font-extrabold text-sm transition active:scale-95 shadow ${!fixture ? "bg-gray-700 opacity-40 cursor-not-allowed text-white" : "bg-green-700 hover:bg-green-600 text-white"}`}>
-            <div className="text-base font-black">NEXT MATCH</div>
-            <div className="text-[9px] opacity-70 font-normal">Settle Matrix & Update Pools</div>
-          </button>
+    <>
+      {/* Hero Section */}
+      <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] overflow-hidden">
+        {/* FIXED: Single unified layout declaration */}
+        <Header 
+          isOpen={openNotifications}
+          notifications={allNotifications}
+        />
+        
+        {/* Animated Background Orbs */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#E30613]/30 rounded-full blur-3xl animate-pulse delay-700"></div>
         </div>
 
-        {fixture ? (
-          isSmallOddsGame ? (
-            <>
-              {/* ARRAY 1 BLOCK — targets SMALL deficit */}
-              <div>
-                <div className="text-[9px] text-cyan-400 font-bold tracking-wider uppercase mb-1.5 ml-1">
-                  ✦ Array 1 Matrix (Targets Small Def)
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {ARRAY_1_KEYS.map((key) => {
-                    const isActive = winnerKey === key;
-                    return (
-                      <button key={key} onClick={() => setWinnerKey(key)} className={`py-3.5 rounded-xl font-bold text-xs transition active:scale-95 flex flex-col items-center justify-center ${isActive ? "bg-white text-green-600 ring-4 ring-green-500" : "bg-cyan-950/60 border border-cyan-800 text-white hover:bg-cyan-900/60"}`}>
-                        <span className="text-[10px] text-cyan-300 font-black">{ARRAY_1_LABELS[key]}</span>
-                        <span className="text-sm font-extrabold mt-0.5">{gameStakes[key] || "0"}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-16 flex flex-col lg:flex-row items-center justify-between gap-16">
+          {/* Text */}
+          <div className="text-white text-center lg:text-left max-w-2xl animate-on-scroll">
+            <h1 className="text-[20px] sm:text-[15px] lg:text-[15px] font-extrabold leading-tight mb-8 drop-shadow-2xl">
+              Welcome Home,<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E30613] to-[#ff4444]">
+                EMRAN Family
+              </span>
+            </h1>
 
-              {/* ARRAY 2 BLOCK — targets (BIG + FINAL) deficit, ends in the 6-0 winner rung */}
-              <div>
-                <div className="text-[9px] text-purple-400 font-bold tracking-wider uppercase mb-1.5 ml-1">
-                  ✦ Array 2 Matrix (Targets Big + Final Def)
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {ARRAY_2_KEYS.map((key) => {
-                    const isActive = winnerKey === key;
-                    const isWinnerRung = key === "winner";
-                    return (
-                      <button key={key} onClick={() => setWinnerKey(key)} className={`py-3.5 rounded-xl font-bold text-xs transition active:scale-95 flex flex-col items-center justify-center ${
-                        isActive
-                          ? "bg-white text-green-600 ring-4 ring-green-500"
-                          : isWinnerRung
-                            ? "bg-yellow-950/60 border border-yellow-700 text-white hover:bg-yellow-900/60"
-                            : "bg-purple-950/60 border border-purple-800 text-white hover:bg-purple-900/60"
-                      }`}>
-                        <span className={`text-[10px] font-black ${isWinnerRung ? "text-yellow-400" : "text-purple-300"}`}>{ARRAY_2_LABELS[key]}</span>
-                        <span className={`text-sm font-extrabold mt-0.5 ${!isActive && isWinnerRung ? "text-yellow-300" : ""}`}>{gameStakes[key] || "0"}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          ) : (
-            /* REGULAR ODDS: WINNER FIRST, THEN HDA MATRIX */
-            <>
-              <div>
-                <div className="text-[9px] text-yellow-400 font-bold tracking-wider uppercase mb-1.5 ml-1">
-                  ✦ 6-0 Jackpot Winner
-                </div>
-                <button onClick={() => setWinnerKey("winner")} className={`w-full py-4 rounded-xl font-bold text-xs transition active:scale-95 flex flex-col items-center justify-center ${winnerKey === "winner" ? "bg-white text-green-600 ring-4 ring-green-500" : "bg-yellow-950/60 border border-yellow-700 text-white hover:bg-yellow-900/60"}`}>
-                  <span className="text-[11px] text-yellow-400 font-black uppercase">{NORMAL_LABELS.winner}</span>
-                  <span className="text-base font-black mt-1 text-yellow-300">{gameStakes.winner || "0"}</span>
+            <p className="text-xl lg:text-2xl text-gray-200 mb-8 leading-relaxed opacity-90">
+              ExxonMobil Retirees Association of Nigeria – Advancing welfare, unity,
+              and comradeship for all retirees.
+            </p>
+
+            <p className="text-lg text-gray-300 mb-12">
+              Incorporated under CAMA 2020 • Reg. No. 153528 • Serving you since 2020
+            </p>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row gap-8 justify-center lg:justify-start">
+              {userData ? (
+                <button
+                  onClick={() => navigate(`/dashboard/${userData._id}`)}
+                  className="group relative overflow-hidden bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-[#E30613]/50"
+                >
+                  <span className="relative z-10">Go to My Dashboard</span>
+                  <div className="absolute inset-0 bg-white/20 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
                 </button>
-              </div>
+              ) : (
+                <>
+                  <NavLink
+                    to="/signin"
+                    className="group relative overflow-hidden bg-gradient-to-r from-[#E30613] to-[#c20511] text-white font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-[#E30613]/50 text-center"
+                  >
+                    <span className="relative z-10">Sign In</span>
+                    <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
+                  </NavLink>
 
-              <div>
-                <div className="text-[9px] text-blue-400 font-bold tracking-wider uppercase mb-1.5 ml-1">
-                  ✦ Standard Match Matrix (HDA)
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {["home", "draw", "away"].map((key) => {
-                    const isActive = winnerKey === key;
-                    return (
-                      <button key={key} onClick={() => setWinnerKey(key)} className={`py-4 rounded-xl font-bold text-xs transition active:scale-95 flex flex-col items-center justify-center ${isActive ? "bg-white text-green-600 ring-4 ring-green-500" : "bg-blue-950/60 border border-blue-800 text-white hover:bg-blue-800/60"}`}>
-                        <span className="text-[11px] text-blue-300 font-black uppercase">{NORMAL_LABELS[key]}</span>
-                        <span className="text-base font-black mt-1 text-yellow-400">{gameStakes[key] || "0"}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </>
-          )
-        ) : null}
-
-        {/* INPUT CONTROLS SECTION */}
-        <div className="space-y-3 mt-2">
-          <div className="flex items-center gap-3">
-            <input value={inputA} onChange={(e) => setInputA(e.target.value)} placeholder="Home" className="flex-1 min-w-0 px-3 py-3 border border-red-900 rounded-xl text-center text-sm bg-black/40 text-white placeholder-red-700 focus:outline-none focus:border-red-500" />
-            <span className="font-black text-xl text-red-600 shrink-0">VS</span>
-            <input value={inputB} onChange={(e) => setInputB(e.target.value)} placeholder="Away" className="flex-1 min-w-0 px-3 py-3 border border-red-900 rounded-xl text-center text-sm bg-black/40 text-white placeholder-red-700 focus:outline-none focus:border-red-500" />
+                  <NavLink
+                    to="/signup"
+                    className="group relative bg-white text-[#001F5B] font-bold text-xl px-12 py-6 rounded-2xl shadow-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-110 hover:bg-gray-50 text-center border-4 border-[#E30613]/20"
+                  >
+                    Create Account
+                  </NavLink>
+                </>
+              )}
+            </div>
           </div>
 
-          <button onClick={handleSubmit} disabled={!!fixture} className={`w-full py-4 font-black text-sm rounded-xl tracking-wide transition active:scale-95 shadow ${fixture ? "bg-gray-800 text-gray-500 cursor-not-allowed" : "bg-red-700 hover:bg-red-600 text-white"}`}>
-            EXECUTE GAME ANALYSIS
-          </button>
-        </div>
-
-        {/* DATA MONITOR METRICS BLOCK */}
-        <div className="bg-black/40 border border-white/5 rounded-2xl p-4 text-xs grid grid-cols-2 gap-x-6 gap-y-2 font-mono">
-          <div className="flex justify-between"><span className="text-gray-400">Base Pool</span><strong className="text-green-400">{baseStake}</strong></div>
-          <div className="flex justify-between"><span className="text-gray-400">Small Def</span><strong className="text-cyan-400">{smallDeficit}</strong></div>
-          <div className="flex justify-between"><span className="text-gray-400">Big Def</span><strong className="text-blue-400">{bigDeficit}</strong></div>
-          <div className="flex justify-between"><span className="text-gray-400">Final Def</span><strong className="text-purple-400">{finalDeficit}</strong></div>
-
-          {fixture && (
-            <div className="col-span-2 pt-2 mt-1 border-t border-white/5 text-center font-sans tracking-wide">
-              <span className="text-white font-black uppercase">{teamA}</span>
-              <span className="text-red-500 mx-2 font-bold">vs</span>
-              <span className="text-white font-black uppercase">{teamB}</span>
+          {/* Hero Image */}
+          <div className="w-full lg:w-1/2 max-w-2xl mx-auto lg:mx-0 animate-on-scroll">
+            <div className="relative group">
+              <img
+                src={heroImage}
+                alt="EMRAN Family Gathering"
+                className="w-full h-auto rounded-3xl shadow-2xl border-8 border-white/40 object-cover transition-transform duration-1000 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
-          )}
+          </div>
         </div>
 
+        {/* Wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg className="w-full h-auto" viewBox="0 0 1440 220">
+            <path
+              fill="#F8F9FA"
+              d="M0 120L48 130C96 140 192 160 288 155C384 150 480 120 576 115C672 110 768 130 864 140C960 150 1056 150 1152 145C1248 140 1344 130 1392 125L1440 120V220H0V120Z"
+            />
+          </svg>
+        </div>
       </div>
-    </div>
+
+      {/* ================= CORE PILLARS SECTION ================= */}
+      <section className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 text-center animate-on-scroll">
+          <h2 className="text-5xl font-bold text-[#001F5B] mb-6">Our Core Pillars</h2>
+          <p className="text-2xl text-gray-600 mb-20">From EMRAN Constitution – Built for You</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {[
+              {
+                icon: "🏛️",
+                title: "Who We Are",
+                desc: "EMRAN is a registered association of ExxonMobil retirees, founded to preserve unity, dignity, and lifelong fellowship.",
+                path: "/about",
+              },
+              {
+                icon: "📜",
+                title: "Our Purpose",
+                desc: "To protect collective interests, promote mutual support, and maintain strong institutional continuity among members.",
+                path: "/resources",
+              },
+              {
+                icon: "🤝",
+                title: "Our Community",
+                desc: "A trusted network built on shared history, transparency, accountability, and mutual respect.",
+                path: "/community",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                onClick={() => navigate(item.path)}
+                className="group cursor-pointer bg-white p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 focus:outline-none focus:ring-4 focus:ring-[#E30613]/30"
+              >
+                <div className="w-24 h-24 bg-gradient-to-br from-[#E30613] to-[#c20511] rounded-full flex items-center justify-center mx-auto mb-8 text-5xl text-white shadow-lg group-hover:scale-110 transition">
+                  {item.icon}
+                </div>
+                <h3 className="text-3xl font-bold text-[#001F5B] mb-6">{item.title}</h3>
+                <p className="text-gray-600 text-lg mb-8">{item.desc}</p>
+                <span className="inline-flex items-center gap-2 text-[#E30613] font-bold text-lg group-hover:underline">
+                  Learn More <span className="group-hover:translate-x-1 transition">→</span>
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================= NEWS & EVENTS SECTION ================= */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6 animate-on-scroll">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <h2 className="text-5xl font-bold text-[#001F5B] mb-4">Latest News & Events</h2>
+              <p className="text-2xl text-gray-600">Stay informed about upcoming milestones, welfare news, and updates</p>
+            </div>
+            <NavLink 
+              to="/news" 
+              className="text-xl font-bold text-[#E30613] hover:text-[#c20511] flex items-center gap-2 whitespace-nowrap group focus:outline-none focus:underline"
+            >
+              View All News <span className="group-hover:translate-x-2 transition">→</span>
+            </NavLink>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {[
+              {
+                tag: "Welfare",
+                tagColor: "bg-emerald-100 text-emerald-800",
+                title: "Annual Medical Check-up Updates",
+                desc: "Important health updates, partner clinic additions, and registration links for our comprehensive 2026 wellness packages.",
+                date: "June 15, 2026",
+                author: "Welfare Committee"
+              },
+              {
+                tag: "Event",
+                tagColor: "bg-blue-100 text-blue-800",
+                title: "EMRAN Annual General Meeting",
+                desc: "Join us for our upcoming general meeting. We will discuss foundational strategies, review budget distributions, and plan future growth frameworks.",
+                date: "June 10, 2026",
+                author: "Secretariat"
+              },
+              {
+                tag: "Notice",
+                tagColor: "bg-amber-100 text-amber-800",
+                title: "New Digital Verification Portal Launch",
+                desc: "A simplified, highly secure portal built from scratch to verify active profiles and maintain seamless connection across all network chains.",
+                date: "May 28, 2026",
+                author: "IT Support Team"
+              }
+            ].map((news, index) => (
+              <article 
+                key={index} 
+                className="bg-white rounded-3xl border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col h-full overflow-hidden hover:-translate-y-2 group"
+              >
+                <div className="p-8 flex-grow flex flex-col">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className={`px-4 py-1.5 rounded-full text-sm font-semibold uppercase tracking-wider ${news.tagColor}`}>
+                      {news.tag}
+                    </span>
+                    <span className="text-sm font-medium text-gray-400">{news.date}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-[#001F5B] mb-4 line-clamp-2 group-hover:text-[#E30613] transition-colors">
+                    {news.title}
+                  </h3>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-6 flex-grow line-clamp-3">
+                    {news.desc}
+                  </p>
+                  <div className="pt-6 border-t border-gray-50 flex items-center justify-between mt-auto">
+                    <span className="text-sm font-medium text-gray-500">By {news.author}</span>
+                    <span className="text-[#E30613] font-bold inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                      Read Article →
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Section */}
+      <section className="py-24 bg-[#001F5B] text-white">
+        <div className="max-w-7xl mx-auto px-6 text-center animate-on-scroll">
+          <h2 className="text-5xl font-bold mb-10">Officially Registered & Trusted</h2>
+          <p className="text-2xl mb-12 opacity-90">Incorporated under CAMA 2020 • Reg. No. 153528</p>
+
+          <div className="relative max-w-4xl mx-auto group">
+            <img
+              src={cacCertificate}
+              alt="Official CAC Certificate"
+              className="w-full rounded-3xl shadow-2xl border-8 border-white/20 object-contain transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+          <p className="mt-12 text-2xl opacity-90">Proudly serving ExxonMobil retirees since 2020</p>
+        </div>
+      </section>
+
+      {notifications && (
+        <NotificationsList 
+          isOpen={notifications} 
+          onClose={closeNotifications} 
+          notifications={allNotifications}
+        />
+      )}
+      
+      {alerts && <AlertModal alert={alerts} />}
+      <Footer />
+    </>
   );
 };
 
