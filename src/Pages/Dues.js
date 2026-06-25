@@ -256,7 +256,9 @@ export const Dues = () => {
 };
 
 
-export  const DuesPayment = () => {
+
+
+export const DuesPayment = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -264,14 +266,14 @@ export  const DuesPayment = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  useEffect(()=>{
-     const storedUser = JSON.parse(localStorage.getItem('userData'));
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('userData'));
 
-      if (!storedUser) {
-        navigate('/signin');
-        return;
-      }
-  })
+    if (!storedUser) {
+      navigate('/signin');
+      return;
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -287,7 +289,7 @@ export  const DuesPayment = () => {
     try {
       const response = await axios.put(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/confirmpayment/${id}`,
-        { token: token.trim(),  year: true }
+        { token: token.trim(), year: true }
       );
 
       setMessage({
@@ -308,9 +310,8 @@ export  const DuesPayment = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] text-white py-12 px-4">
-
       <div className="max-w-4xl mx-auto">
-
+        
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
@@ -376,13 +377,24 @@ export  const DuesPayment = () => {
 
             {message.text && (
               <div
-                className={`mt-6 p-5 rounded-xl text-center ${
+                className={`mt-6 p-5 rounded-xl text-center text-lg ${
                   message.type === 'success'
                     ? 'bg-green-600/20 border border-green-400 text-green-200'
                     : 'bg-red-600/20 border border-red-400 text-red-200'
                 }`}
               >
-                {message.text}
+                <span>{message.text}</span>
+                {message.type === 'success' && (
+                  <div className="mt-2 text-base border-t border-green-400/30 pt-2 font-medium">
+                    Also, please send your transfer receipt to{' '}
+                    <a
+                      href="mailto:emranwebmgt@gmail.com?subject=EMRAN%20Dues%20Transfer%20Receipt"
+                      className="underline text-white hover:text-green-300 font-bold transition"
+                    >
+                      emranwebmgt@gmail.com
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
@@ -393,4 +405,3 @@ export  const DuesPayment = () => {
     </div>
   );
 };
-
