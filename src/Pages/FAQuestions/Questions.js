@@ -364,7 +364,23 @@ export const faqCategories = [
       { q: "What security practices should I follow to keep my account safe?", a: "Never share your password, use a strong password, sign out after using shared or public devices, and keep your registered email account secure since it's used for password resets and important notifications." },
       { q: "Do I need to be signed in to contact EMRAN support?", a: "Yes. Sign in first, then open the Support page, enter your message, and submit your request." },
       { q: "Can I sort and filter questions on the FAQ page, not just search them?", a: "Yes. The FAQ page lets you browse by category, search using the search bar, and also sort and filter questions to find what you need faster." },
-      { q: "Will I be redirected anywhere automatically after signing in?", a: "Yes. Once you sign in successfully, you're automatically redirected to your dashboard." }
+      { q: "Will I be redirected anywhere automatically after signing in?", a: "Yes. Once you sign in successfully, you're automatically redirected to your dashboard." }, 
+      {
+    "q": "How do I set my date of birth?",
+    "a": "Clicked on the calendar, click on the year (2026), scroll up till you find your desired year, click on the year, click on the arrows to find the month and date, then click OK."
+  },
+  {
+    "q": "How do I set my year of Retirement?",
+    "a": "Clicked on the calendar, click on the year (2026), scroll up till you find your desired year, click on the year, click on the arrows to find the month and date, then click OK."
+  },
+  {
+    "q": "How do I see my dues payment history?",
+    "a": "Go to your Dashboard, then profile, then scroll down to dues, click on it and scroll down to see your dues and payment history."
+  }
+
+
+
+      
     ]
   }
 ];
