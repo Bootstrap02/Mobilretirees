@@ -1,5 +1,4 @@
 
-
 export const faqCategories = [
   {
     id: "general",
@@ -38,17 +37,31 @@ export const faqCategories = [
     label: "Benefits & Welfare",
     icon: "💙",
     faqs: [
-      { q: "Does EMRAN provide death benefits?", a: "Yes. EMRAN provides death benefits for deceased members and spouses of members who are in good financial standing." },
-      { q: "What is the current death benefit amount?", a: "The current death benefit is ₦500,000 — applicable for the death of a member or the death of a member's spouse." },
-      { q: "Who receives the death benefit when a member dies?", a: "The death benefit is paid to the Designated Beneficiary listed in the EMRAN membership records." },
-      { q: "How long does it take to process death benefit payments?", a: "Payment is expected within two weeks after verification of all required documentation." },
+      { q: "Does EMRAN provide death benefits?", a: "Yes. EMRAN provides its own internal death benefit for deceased members and spouses of members who are in good financial standing. This is separate from the ExxonMobil burial assistance benefit paid by Stanbic IBTC, which is also available to retirees." },
+      { q: "What is the current EMRAN death benefit amount?", a: "EMRAN's own internal death benefit is ₦500,000, applicable for the death of a member or the death of a member's spouse. Note that this is distinct from the ExxonMobil burial assistance of ₦1,000,000 paid by Stanbic IBTC to the retiree's Next of Kin — both benefits may be available." },
+      { q: "Who receives the EMRAN death benefit when a member dies?", a: "EMRAN's internal death benefit is paid to the Designated Beneficiary listed in the EMRAN membership records." },
+      { q: "How long does it take to process EMRAN death benefit payments?", a: "EMRAN's internal death benefit payment is expected within two weeks of the claim being submitted, after verification of all required documentation by the EMRAN Secretariat. Note that this is separate from PenCom-regulated RSA benefit approvals, which are processed by the National Pension Commission within 5 working days of receiving the application from your PFA." },
       { q: "Does EMRAN support members during celebrations?", a: "Yes. EMRAN supports publicity for milestone events such as birthday celebrations, wedding anniversaries, and children's weddings. Members should notify the Publicity Secretary and Vice President at least two days before the event." },
       { q: "Are milestone birthday gifts provided?", a: "Yes. EMRAN recognizes milestone birthdays at ages 70, 80, 90, and 100. Eligible members may receive gift items or cash gifts approved by the Association." },
       { q: "How does the EMRAN Executive Committee support members on pension matters?", a: "The EMRAN Executive Committee actively supports members in resolving pension-related issues, including delayed pension payments, pension computation concerns, clarifications with Pension Fund Administrators (PFAs), and escalation of unresolved pension matters to the appropriate authorities." },
       { q: "What is Pension Supplementation, and what role does EMRAN play?", a: "EMRAN continually advocates for Pension Supplementation for retirees. The Association engages relevant stakeholders and ExxonMobil management in pursuit of improved post-retirement financial support and welfare enhancement for members." },
       { q: "Does EMRAN assist members with health insurance matters?", a: "Yes. The Executive Committee, through the Benefits Officer and relevant subcommittees, assists members in processing health insurance claims, resolving HMO-related challenges, clarifying benefits and coverage issues, and escalating unresolved healthcare matters with the Health Maintenance Organization (HMO)." },
       { q: "Does EMRAN advocate for better healthcare benefits for retirees?", a: "Yes. EMRAN actively advocates for improvements in the health insurance plan available to members and their spouses. This includes engaging stakeholders on improved healthcare coverage, better access to medical services, expanded wellness and preventive care initiatives, and fair and timely processing of medical claims." },
-      { q: "Who should members contact regarding pension or healthcare issues?", a: "Members may contact the EMRAN Executive Committee through the President, the Benefits Officer, the General Secretary, official EMRAN communication platforms, or the official email." }
+      { q: "Who should members contact regarding pension or healthcare issues?", a: "Members may contact the EMRAN Executive Committee through the President, the Benefits Officer, the General Secretary, official EMRAN communication platforms, or the official email." },
+      { q: "How is my monthly pension paid after retirement?", a: "Stanbic IBTC Pension Managers processes and pays your monthly pension directly into your last payroll bank account every month. For pension-related queries, contact Olamide.Amoo@stanbicibtc.com or call +234 (0) 913 934 1588." },
+      { q: "How do I enroll into the medical insurance plan after retirement?", a: "You enroll into medical insurance with AXA Mansard Health Limited. Contact healthcare@axamansard.com, ETCO@axamansard.com, or exxonmobilaxacares@axamansard.com. You may also reach the ExxonMobil HR benefits team at hr.ng.benefits@exxonmobil.com or EMBPC.Nigeria@alight.com." },
+      { q: "Who is covered under the medical insurance plan?", a: "The medical insurance plan covers the retiree and their spouse." },
+      { q: "How do I claim my NSITF (Nigeria Social Insurance Trust Fund) contribution refund?", a: "Your NSITF contribution refund is now handled by Deloitte on behalf of ExxonMobil. To process it, complete the NSITF Refund Form, attach a copy of a government-issued photo ID, and submit both to the company contact. The processing is done through Stanbic IBTC Pension Managers upon retirement. Contact: exxonmobilngges@deloitte.com.ng." },
+      { q: "How do I claim my NHF (National Housing Fund) contribution refund?", a: "Your NHF contribution refund is processed at age 60 through the Federal Mortgage Bank of Nigeria (FMBN). Company endorsement is required on the form before submission to FMBN through the company contact. This applies only to those who retired after April 2005. Note that payment is strictly handled by FMBN and may take several months. Contact: exxonmobilngges@deloitte.com.ng." },
+      { q: "What is the ExxonMobil burial assistance benefit and how is it paid?", a: "Upon the passing of a retiree, ExxonMobil provides a one-time burial assistance payment of ₦1,000,000 to the designated Next of Kin (NOK) listed on the most recent annual verification form. This is separate from EMRAN's own internal death benefit of ₦500,000. To claim the ExxonMobil burial assistance, the NOK must present a copy of the death certificate, bank account confirmation, and a government-issued photo ID. Contacts: Olamide.Amoo@stanbicibtc.com, +234 (0) 913 934 1588, hr.ng.benefits@exxonmobil.com, EMBPC.Nigeria@alight.com, hrexpress@exxonmobil.com." },
+      { q: "What is the Survivor Guaranteed Option benefit?", a: "The Survivor Guaranteed Option benefit is based on the guarantee option you selected at retirement and applies if you die before the guarantee period expires. Options available at retirement include: 5 Years Guarantee (GTE), 10 Years GTE, 15 Years GTE, Spouse Pension + 5 Years GTE, Spouse Pension + 10 Years GTE, and Spouse Pension + 15 Years GTE. If the beneficiary is not the spouse, a lump sum is paid to the designated beneficiary upon presentation of a death certificate, bank account confirmation, and government-issued photo ID. If the spouse is the beneficiary, a Spouse Pension Form is administered and monthly pension is set up for the remainder of the guaranteed period. Contacts: EMBPC.Nigeria@alight.com, Olamide.Amoo@stanbicibtc.com, +234 (0) 913 934 1588, hr.ng.benefits@exxonmobil.com, hrexpress@exxonmobil.com." },
+      { q: "What is the Survivor Spouse Pension benefit?", a: "The Survivor Spouse Pension applies if you selected the Spousal Pension option at retirement. In the event of your death, your spouse receives a life pension equal to 50% of your monthly pension. To set it up, your family notifies the relevant contacts, a Spouse Pension Form is administered, and monthly pension payments are set up for the spouse thereafter. Contacts: EMBPC.Nigeria@alight.com, Olamide.Amoo@stanbicibtc.com, +234 (0) 913 934 1588, hr.ng.benefits@exxonmobil.com, hrexpress@exxonmobil.com." },
+      { q: "How do I obtain my Tax Clearance Certificates (TCCs) after retirement?", a: "Send an email to the ExxonMobil Tax Consultant (Deloitte) directly at exxonmobilngges@deloitte.com.ng to request your Tax Clearance Certificates." },
+      { q: "Who handles NSITF refunds, NHF refunds, and Tax Clearance Certificates for ExxonMobil retirees?", a: "All three are handled by Deloitte as the appointed consultant. Contact them at exxonmobilngges@deloitte.com.ng for NSITF refunds, NHF refunds, and Tax Clearance Certificates." },
+      { q: "What documents are required to process a burial assistance claim for a deceased retiree?", a: "The Next of Kin must provide three documents: a copy of the death certificate, a bank account confirmation showing the NOK's account details, and a government-issued photo ID of the NOK." },
+      { q: "What documents are required to process a Survivor Guaranteed Option lump sum for a non-spouse beneficiary?", a: "The designated beneficiary must present a copy of the death certificate, bank account confirmation, and a government-issued photo ID of the beneficiary." },
+      { q: "Who is the Stanbic IBTC contact for pension and burial assistance matters?", a: "Contact Olamide Amoo at Olamide.Amoo@stanbicibtc.com or call +234 (0) 913 934 1588 for pension payments and burial assistance processing." },
+      { q: "What is the EMBPC Nigeria Alight contact used for?", a: "EMBPC.Nigeria@alight.com is used for burial assistance claims, survivor guaranteed option processing, and survivor spouse pension setup for ExxonMobil retirees." }
     ]
   },
   {
@@ -240,7 +253,7 @@ export const faqCategories = [
       { q: "How often does EMRAN hold its AGM?", a: "The Association holds an Annual General Meeting (AGM) once every calendar year." },
       { q: "How much notice is given before AGMs or EGMs?", a: "A minimum notice period of 21 calendar days is required." },
       { q: "What constitutes a quorum for meetings?", a: "The quorum for an AGM or EGM is one-third of the total financial members, or 25 financial members — whichever is lower." },
-      { q: "Who can vote in EMRAN elections?", a: "Only members who are financially up to date and not under suspension are eligible to vote or participate in elections." },
+      { q: "Who can vote in EMRAN elections?", a: "Only members who are financially current (up to date on all dues and fees) and not under suspension are eligible to vote or participate in elections." },
       { q: "How are elections conducted?", a: "Elections are conducted through secret ballot or secure electronic voting supervised by an Electoral Panel." }
     ]
   },
@@ -261,7 +274,7 @@ export const faqCategories = [
     icon: "💬",
     faqs: [
       { q: "Does EMRAN operate WhatsApp platforms?", a: "Yes. EMRAN maintains WhatsApp platforms including XOM EMRAN Forum (https://chat.whatsapp.com/JauKjUkEOiPIn6MPmvwRcQ) and Pegasus EMRAN Forum (https://chat.whatsapp.com/IukAzzaIMeZFn78G1cUInZ)." },
-      { q: "Who can join EMRAN WhatsApp groups?", a: "Only members who are financially current and not under suspension may join the platforms." },
+      { q: "Who can join EMRAN WhatsApp groups?", a: "Only members who are financially current (up to date on all dues and fees) and not under suspension may join the platforms." },
       { q: "Are members allowed to post political or religious content?", a: "No. Political campaigns, partisan discussions, religious promotions, and proselytization are prohibited on all EMRAN platforms." },
       { q: "Are commercial advertisements allowed on EMRAN platforms?", a: "No. Members may not use EMRAN platforms to market or sell goods, services, or financial products." },
       { q: "What type of behavior is expected on EMRAN platforms?", a: "Members are expected to be respectful and courteous, avoid insults or harassment, respect differing opinions, promote peace and harmony, and avoid abusive language and personal attacks." },
@@ -347,7 +360,7 @@ export const faqCategories = [
       { q: "How do I view upcoming and past EMRAN events from my dashboard?", a: "Navigate to your dashboard and scroll down to the Events section. Click on it to see both upcoming and past EMRAN events." },
       { q: "How do I cast my vote during an EMRAN election?", a: "Navigate to your dashboard and scroll down to the Elections section. Click on the active election to cast your vote." },
       { q: "How do I access EMRAN's constitution, articles of association, CAC registration, and WhatsApp group rules from my dashboard?", a: "Go to the homepage, navigate to your dashboard, and scroll down to find the Resources section, where these documents are available." },
-      { q: "What is EMRAN's help desk number for phone support?", a: "You can call the EMRAN help desk at +234 90 6941 2463 for customer support assistance." },
+      { q: "What is EMRAN's help desk number for phone support?", a: "You can call the EMRAN help desk at +234 906 941 2463 for customer support assistance." },
       { q: "What security practices should I follow to keep my account safe?", a: "Never share your password, use a strong password, sign out after using shared or public devices, and keep your registered email account secure since it's used for password resets and important notifications." },
       { q: "Do I need to be signed in to contact EMRAN support?", a: "Yes. Sign in first, then open the Support page, enter your message, and submit your request." },
       { q: "Can I sort and filter questions on the FAQ page, not just search them?", a: "Yes. The FAQ page lets you browse by category, search using the search bar, and also sort and filter questions to find what you need faster." },
@@ -355,3 +368,4 @@ export const faqCategories = [
     ]
   }
 ];
+
