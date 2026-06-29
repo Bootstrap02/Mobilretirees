@@ -1,4 +1,3 @@
-
 // pages/Dashboard.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -60,6 +59,8 @@ const Dashboard = () => {
   const [showIOSTip, setShowIOSTip]         = useState(false);
   const [notifBlocked, setNotifBlocked]     = useState(false);
 
+ 
+
   useEffect(() => {
     const stored           = JSON.parse(localStorage.getItem('userData'));
     const notificationsData = JSON.parse(localStorage.getItem('notifications')) || [];
@@ -119,7 +120,7 @@ const Dashboard = () => {
     try {
       const reg = await navigator.serviceWorker.register('/emran-sw.js');
       await navigator.serviceWorker.ready;
-      const keyRes = await fetch('https://campusbuy-backend-nkmx.onrender.com/push/vapid-key');
+      const keyRes = await fetch('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/push/vapid-key');
       const { publicKey } = await keyRes.json();
       const urlBase64ToUint8Array = (b64) => {
         const padding = '='.repeat((4 - (b64.length % 4)) % 4);
@@ -132,7 +133,7 @@ const Dashboard = () => {
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
       const storedUser = JSON.parse(localStorage.getItem('userData'));
-      await fetch('https://campusbuy-backend-nkmx.onrender.com/push/subscribe', {
+      await fetch('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subscription, userId: storedUser?._id || null }),
