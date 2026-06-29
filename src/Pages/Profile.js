@@ -1,5 +1,5 @@
 
-// pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH
+// pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH + EXIF ORIENTATION FIX
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import axios from "axios";
@@ -25,7 +25,6 @@ const SectionHeader = ({ icon: Icon, title, subtitle }) => (
   </div>
 );
 
-// ── Reusable labelled input ─────────────────────────────────────────────────
 const Field = ({ label, icon: Icon, children }) => (
   <div className="space-y-2 w-full">
     <label className="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-600 uppercase tracking-wide">
@@ -43,7 +42,6 @@ const readOnlyCls =
 const selectCls =
   "w-full px-4 py-3 md:px-5 md:py-4 border-2 border-gray-200 rounded-2xl text-base focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/20 transition shadow-sm bg-white appearance-none outline-none";
 
-// ── Phone wrapper for consistent styling ───────────────────────────────────
 const PhoneField = ({ value, onChange }) => (
   <div className="w-full">
     <PhoneInput
@@ -61,20 +59,58 @@ const PhoneField = ({ value, onChange }) => (
   </div>
 );
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   EXIF ORIENTATION FIX
+   ─────────────────────────────────────────────────────────────────────────────
+   Problem: iPhones and some Android cameras embed an EXIF orientation tag in
+   JPEG files. The original pixel data is stored rotated (e.g. upside-down),
+   and the EXIF tag tells viewers how to display it correctly. Most browsers
+   honour the EXIF tag when rendering <img> tags, but when you upload the raw
+   file bytes to a server and store them, the server/CDN may strip the EXIF
+   tag — causing the image to appear rotated when retrieved.
+
+   Fix: Before uploading, we draw the image onto an HTML5 Canvas (which
+   always renders with the EXIF orientation applied), then export the canvas
+   as a new JPEG blob. The resulting file has the correct pixel orientation
+   baked in, with no reliance on an EXIF tag. We upload this corrected blob
+   instead of the original file.
+   ──────────────────────────────────────────────────────────────────────────── */
+const fixImageOrientation = (file) =>
+  new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width  = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(
+          (blob) => resolve(new File([blob], file.name, { type: 'image/jpeg' })),
+          'image/jpeg',
+          0.92
+        );
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
 const Profile = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const fileInputRef = useRef(null);
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading]               = useState(true);
+  const [saving, setSaving]                 = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCurrentPass, setShowCurrentPass] = useState(false);
-  const [showNewPass, setShowNewPass] = useState(false);
+  const [showNewPass, setShowNewPass]       = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
-  const [uploadError, setUploadError] = useState('');
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [passwordError, setPasswordError]   = useState('');
+  const [uploadError, setUploadError]       = useState('');
+  const [saveSuccess, setSaveSuccess]       = useState(false);
 
   const [formData, setFormData] = useState({
     fullname: '', email: '', phone: '', address: '',
@@ -86,7 +122,7 @@ const Profile = () => {
   });
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [passwordData, setPasswordData] = useState({
+  const [passwordData, setPasswordData]   = useState({
     currentPassword: '', newPassword: '', confirmPassword: ''
   });
 
@@ -97,18 +133,14 @@ const Profile = () => {
     let formattedRetirementDate = 'N/A';
     if (stored.dateOfRetirement) {
       const d = new Date(stored.dateOfRetirement);
-      if (!isNaN(d.getTime())) {
+      if (!isNaN(d.getTime()))
         formattedRetirementDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      }
     }
 
-    // Convert dateOfBirth to YYYY-MM-DD template value for the HTML5 input tag
     let inputBirthDate = '';
     if (stored.dateOfBirth) {
       const d = new Date(stored.dateOfBirth);
-      if (!isNaN(d.getTime())) {
-        inputBirthDate = d.toISOString().split('T')[0];
-      }
+      if (!isNaN(d.getTime())) inputBirthDate = d.toISOString().split('T')[0];
     }
 
     setFormData({
@@ -140,15 +172,28 @@ const Profile = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageSelect = (e) => {
+  /* ── Image selection with EXIF fix applied immediately on select ── */
+  const handleImageSelect = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
     const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
-    if (!allowed.includes(file.type)) { setUploadError('Only JPG, JPEG, PNG, SVG allowed'); return; }
-    if (file.size > 5 * 1024 * 1024) { setUploadError('Image too large (max 5MB)'); return; }
+    if (!allowed.includes(file.type)) {
+      setUploadError('Only JPG, JPEG, PNG, SVG allowed'); return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image too large (max 5MB)'); return;
+    }
     setUploadError('');
-    setSelectedImage(file);
-    setFormData(prev => ({ ...prev, profilePhoto: URL.createObjectURL(file) }));
+
+    // SVG files have no EXIF data — skip the canvas fix for them
+    const correctedFile = file.type === 'image/svg+xml'
+      ? file
+      : await fixImageOrientation(file);
+
+    setSelectedImage(correctedFile);
+    // Show the corrected preview immediately
+    setFormData(prev => ({ ...prev, profilePhoto: URL.createObjectURL(correctedFile) }));
   };
 
   const handleSaveProfile = async () => {
@@ -165,7 +210,7 @@ const Profile = () => {
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
-          dateOfBirth: formData.dateOfBirth, // <-- Sent to API
+          dateOfBirth: formData.dateOfBirth,
           companyAtRetirement: formData.companyAtRetirement,
           locationOfRetirement: formData.locationOfRetirement,
           departmentOfRetirement: formData.departmentOfRetirement,
@@ -233,9 +278,11 @@ const Profile = () => {
       const errorMsg = err.response?.data?.message || err.message || 'Failed to change password';
       if (err.response?.status === 401) {
         setPasswordError('Session expired. Please login again.');
-        localStorage.removeItem('userData'); localStorage.removeItem('token');
+        localStorage.removeItem('userData');
         navigate('/signin');
-      } else { setPasswordError(errorMsg); }
+      } else {
+        setPasswordError(errorMsg);
+      }
     } finally { setSaving(false); }
   };
 
@@ -245,15 +292,19 @@ const Profile = () => {
     navigate('/signin');
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-3xl text-[#001F5B]">Loading...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center text-3xl text-[#001F5B]">
+      Loading...
+    </div>
+  );
 
   return (
     <div className="w-full overflow-x-hidden bg-gray-50">
       <Header />
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-24 pb-20 px-4">
         <div className="max-w-5xl mx-auto w-full">
-          
-          {/* Top Banner Accent */}
+
+          {/* Top Banner */}
           <div className="relative bg-gradient-to-br from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl md:rounded-3xl p-6 md:p-10 mb-8 md:mb-12 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_40%,rgba(227,6,19,0.4),transparent)]"></div>
             <div className="relative z-10 text-center">
@@ -262,20 +313,25 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* User Profile Image Wrapper */}
+          {/* Profile Photo */}
           <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl p-6 md:p-10 mb-8 relative text-center">
             <div className="inline-block relative group cursor-pointer" onClick={() => fileInputRef.current.click()}>
-              <img 
-                src={formData.profilePhoto} 
-                alt={formData.fullname || "Profile Avatar"}
+              <img
+                src={formData.profilePhoto}
+                alt={formData.fullname || 'Profile Avatar'}
                 className="w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 md:border-8 border-white shadow-2xl ring-4 ring-[#E30613]/40 group-hover:opacity-80 transition"
-                onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname || 'U')}&background=001F5B&color=fff&size=256`; }} 
+                onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname || 'U')}&background=001F5B&color=fff&size=256`; }}
               />
               <div className="absolute bottom-1 right-1 bg-[#E30613] p-2 md:p-3 rounded-full text-white shadow-lg hover:bg-[#c20511] transition">
                 <FiCamera className="text-base md:text-xl" />
               </div>
-              <input type="file" ref={fileInputRef} accept="image/jpeg,image/jpg,image/png,image/svg+xml"
-                onChange={handleImageSelect} className="hidden" />
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/jpeg,image/jpg,image/png,image/svg+xml"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
             </div>
             {uploadError && <p className="text-red-600 text-xs md:text-sm mt-2">{uploadError}</p>}
             <div className="mt-4">
@@ -284,7 +340,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Form Fields Stack */}
           <div className="w-full space-y-6">
             {saveSuccess && (
               <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-semibold text-lg animate-bounce">
@@ -430,7 +485,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Save & Delete Control Buttons */}
+            {/* Save & Delete Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full">
               <button onClick={handleSaveProfile} disabled={saving}
                 className="w-full flex-1 bg-gradient-to-r from-[#E30613] to-[#c20511] hover:from-[#c20511] hover:to-[#E30613] text-white font-bold text-lg md:text-xl py-4 px-6 md:py-5 md:px-10 rounded-2xl shadow-xl transition hover:scale-105 disabled:opacity-60 flex items-center justify-center gap-3">
@@ -460,7 +515,9 @@ const Profile = () => {
             <div className="text-center mb-6">
               <FiAlertTriangle className="text-5xl md:text-7xl text-red-600 mx-auto mb-4" />
               <h3 className="text-xl md:text-2xl font-bold text-[#001F5B] mb-3">Delete Account?</h3>
-              <p className="text-gray-700 text-sm md:text-base">This action is <strong>permanent</strong> and cannot be undone.</p>
+              <p className="text-gray-700 text-sm md:text-base">
+                This action is <strong>permanent</strong> and cannot be undone.
+              </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button onClick={() => setShowDeleteModal(false)}
