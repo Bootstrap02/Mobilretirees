@@ -18,6 +18,7 @@ import cacCertificate from '../assets/cac-certificate.jpg';
    PUSH NOTIFICATION HELPERS
 ───────────────────────────────────────────────────────────────────────── */
 const NOTIF_STORAGE_KEY = 'emran_notif_permission';
+const PUSH_BASE = 'https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications';
 
 const isIOS = () =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -59,7 +60,12 @@ const Dashboard = () => {
   const [showIOSTip, setShowIOSTip]         = useState(false);
   const [notifBlocked, setNotifBlocked]     = useState(false);
 
- 
+  /* ── DEBUG: visible push diagnostics panel (dev-only helper) ── */
+  const [pushDebug, setPushDebug] = useState([]);
+  const logPush = (msg) => {
+    console.log('[PUSH]', msg);
+    setPushDebug(prev => [...prev.slice(-6), `${new Date().toLocaleTimeString()} — ${msg}`]);
+  };
 
   useEffect(() => {
     const stored           = JSON.parse(localStorage.getItem('userData'));
@@ -67,7 +73,6 @@ const Dashboard = () => {
     const newsevents       = JSON.parse(localStorage.getItem('newsevents')) || [];
 
     setAllNotifications(notificationsData);
-    // FIX 1: use the actual array length, not stored.notifications (which doesn't exist)
     setNews(newsevents.length);
 
     if (!stored) { navigate('/signin'); return; }
@@ -80,7 +85,6 @@ const Dashboard = () => {
       profilePhoto:   stored.image?.[0]     || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
       duesStatus:     stored.duesStatus     || 'Pending Verification',
       unreadMessages: stored.messages       || 0,
-      // FIX 1: notifications count = array length from localStorage
       notificationsCount: notificationsData.length,
       upcomingEvents: stored.upcomingEvents || 0,
       role:           stored.role           || 'member',
@@ -93,11 +97,18 @@ const Dashboard = () => {
   useEffect(() => {
     if (loading) return;
     const stored = localStorage.getItem(NOTIF_STORAGE_KEY);
+    logPush(`Permission check — localStorage flag: "${stored}", browser permission: "${notificationsSupported() ? Notification.permission : 'unsupported'}"`);
+
     if (stored === 'granted') return;
 
     if (notificationsSupported()) {
       if (Notification.permission === 'granted') {
         localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
+        // IMPORTANT: even if permission was already granted in a previous
+        // session, we still need an active subscription on file. If the
+        // user cleared cookies/localStorage but the OS permission stuck,
+        // we silently re-subscribe here so pushes keep working.
+        registerPushSubscription();
         return;
       }
       if (Notification.permission === 'denied') {
@@ -105,7 +116,6 @@ const Dashboard = () => {
         setNotifBlocked(true);
         return;
       }
-      // permission === 'default' — always show our modal until user decides
     }
 
     if (isIOS() && !isPWA()) {
@@ -114,31 +124,65 @@ const Dashboard = () => {
     }
 
     if (notificationsSupported()) setShowNotifModal(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
   const registerPushSubscription = useCallback(async () => {
     try {
+      logPush('Step 1: checking serviceWorker support...');
+      if (!('serviceWorker' in navigator)) {
+        logPush('❌ serviceWorker NOT supported in this browser');
+        return;
+      }
+
+      logPush('Step 2: registering /emran-sw.js ...');
       const reg = await navigator.serviceWorker.register('/emran-sw.js');
+      logPush('✅ Service worker registered: ' + reg.scope);
+
       await navigator.serviceWorker.ready;
-      const keyRes = await fetch('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/push/vapid-key');
+      logPush('✅ Service worker ready');
+
+      logPush('Step 3: fetching VAPID public key...');
+      const keyRes = await fetch(`${PUSH_BASE}/push/vapid-key`);
+      if (!keyRes.ok) {
+        logPush(`❌ vapid-key request failed: HTTP ${keyRes.status}`);
+        return;
+      }
       const { publicKey } = await keyRes.json();
+      if (!publicKey) {
+        logPush('❌ vapid-key response has no publicKey — check VAPID_PUBLIC_KEY in .env on the server');
+        return;
+      }
+      logPush('✅ Got VAPID public key');
+
       const urlBase64ToUint8Array = (b64) => {
         const padding = '='.repeat((4 - (b64.length % 4)) % 4);
         const base64  = (b64 + padding).replace(/-/g, '+').replace(/_/g, '/');
         const raw     = atob(base64);
         return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
       };
+
+      logPush('Step 4: subscribing pushManager...');
       const subscription = await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),
       });
+      logPush('✅ Got push subscription endpoint: ' + subscription.endpoint.substring(0, 50) + '...');
+
       const storedUser = JSON.parse(localStorage.getItem('userData'));
-      await fetch('https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications/push/subscribe', {
+      logPush('Step 5: sending subscription to backend...');
+      const subRes = await fetch(`${PUSH_BASE}/push/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subscription, userId: storedUser?._id || null }),
       });
+      if (!subRes.ok) {
+        logPush(`❌ Subscribe save failed: HTTP ${subRes.status}`);
+        return;
+      }
+      logPush('✅ Subscription saved on backend — push notifications are now active for this browser');
     } catch (err) {
+      logPush('❌ ERROR: ' + (err.message || String(err)));
       console.error('Push subscription error:', err);
     }
   }, []);
@@ -148,13 +192,15 @@ const Dashboard = () => {
     try {
       const permission = await Notification.requestPermission();
       localStorage.setItem(NOTIF_STORAGE_KEY, permission);
+      logPush(`User responded to permission prompt: "${permission}"`);
       if (permission === 'granted') {
         sendTestNotification();
-        if ('serviceWorker' in navigator) registerPushSubscription();
+        registerPushSubscription();
       } else {
         setNotifBlocked(permission === 'denied');
       }
     } catch (err) {
+      logPush('❌ requestPermission threw: ' + err.message);
       console.error('Notification permission error:', err);
     }
   }, [registerPushSubscription]);
@@ -245,6 +291,14 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
+          {/* ── DEBUG PANEL — remove once push is confirmed working ── */}
+          {pushDebug.length > 0 && (
+            <div className="bg-gray-900 text-green-400 font-mono text-xs rounded-2xl p-4 mb-8 overflow-x-auto">
+              <p className="text-white font-bold mb-2">🔧 Push Debug Log (remove before final launch)</p>
+              {pushDebug.map((line, i) => <div key={i}>{line}</div>)}
+            </div>
+          )}
+
           {/* Welcome Banner - Desktop */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
@@ -310,7 +364,6 @@ const Dashboard = () => {
               <NavLink to="/dues" className="text-[#E30613] font-bold mt-4 block hover:underline">View Details →</NavLink>
             </div>
 
-            {/* FIX 1: show notificationsCount (array length) not the old stored.notifications field */}
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiBell className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Notifications</h3>
@@ -403,3 +456,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
