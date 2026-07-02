@@ -1,4 +1,5 @@
 
+
 export const faqCategories = [
   {
     id: "general",
@@ -198,7 +199,9 @@ export const faqCategories = [
       { q: "How do I find my AXA MANSARD Enrollee number?", a: "Search your email inbox for 'MyAXA - HMO Onboarding' and you'll find the initial welcome email sent by AXA when you enrolled. That email contains your enrollee number." },
       { q: "How does the AXA MANSARD approval process work?", a: "For primary care, approvals are automatically granted. For secondary care, approval times vary on a case-by-case basis. Each request is reviewed carefully to ensure it matches the diagnosis and to prevent potential fraudulent activities by hospitals. Sometimes, hospitals may not be transparent about the real issue, or they may not have sent the request to AXA, leading to delays." },
       { q: "Why is there a delay in approving my medication request?", a: "Nigeria is currently facing challenges with drug scarcity as many pharmaceutical companies are leaving the country. AXA MANSARD's pharmacy team needs to search for alternative medicines, which can take time — especially when enrollees have specific preferences for certain brands of drugs." },
-      { q: "Is there a dedicated AXA MANSARD contact for EMRAN members?", a: "While a single person dedicated solely to EMRAN requests isn't feasible due to the 24/7 shift schedule of the healthcare team (including doctors and nurses), Onyebuchi Ogwu is available to handle administrative tasks and respond to enquiries and escalations. You can reach him at +234 701 804 6891 or Onyebuchi.Ogwu@axamansard.com." },
+      { q: "Is there a dedicated AXA MANSARD contact for EMRAN members?", a: "While a single person dedicated solely to EMRAN requests isn't feasible due to the 24/7 shift schedule of the healthcare team (including doctors and nurses), Onyebuchi Ogwu is available to handle administrative tasks and respond to enquiries and escalations. You can reach him at +234 701 804 6891 or Onyebuchi.Ogwu@axamansard.com. For any follow-up, always copy emranannuitants@gmail.com on your email." },
+      { q: "How do I file a medical treatment complaint with AXA Mansard?", a: "To file a medical treatment complaint, send an email to any of the following AXA Mansard addresses: healthcare@axamansard.com, exxonmobilaxacares@axamansard.com, or Onyebuchi.Ogwu@axamansard.com. For follow-up assistance, remember to copy the EMRAN Secretariat at emranannuitants@gmail.com on all correspondence." },
+      { q: "Which email addresses should I use to contact AXA Mansard about my healthcare?", a: "You can reach AXA Mansard through the following email addresses: healthcare@axamansard.com for general healthcare queries, exxonmobilaxacares@axamansard.com for ExxonMobil retiree-specific matters, and Onyebuchi.Ogwu@axamansard.com for administrative follow-up and escalations. Always copy emranannuitants@gmail.com when writing to AXA Mansard so the EMRAN Secretariat can assist with follow-up if needed." },
       { q: "What is the official AXA MANSARD contact number?", a: "The official AXA MANSARD contact number for EMRAN members is +234 811 947 5787." },
       { q: "What is the annual limit on the ExxonMobil Retiree health plan?", a: "The annual limit for the Mobil Retiree Plan (Category A+B+C) is ₦40,000,000. Note that no annual limit applies on all plans for the core components." },
       { q: "Which countries does the ExxonMobil Retiree health plan cover for both elective and non-elective treatment?", a: "The plan covers Nigeria, India, UAE, and South Africa for both elective and non-elective treatment." },
@@ -364,24 +367,7 @@ export const faqCategories = [
       { q: "What security practices should I follow to keep my account safe?", a: "Never share your password, use a strong password, sign out after using shared or public devices, and keep your registered email account secure since it's used for password resets and important notifications." },
       { q: "Do I need to be signed in to contact EMRAN support?", a: "Yes. Sign in first, then open the Support page, enter your message, and submit your request." },
       { q: "Can I sort and filter questions on the FAQ page, not just search them?", a: "Yes. The FAQ page lets you browse by category, search using the search bar, and also sort and filter questions to find what you need faster." },
-      { q: "Will I be redirected anywhere automatically after signing in?", a: "Yes. Once you sign in successfully, you're automatically redirected to your dashboard." }, 
-      {
-    "q": "How do I set my date of birth?",
-    "a": "Clicked on the calendar, click on the year (2026), scroll up till you find your desired year, click on the year, click on the arrows to find the month and date, then click OK."
-  },
-  {
-    "q": "How do I set my year of Retirement?",
-    "a": "Clicked on the calendar, click on the year (2026), scroll up till you find your desired year, click on the year, click on the arrows to find the month and date, then click OK."
-  },
-  {
-    "q": "How do I see my dues payment history?",
-    "a": "Go to your Dashboard, then profile, then scroll down to dues, click on it and scroll down to see your dues and payment history."
-  }
-
-
-
-      
+      { q: "Will I be redirected anywhere automatically after signing in?", a: "Yes. Once you sign in successfully, you're automatically redirected to your dashboard." }
     ]
   }
 ];
-
