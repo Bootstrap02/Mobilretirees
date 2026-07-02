@@ -140,7 +140,7 @@ export const Signup = () => {
       if (avatarFile && userId) {
         const fd = new FormData();
         fd.append('images', avatarFile);
-        await axios.put(`${API}/uploadimages/${userId}`, fd, {
+        await axios.put(`${API}/upload-fortune-image/${userId}`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
