@@ -310,7 +310,7 @@ const Dashboard = () => {
                   <h1 className="text-4xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-xl opacity-90 mt-2">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                   // Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
+                   
                   Retired {user.dateOfRetirement !== 'N/A' 
   ? new Date(user.dateOfRetirement).toLocaleDateString('en-US', { 
       year: 'numeric', 
