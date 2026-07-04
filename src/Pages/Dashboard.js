@@ -294,8 +294,8 @@ const Dashboard = () => {
           {/* ── DEBUG PANEL — remove once push is confirmed working ── */}
           {pushDebug.length > 0 && (
             <div className="bg-gray-900 text-green-400 font-mono text-xs rounded-2xl p-4 mb-8 overflow-x-auto">
-              <p className="text-white font-bold mb-2">🔧 Push Debug Log (remove before final launch)</p>
-              {pushDebug.map((line, i) => <div key={i}>{line}</div>)}
+              <p className="text-white font-bold mb-2">🔧 Welcome to the EMRAN users Personal Dashboard </p>
+           <div>Here you can Get more personal information and General EMRAN Information. Click profile to update your account. </div>)
             </div>
           )}
 
@@ -310,7 +310,15 @@ const Dashboard = () => {
                   <h1 className="text-4xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-xl opacity-90 mt-2">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                    Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
+                   // Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
+                  Retired {user.dateOfRetirement !== 'N/A' 
+  ? new Date(user.dateOfRetirement).toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }) 
+  : 'Member'
+}
                   </p>
                 </div>
               </div>
