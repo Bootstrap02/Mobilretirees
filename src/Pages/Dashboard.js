@@ -437,8 +437,8 @@ const Dashboard = () => {
               { title: 'EMRAN Newly Elected Executives 2026', desc: 'View the official EMRAN Newly Elected Executives in 2026.', href: executives, color: '#001F5B' },
               { title: 'EMRAN WhatsApp Rules and Regulations', desc: 'Rules and Regulations for Posting and Commenting on EMRAN WhatsApp.', href: whatsapp_rules, color: '#001F5B' },
               { title: 'EMRAN WhatsApp Penalties', desc: 'Penalties for offences on EMRAN WhatsApp Group.', href: whatsapp_penalties, color: '#001F5B' },
-              { title: 'EMRAN Retirees Benefits 2026', desc: 'Retiree Benefits for EMRAN members 2026.', href: retireesBenefit, color: '#001F5B' },
-              { title: 'EMRAN Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
+              { title: 'AXA MANSARD Medical Benefits 2026', desc: 'Retiree Benefits for EMRAN members 2026.', href: retireesBenefit, color: '#001F5B' },
+              { title: 'AXA MANSARD Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
             ].map((doc, i) => (
               <div key={i} className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition flex flex-col justify-between"
                 style={{ borderTop: `8px solid ${doc.color}` }}>
