@@ -1,3 +1,4 @@
+
 // pages/Dashboard.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -46,6 +47,33 @@ window.emranNotify = (title, body, icon = '/emran-icon.png') => {
 };
 
 /* ─────────────────────────────────────────────────────────────────────── */
+
+// ── Helper: Format retirement date ─────────────────────────────────────
+const formatRetirementDate = (dateOfRetirement) => {
+  if (!dateOfRetirement || dateOfRetirement === 'N/A') {
+    return 'Active Member';
+  }
+  try {
+    const retDate = new Date(dateOfRetirement);
+    if (isNaN(retDate.getTime())) {
+      return 'Active Member';
+    }
+    const now = new Date();
+    const years = Math.floor((now - retDate) / (1000 * 60 * 60 * 24 * 365));
+    const formattedDate = retDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    if (years < 1) {
+      return `Retired (${formattedDate})`;
+    }
+    return `Retired ${years} year${years > 1 ? 's' : ''} ago (${formattedDate})`;
+  } catch {
+    return 'Active Member';
+  }
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -104,10 +132,6 @@ const Dashboard = () => {
     if (notificationsSupported()) {
       if (Notification.permission === 'granted') {
         localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
-        // IMPORTANT: even if permission was already granted in a previous
-        // session, we still need an active subscription on file. If the
-        // user cleared cookies/localStorage but the OS permission stuck,
-        // we silently re-subscribe here so pushes keep working.
         registerPushSubscription();
         return;
       }
@@ -235,6 +259,9 @@ const Dashboard = () => {
     );
   }
 
+  // Format retirement date once
+  const retirementDisplay = formatRetirementDate(user?.dateOfRetirement);
+
   return (
     <>
       <Header />
@@ -294,8 +321,8 @@ const Dashboard = () => {
           {/* ── DEBUG PANEL — remove once push is confirmed working ── */}
           {pushDebug.length > 0 && (
             <div className="bg-gray-900 text-green-400 font-mono text-xs rounded-2xl p-4 mb-8 overflow-x-auto">
-              <p className="text-white font-bold mb-2">🔧 Welcome to the EMRAN users Personal Dashboard </p>
-           <div>Here you can Get more personal information and General EMRAN Information. Click profile to update your account. </div>)
+              <p className="text-white font-bold mb-2">🔧 Welcome to the EMRAN users Personal Dashboard</p>
+              <div>Here you can Get more personal information and General EMRAN Information. Click profile to update your account.</div>
             </div>
           )}
 
@@ -310,15 +337,7 @@ const Dashboard = () => {
                   <h1 className="text-4xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-xl opacity-90 mt-2">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                   
-                  Retired {user.dateOfRetirement !== 'N/A' 
-  ? new Date(user.dateOfRetirement).toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    }) 
-  : 'Member'
-}
+                    {retirementDisplay}
                   </p>
                 </div>
               </div>
@@ -346,7 +365,7 @@ const Dashboard = () => {
                   <h1 className="text-2xl sm:text-3xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-base sm:text-lg opacity-90 mt-1">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                    Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
+                    {retirementDisplay}
                   </p>
                 </div>
               </div>
@@ -464,4 +483,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
