@@ -10,9 +10,9 @@ import constitutionCover from '../assets/constitution-cover.png';
 import constitutionTOC  from '../assets/constitution-toc.jpg';
 import cacCertificate   from '../assets/cac-certificate.jpg';
 import tinCertificate   from '../assets/tin-certificate.jpg';
-import trusteesGroup    from '../assets/community-icon.webp';
-import historicalPhoto1 from '../assets/death-icon2.jpeg';
-import historicalPhoto2 from '../assets/medical-icon.webp';
+import trusteesGroup    from '../assets/community-icon.jpg';
+import historicalPhoto1 from '../assets/death-icon2.jpg';
+import historicalPhoto2 from '../assets/medical-icon.jpg';
 import addressMap       from '../assets/address-map.jpg';
 import constitution     from '../assets/emran-rules.pdf';
 
