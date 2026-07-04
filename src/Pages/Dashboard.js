@@ -11,6 +11,8 @@ import agm from '../assets/agm2026.pdf';
 import executives from '../assets/executives.pdf';
 import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
 import whatsapp_rules from '../assets/whatsapp_rules.pdf';
+import retireesBenefit from '../assets/retiree_benefits_2026.pdf'
+import retireesProviders from '../assets/retirees_providers_2026.xlsx'
 import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiCalendar, FiFileText } from 'react-icons/fi';
 import cacCertificate from '../assets/cac-certificate.jpg';
@@ -435,6 +437,8 @@ const Dashboard = () => {
               { title: 'EMRAN Newly Elected Executives 2026', desc: 'View the official EMRAN Newly Elected Executives in 2026.', href: executives, color: '#001F5B' },
               { title: 'EMRAN WhatsApp Rules and Regulations', desc: 'Rules and Regulations for Posting and Commenting on EMRAN WhatsApp.', href: whatsapp_rules, color: '#001F5B' },
               { title: 'EMRAN WhatsApp Penalties', desc: 'Penalties for offences on EMRAN WhatsApp Group.', href: whatsapp_penalties, color: '#001F5B' },
+              { title: 'EMRAN Retirees Benefits 2026', desc: 'Retiree Benefits for EMRAN members 2026.', href: retireesBenefit, color: '#001F5B' },
+              { title: 'EMRAN Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
             ].map((doc, i) => (
               <div key={i} className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition flex flex-col justify-between"
                 style={{ borderTop: `8px solid ${doc.color}` }}>
