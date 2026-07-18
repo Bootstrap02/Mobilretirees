@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { faqCategories } from './Questions';
 
@@ -101,8 +102,6 @@ const LiveChat = () => {
         .dot-typing span:nth-child(2){animation-delay:0.2s}
         .dot-typing span:nth-child(3){animation-delay:0.4s}
         @keyframes dot{0%,80%,100%{transform:scale(0.7);opacity:0.4}40%{transform:scale(1);opacity:1}}
-
-        /* ── Glow / pulse animation on bubble ── */
         @keyframes glowPulse {
           0%   { box-shadow: 0 0 0 0 rgba(227,6,19,0.55), 0 4px 20px rgba(227,6,19,0.35); }
           50%  { box-shadow: 0 0 0 10px rgba(227,6,19,0), 0 4px 20px rgba(227,6,19,0.35); }
@@ -117,29 +116,49 @@ const LiveChat = () => {
           transition: transform 0.2s;
         }
         .chat-bubble-live:hover { transform: scale(1.08) !important; animation: none; }
-
-        /* ── Label above bubble ── */
         @keyframes labelPop {
           0%,100% { transform:translateX(-50%) scale(1); opacity:1; }
           50%      { transform:translateX(-50%) scale(1.05); opacity:0.9; }
         }
-        .chat-label {
-          animation: labelPop 2.5s ease-in-out infinite;
-          white-space: nowrap;
-        }
-
-        /* ── WhatsApp header button ── */
+        .chat-label { animation: labelPop 2.5s ease-in-out infinite; white-space: nowrap; }
         .whatsapp-btn { transition: transform 0.18s, background 0.18s; }
         .whatsapp-btn:hover { transform: scale(1.08); background:#1ebe57 !important; }
+
+        /* ── CHAT WINDOW: responsive sizing ──
+           On mobile:  covers most of the screen, sits above the bottom nav bar
+           On desktop: fixed height, never taller than viewport - 120px, 
+                       always visible fully without clipping at the top           */
+        .chat-window {
+          position: fixed;
+          right: 20px;
+          bottom: 90px;           /* above mobile bottom bar */
+          width: 360px;
+          max-width: calc(100vw - 32px);
+          /* Never taller than the available viewport height minus some margin */
+          height: min(520px, calc(100vh - 120px));
+          background: #fff;
+          border-radius: 20px;
+          box-shadow: 0 12px 60px rgba(0,31,91,0.18);
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          z-index: 1001;
+        }
+
+        /* On wider desktop screens push it a bit higher from the bottom */
+        @media (min-width: 768px) {
+          .chat-window {
+            bottom: 88px;
+            height: min(560px, calc(100vh - 120px));
+          }
+        }
       `}</style>
 
-      {/* Lifted position: bottom 90px on mobile, 28px on desktop (clears nav) */}
-      <div className="chat-widget" style={{ position:'fixed', bottom:'clamp(90px, 12vw, 90px)', right:20, zIndex:1000 }}>
+      <div className="chat-widget">
 
-        {/* ── Chat Window ── */}
+        {/* ── Chat Window — now uses .chat-window class with fixed positioning ── */}
         {open && (
-          <div className="chat-window-enter"
-            style={{ position:'absolute', bottom:72, right:0, width:360, maxWidth:'calc(100vw - 32px)', background:'#fff', borderRadius:20, boxShadow:'0 12px 60px rgba(0,31,91,0.18)', display:'flex', flexDirection:'column', overflow:'hidden', height:520 }}>
+          <div className="chat-window chat-window-enter">
 
             {/* Header */}
             <div style={{ background:'linear-gradient(135deg,#001F5B 0%,#003494 100%)', padding:'16px 20px', display:'flex', alignItems:'center', gap:12, flexShrink:0 }}>
@@ -153,12 +172,8 @@ const LiveChat = () => {
               </div>
 
               {/* WhatsApp handoff */}
-              <a
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Continue on WhatsApp"
-                className="whatsapp-btn"
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer"
+                title="Continue on WhatsApp" className="whatsapp-btn"
                 style={{ marginLeft:'auto', background:'#25D366', border:'none', borderRadius:'50%', width:30, height:30, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, textDecoration:'none' }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
                   <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.86 9.86 0 0012.04 2zm0 18.13h-.01c-1.48 0-2.94-.4-4.21-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 01-1.26-4.36c0-4.54 3.7-8.24 8.27-8.24 2.21 0 4.28.86 5.84 2.42a8.17 8.17 0 012.42 5.83c0 4.55-3.7 8.25-8.26 8.25zm4.53-6.18c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.81-.78.97-.14.17-.29.19-.53.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.48-1.39-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01-.16 0-.43.06-.66.31-.23.24-.86.85-.86 2.07 0 1.22.89 2.39 1.01 2.56.12.16 1.75 2.67 4.25 3.74.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.23-.16-.48-.28z"/>
@@ -255,9 +270,8 @@ const LiveChat = () => {
           </div>
         )}
 
-        {/* ── Bubble + Label ── */}
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
-          {/* "Chat with us" label */}
+        {/* ── Floating Bubble (fixed position, separate from window) ── */}
+        <div style={{ position:'fixed', bottom:24, right:20, zIndex:1002, display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
           {!open && (
             <div className="chat-label"
               style={{ background:'#001F5B', color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:20, letterSpacing:'0.04em', boxShadow:'0 2px 8px rgba(0,31,91,0.25)' }}>
@@ -273,7 +287,6 @@ const LiveChat = () => {
                 <path d="M18 6L6 18M6 6L18 18" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/>
               </svg>
             ) : '💬'}
-            {/* Live indicator dot */}
             {!open && (
               <span style={{ position:'absolute', top:2, right:2, width:10, height:10, borderRadius:'50%', background:'#4ade80', border:'2px solid #fff' }}/>
             )}
