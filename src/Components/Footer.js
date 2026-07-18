@@ -29,7 +29,7 @@ const Footer = () => {
           {/* Column 1: Brand & Welcome */}
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <img src={exxonLogoWhite} alt="ExxonMobil Nigeria" className="h-16" />
+              <img src={exxonLogoWhite} alt="ExxonMobil Nigeria" className="h-16 border-radius-[50%]" />
               <div>
                 <h3 className="font-bold text-xl">Retirees Portal</h3>
               </div>
