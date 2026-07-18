@@ -38,7 +38,7 @@ const AuthLayout = ({ children, title, subtitle }) => (
     </NavLink>
     <div className="max-w-md w-full">
       <div className="text-center mb-10">
-        <img src={exxonLogo} alt="ExxonMobil Nigeria" className="h-20 mx-auto mb-6" />
+        <img src={exxonLogo} alt="ExxonMobil Nigeria" className="h-20 mx-auto mb-6 rounded-full    " />
         <h1 className="text-3xl font-bold text-white">{title}</h1>
         <p className="text-gray-300 mt-2">{subtitle}</p>
       </div>
