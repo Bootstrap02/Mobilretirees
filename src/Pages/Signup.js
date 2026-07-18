@@ -183,10 +183,16 @@ export const Signup = () => {
         </div>
 
         {/* Basic fields */}
-        <div>
-          <Label required>Full Name (as in service record)</Label>
+          <div className="space-y-2 w-full">
+                  <Label required>Full Name (as in service record)</Label>
           <InputField icon={FiUser} type="text" name="fullname" placeholder="Full Name" value={formData.fullname} onChange={handleChange} required />
-        </div>
+      
+                  {/* ── SURNAME FIRST NOTICE ── */}
+                  <p className="text-[10px] md:text-xs text-red-600 font-bold flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
+                    ⚠️ Surname first, please
+                  </p>
+                </div>
         <div>
           <Label required>Email Address</Label>
           <InputField icon={FiMail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
