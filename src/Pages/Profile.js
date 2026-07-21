@@ -351,16 +351,9 @@ const Profile = () => {
             <div className="bg-white rounded-3xl shadow-lg p-5 md:p-8">
               <SectionHeader icon={FiUser} title="Personal Information" subtitle="Update your basic contact details" />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-                <div className="space-y-2 w-full">
-                  <Field label="Full Name" icon={FiUser}>
-                    <input name="fullname" value={formData.fullname} onChange={handleChange} className={inputCls} />
-                  </Field>
-                  {/* ── SURNAME FIRST NOTICE ── */}
-                  <p className="text-[10px] md:text-xs text-red-600 font-bold flex items-center gap-1.5">
-                    <span className="inline-block w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
-                    ⚠️ Surname first, please
-                  </p>
-                </div>
+                <Field label="Full Name" icon={FiUser}>
+                  <input name="fullname" value={formData.fullname} onChange={handleChange} className={inputCls} />
+                </Field>
                 <Field label="Email Address" icon={FiMail}>
                   <input name="email" type="email" value={formData.email} onChange={handleChange} className={inputCls} />
                 </Field>
