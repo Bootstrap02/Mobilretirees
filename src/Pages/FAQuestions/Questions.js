@@ -1,5 +1,4 @@
 
-
 export const faqCategories = [
   {
     id: "general",
@@ -37,6 +36,14 @@ export const faqCategories = [
       { q: "What details are maintained in the EMRAN Register of Members?", a: "The General Secretary maintains an up-to-date electronic register containing the member's name, spouse's name, residential address, email address, active telephone number, and the names, phone numbers, and email addresses of both the Next-of-Kin and the Designated Beneficiary." },
       { q: "What is the difference between a Next-of-Kin and a Designated Beneficiary?", a: "A Next-of-Kin is nominated to be contacted by the Association during emergencies or when the member cannot be reached. A Designated Beneficiary is authorised to receive any due Death Benefits following the member's passing. While one individual can fulfil both roles, they can also be assigned to different people." },
       { q: "How does EMRAN handle data privacy for members?", a: "Members' records are protected as private files, though members are granted access to view and update their own data. Trustees, Executive Committee members, and sub-committee members are strictly prohibited from disclosing a member's private data — including physical/email addresses, phone numbers, birth dates, social media handles, and health data — to third parties without documented consent." },
+      { q: "What is EMRAN\'s CAC registration number?", a: "The association\'s Corporate Affairs Commission registration mark is RC IT - 153528." },
+      { q: "On what date does the Financial Secretary issue notices of dues payment?", a: "Dues notices are officially issued by the Financial Secretary on the 1st of December of the preceding year." },
+      { q: "What is the publication schedule for tracking who has paid dues?", a: "The Financial Secretary publishes a list of members who have paid on a weekly basis, starting from the first week of January through the first week of April." },
+      { q: "When is the Executive Committee authorized to display the list of dues defaulters?", a: "The Executive Committee is authorized to display the list of dues defaulters after the conclusion of the first week of April." },
+      { q: "Is there an alternative manual method to submit a membership registration form?", a: "Yes. An applicant may request a digital soft copy of the registration form, complete it offline, and submit it directly to the General Secretary via email at Emranannuitants@gmail.com." },
+      { q: "What legal agreement is enacted when an applicant submits their registration form?", a: "By completing and submitting the registration form, the applicant legally agrees to abide fully by the association\'s Articles of Association and its Rules & Regulations." },
+      { q: "Where are the banking details for paying the registration fee located?", a: "The association\'s bank account details and payment instructions are explicitly contained inside the registration form." },
+
     ]
   },
   {
@@ -48,6 +55,13 @@ export const faqCategories = [
       { q: "What is the claims process when a member passes away?", a: "The process involves: (1) A strict 24-hour memory observance is held on online platforms, allowing only eulogies, photos, and videos. (2) The Welfare Officer coordinates with the family to share burial details. (3) The Benefit Officer or Vice President contacts the registered Designated Beneficiary to obtain a valid ID copy (International Passport, Driver's Licence, or National ID Card) and bank details. (4) The beneficiary must email these details from their registered email to Emranannuitants@gmail.com. (5) EMRAN will acknowledge, verify, and validate the information, and the Financial Secretary/Treasurer will execute the bank transfer within two weeks of verification." },
       { q: "What is the claims process when a member's spouse passes away?", a: "The bereaved member must electronically send their personal bank account details to Emranannuitants@gmail.com from their registered email address. The Executive Committee will acknowledge the email, verify the information, and transfer the benefit to the member's account within two weeks." },
       { q: "What are the exact cash gift amounts for milestone birthdays?", a: "Cash or token gifts are capped according to the specific milestone birthday achieved: 70th Birthday — capped at ₦50,000; 80th Birthday — capped at ₦60,000; 90th Birthday — capped at ₦80,000; 100th Birthday — capped at ₦100,000. The member must have met all financial obligations and must not be violating any rules to qualify." },
+      { q: "What specific digital platform actions are triggered immediately upon the death of an active member?", a: "A strict 24-hour memory observance is held on the association\'s online media platforms in honour of the deceased. Only eulogies in the form of photographs, commentaries, and memory videos are permitted during this window. No other standard postings, chats, or commercial updates are allowed." },
+      { q: "Which officer collects and distributes burial information from the deceased\'s family?", a: "The Welfare Officer is officially responsible for facilitating the collection and platform sharing of burial details." },
+      { q: "Which executive officers are authorized to contact a Designated Beneficiary after a member\'s death?", a: "Only the Benefits Officer or the Vice President are designated to contact the Designated Beneficiary following a member\'s death." },
+      { q: "What identification documents must a Designated Beneficiary provide to file a death benefit claim?", a: "The beneficiary must provide a clear electronic copy of a valid government-issued ID — either the data page of an International Passport, a Driver\'s Licence, or a National ID Card — plus complete bank account details bearing the exact name of the Designated Beneficiary, the bank name, and account number." },
+      { q: "From which email must a Designated Beneficiary submit their claim?", a: "The information must be sent electronically to Emranannuitants@gmail.com from the Designated Beneficiary\'s email address that was registered with the association." },
+      { q: "What financial compliance must a member maintain to be eligible for the death benefit?", a: "The member must not be in default of their annual dues payment obligations as of the exact time of the death of the member or their spouse." },
+
     ]
   },
   {
@@ -113,6 +127,14 @@ export const faqCategories = [
       { q: "How are elections conducted?", a: "Elections are conducted through secret ballot or secure electronic voting supervised by an Electoral Panel." },
       { q: "How is voting conducted and how is a winner determined?", a: "Voting is conducted by secret ballot via electronic tools selected by the Electoral Panel. In rare instances where a member cannot use the digital tool, they can request a paper form from the Electoral Panel and return it via WhatsApp to the panel's chairperson. The candidate with the highest number of votes wins. In the event of a tie, the Electoral Panel members vote to break it; if the panel itself ties, the Returning Officer casts the deciding vote." },
       { q: "Who is eligible to vote, nominate, or contest in EMRAN elections?", a: "Only members who are fully up to date with their financial obligations (annual dues) and are not under active suspension can participate as nominators, nominees, candidates, voters, or committee panel members." },
+      { q: "What are the formal notice timelines required for AGMs and EGMs?", a: "A minimum of twenty-one (21) calendar days notice is required for an AGM or EGM. Review documents such as Articles of Association, Rules & Regulations, and Audit Reports must be circulated at least ten (10) calendar days prior to the meeting date." },
+      { q: "What constitutes a critical campaign violation and what is the penalty?", a: "Any member or nominee who campaigns on the platform outside the allowed campaign period, or who votes more than once, is in violation. The penalty is that their cast vote is discarded entirely and not tallied." },
+      { q: "When must the President constitute the Electoral Panel?", a: "The President, in consultation with the Executive Committee, must constitute the Electoral Panel not later than one (1) month before the scheduled inauguration of the incoming committee." },
+      { q: "What are the minimum sequential steps in the EMRAN electoral process?", a: "The mandatory steps are: (1) Notice of Election; (2) Notice of Nomination; (3) Nominations Submission; (4) Eligibility Verification by the Electoral Panel using data from the Financial Secretary; (5) Campaign Window; (6) Voting Execution via secret ballot." },
+      { q: "What is the lifespan of a term for a member elected via by-election?", a: "Where a vacancy occurs mid-term and a by-election is held, the new member\'s term terminates automatically at the end of the current incumbent Executive Committee\'s term." },
+      { q: "Can an executive member run for a different office after completing two terms?", a: "Yes. A member can present themselves for election to another office independently. The two-term limit resets and applies to the new role separately from past service." },
+      { q: "Can a member who completed two consecutive terms in an office hold that position again later?", a: "Yes. They can contest for the same office at a future date, provided the additional terms are not consecutive with the initial two terms." },
+
     ]
   },
   {
@@ -129,6 +151,19 @@ export const faqCategories = [
       { q: "What are the notice periods for official EMRAN documents before major meetings?", a: "The notice period required to convene an AGM or EGM is a minimum of 21 calendar days. Important decision-making documents (such as Audit Reports, Rules & Regulations, or Articles of Association) must be circulated to members at least 10 calendar days prior to the meeting date." },
       { q: "How can a member propose an amendment to the Rules & Regulations or Articles of Association?", a: "A member must submit a written memorandum outlining the specific clause and a clear justification to the Executive Committee via the General Secretary at Emranannuitants@gmail.com. The General Secretary will periodically collate these proposals, share them with the membership, and host a vote on the XOM EMRAN Forum. Amendments require a simple majority vote of participating members to pass, after which the approved changes must be circulated within three weeks." },
       { q: "Who can members contact for general assistance or questions?", a: "Members can communicate directly by emailing Emranannuitants@gmail.com. Alternatively, they can reach out to their designated Welfare Location Contact Representative; a complete list of these representatives can be requested via the primary EMRAN email address." },
+      { q: "Who is the Chairman of the EMRAN Board of Trustees?", a: "The Chairman of the EMRAN Board of Trustees is Odior Gilbert Erelumhe." },
+      { q: "Who is the Secretary of the EMRAN Board of Trustees?", a: "The Secretary of the EMRAN Board of Trustees is Dr. Akinlade Titilola Olusola." },
+      { q: "How many members are on the EMRAN Board of Trustees?", a: "There are exactly ten (10) individuals listed on the EMRAN Board of Trustees: Odior Gilbert Erelumhe (Chairman), Dr. Akinlade Titilola Olusola (Secretary), Ekpo Chibuzor Nnamdi, Bashorun Adeyinka, Musah Abdul Raheem, Ogunlade Olatunji Adedayo, Agbim Arinze Justus, Oyofo Victor Kassim, Ogu Valentine Obonna, and Essien-Danner Gloria." },
+      { q: "Who is the Treasurer of EMRAN?", a: "The Treasurer of EMRAN is Mr. Fortunatus Udegbue." },
+      { q: "Who is the General Secretary of EMRAN?", a: "The General Secretary of EMRAN is Mr. Jafaru Mohammed." },
+      { q: "What is the official seniority ranking within the EMRAN Executive Committee?", a: "Seniority within the Executive Committee from highest to lowest is: President, Vice President, General Secretary, Financial Secretary/Treasurer, Benefits Officer, Welfare Officer, Publicity Officer, Ex-Officio Member, Assistant General Secretary, Assistant Treasurer." },
+      { q: "What are the four official grounds for removing an Executive Committee member from office?", a: "An officer can be removed strictly based on: (1) Willful violation of the Articles of Association; (2) A formal declaration of bankruptcy; (3) Verified acts of financial misappropriation; (4) Conviction for a criminal offense by a court of law." },
+      { q: "What are the formal definitions of bankruptcy and financial misappropriation in EMRAN rules?", a: "Bankruptcy is defined as a legal proceeding initiated when a person cannot repay outstanding debts. Financial misappropriation is defined as the act of stealing money or assets entrusted to one\'s care for personal gain." },
+      { q: "What specific information must a member include when lodging an official misconduct complaint?", a: "The complaint sent to Emranannuitants@gmail.com must contain: the name of the member lodging the complaint, the identity of the accused member, the positions held, the specific offenses alleged, and all corroborating evidence or documentation." },
+      { q: "What voting threshold is required to ratify the removal of an executive officer?", a: "A simple majority of the voting members of the association must ratify the decision to remove any member of the Executive from office." },
+      { q: "When is a general membership vote bypassed for removal?", a: "In the case of a criminal conviction by a court of law, the affected member stands removed automatically without a ratification vote. The committee simply informs the association within 3 days of learning of the conviction." },
+      { q: "How long does an officer facing removal have to respond?", a: "The concerned officer must be notified in writing and given exactly seven (7) days to submit written comments before a general vote is called." },
+
     ]
   },
   {
@@ -145,6 +180,11 @@ export const faqCategories = [
       { q: "What are the primary rules for communicating on EMRAN WhatsApp platforms?", a: "Communication must be friendly and courteous. Yelling, abuse, insults, and discriminatory slurs (racial, cultural, ethnic, etc.) are explicitly forbidden. If a language other than English is used, a translation must be provided immediately. Members should use their real first and last names; if they use a pseudonym, they must sign off posts with their real name. Commercial marketing, advertising, or selling of goods and services is entirely prohibited." },
       { q: "What behavioral guidelines should members follow to maintain harmony online?", a: "Members should: appreciate others' posts to foster positivity; never publicly attack or run down members — handle disagreements via private inbox rather than group chats; apologise quickly if they err to de-escalate tension; not force ideas on the group; celebrate with members during milestone events regardless of personal friendship; and avoid posting pornographic, violent, gory, lewd, or sensational content, and ensure the veracity of information before forwarding." },
       { q: "What are the expectations for attending virtual or hybrid EMRAN meetings?", a: "Attendees must test their devices beforehand, use their real names for security, and join at least 5 minutes early. They must remain muted unless speaking, use virtual hand-raising tools to call attention, remain concise and prepared, avoid local distractions, and keep focus on the issues at hand rather than individuals." },
+      { q: "Can a member suspended from a WhatsApp platform still remain a general EMRAN member?", a: "Yes. Suspension from an online platform does not constitute suspension from general association membership unless the reasons for the platform ban independently meet the conditions for membership termination." },
+      { q: "Who holds legal liability for opinions expressed on EMRAN online platforms?", a: "The views and opinions expressed by any member represent the authoring individual alone. The association as a corporate entity bears zero legal responsibility or liability for such views." },
+      { q: "What right does a general member have if they find an inappropriate post on the chat boards?", a: "Every member has the right to draw the attention of an administrator to an inappropriate post. The administrator must use their judgment or consult other administrators to resolve the complaint." },
+      { q: "Do members have a right to withdraw from EMRAN online platforms?", a: "Yes. Any member has the absolute right to be added to online media platforms and holds an equal right to withdraw at any time without providing reasons." },
+
     ]
   },
   {
@@ -167,6 +207,8 @@ export const faqCategories = [
       { q: "What are the distinct categories for the EMRAN Annual Awards Programme?", a: "The categories include: Category A (Executive Committee Members) — letters of commendation highlighting achievements given to outgoing officers who compliantly completed their tenure; Category B (Most Productive Subcommittee/Panel Member) — nominated and decided via a majority vote within the Executive Committee; Category C (Outstanding Contributor on EMRAN WhatsApp Platform) — nominated by the general house, screened to a maximum of three candidates by the Executive Committee, and voted on by the general house via simple majority." },
       { q: "What is the financial value of the EMRAN Annual Awards?", a: "Awards comprise a written commendation and either a token or cash gift. Within a given calendar year (June 1 – May 31), the value of gifts for Category B and C awards are strictly capped at ₦35,000 and ₦30,000 respectively." },
       { q: "Can members set up local regional groups and does EMRAN support them financially?", a: "Yes. EMRAN encourages members in the same locality to form interaction groups. To be officially recognised, a designated member must email the location details and member names to the President or General Secretary at Emranannuitants@gmail.com. EMRAN provides a reasonable reimbursement subsidy determined by the Executive Committee to help local clusters host biannual social gatherings." },
+      { q: "What is the exact value cap for Category B and Category C EMRAN awards?", a: "Within a given EMRAN calendar year (June 1 to May 31), the total value of the cash or token gift is capped at exactly N35,000 for Category B (Most Productive Subcommittee/Panel Member) and exactly N30,000 for Category C (Outstanding WhatsApp Contributor)." },
+
     ]
   },
   {
@@ -234,3 +276,4 @@ export const faqCategories = [
     ]
   }
 ];
+
