@@ -114,7 +114,7 @@ const Profile = () => {
 
   const [formData, setFormData] = useState({
     fullname: '', email: '', phone: '', address: '',
-    staffId: 'N/A', dateOfRetirement: 'N/A', dateOfBirth: '', profilePhoto: '',
+    staffId: 'N/A', dateOfRetirement: '', dateOfBirth: '', profilePhoto: '',
     companyAtRetirement: '', locationOfRetirement: '', departmentOfRetirement: '',
     spouse: '', spousePhone: '',
     nextOfKin: '', nextOfKinEmail: '', nextOfKinPhone: '',
@@ -130,17 +130,26 @@ const Profile = () => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
 
-    let formattedRetirementDate = 'N/A';
+    let formattedRetirementDate = '';
     if (stored.dateOfRetirement) {
       const d = new Date(stored.dateOfRetirement);
-      if (!isNaN(d.getTime()))
-        formattedRetirementDate = d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        formattedRetirementDate = `${y}-${m}-${day}`;
+      }
     }
 
     let inputBirthDate = '';
     if (stored.dateOfBirth) {
       const d = new Date(stored.dateOfBirth);
-      if (!isNaN(d.getTime())) inputBirthDate = d.toISOString().split('T')[0];
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        inputBirthDate = `${y}-${m}-${day}`;
+      }
     }
 
     setFormData({
@@ -211,6 +220,7 @@ const Profile = () => {
           phone: formData.phone,
           address: formData.address,
           dateOfBirth: formData.dateOfBirth,
+          dateOfRetirement: formData.dateOfRetirement,
           companyAtRetirement: formData.companyAtRetirement,
           locationOfRetirement: formData.locationOfRetirement,
           departmentOfRetirement: formData.departmentOfRetirement,
@@ -370,7 +380,7 @@ const Profile = () => {
                   <div className={readOnlyCls}>{formData.staffId}</div>
                 </Field>
                 <Field label="Date of Retirement" icon={FiCalendar}>
-                  <div className={readOnlyCls}>{formData.dateOfRetirement}</div>
+                  <input name="dateOfRetirement" type="date" value={formData.dateOfRetirement} onChange={handleChange} className={inputCls} />
                 </Field>
               </div>
             </div>

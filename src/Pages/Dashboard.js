@@ -246,11 +246,8 @@ const Dashboard = () => {
 
   const openElections = () => {
     if (!user?.staffId) { alert('User ID not found. Please login again.'); return; }
-    const role = user.role || 'member';
-    window.open(
-      `https://emranelections.site/user/ballot.php?id=${user.staffId}&role=${role}&email=${user.email}`,
-      '_blank', 'noopener,noreferrer'
-    );
+   // const role = user.role || 'member';
+  navigate(`/elections/${user.staffId}`)
   };
 
   if (loading) {

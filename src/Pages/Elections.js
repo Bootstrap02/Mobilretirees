@@ -13,8 +13,9 @@ const getCandidates = async () => {
 };
 
 // Cast vote
-const castVote = async (candidateId) => {
-  const res = await axios.post(`${API_URL}/vote`, { candidateId });
+const castVote = async (candidateId, userId) => {
+  if (!userId) throw new Error('User not authenticated');
+  const res = await axios.post(`${API_URL}/${userId}/vote`, { candidateId });
   return res.data;
 };
 
@@ -29,6 +30,8 @@ export const VotingDashboard = () => {
   const [candidates, setCandidates] = useState([]);
   const [selected, setSelected] = useState({});
   const [loading, setLoading] = useState(false);
+  const userData = JSON.parse(localStorage.getItem('userData')) || null;
+  const userId = userData?._id;
   
 
   useEffect(() => {
@@ -52,15 +55,19 @@ export const VotingDashboard = () => {
   };
 
   const handleSubmit = async () => {
+    if (!userId) {
+      alert('Please sign in to vote');
+      return;
+    }
     setLoading(true);
     try {
       for (let office in selected) {
-        await castVote(selected[office]);
+        await castVote(selected[office], userId);
       }
 
       alert("Vote submitted successfully!");
     } catch (error) {
-      alert(error.response?.data?.message || "Voting failed");
+      alert(error.response?.data?.message || error.message || "Voting failed");
     }
     setLoading(false);
   };
@@ -176,3 +183,6 @@ export const ResultsPage = () => {
     </div>
   );
 };
+
+// Provide a default export so App.js can import the page as 'Elections'
+export default VotingDashboard;

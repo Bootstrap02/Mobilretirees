@@ -12,6 +12,7 @@ import Benefits from './Pages/Benefits'
 import  NewsEvents from './Pages/NewsEvents';
 import  News from './Pages/News';
 import Dashboard from './Pages/Dashboard';
+import Elections from './Pages/Elections';
 import Resources from './Pages/Resources';
 import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
@@ -31,6 +32,7 @@ function App() {
 <Route path="/" element={<Firstpage />} />
 <Route path='/profile/:id' element={<Profile />} />
 <Route path='/dashboard/:id' element={<Dashboard />} />
+<Route path='/elections/:id' element={<Elections />} />
         <Route path='/newsevents' element={<NewsEvents /> }/>
         <Route path='/news/:id' element={<News /> }/>
         <Route path='/resources' element= {<Resources /> }/>          

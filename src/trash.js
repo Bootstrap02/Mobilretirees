@@ -46,6 +46,8 @@
         <h3 className="text-2xl font-bold text-[#001F5B] mb-4">No Recent News</h3>
         <p className="text-xl text-gray-600">
           Check back soon for updates from EMRAN activities and engagements.
+          cedar toa
+          
         </p>
       </div>
     )}
