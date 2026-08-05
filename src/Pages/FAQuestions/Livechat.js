@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { faqCategories } from './Questions';
 
@@ -11,15 +10,26 @@ const searchFaqs = (message) => {
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
     .filter(w => w.length > 2)
-    .filter(w => !['the','and','are','for','how','can','what','does','why','who','when','where','was','this','that','have','with','from','will','your','you','our','its','but','not','his','her','they','them'].includes(w));
+    // Only strip true filler words — keep how/what/who/when/where/why
+    // because members ask things like "how do I pay" or "who is the president"
+    .filter(w => !['the','and','are','for','can','was','this','that','have',
+                   'with','from','will','your','you','our','its','but','not',
+                   'his','her','they','them','been','into','also','just','then',
+                   'their','than','about','after','before','some','more'].includes(w));
   if (words.length === 0) return [];
   const scored = allFaqs.map(faq => {
-    const text = (faq.q + ' ' + faq.a).toLowerCase();
+    const qLower = faq.q.toLowerCase();
+    const aLower = faq.a.toLowerCase();
     let score = 0;
     words.forEach(w => {
-      if (faq.q.toLowerCase().includes(w)) score += 3;
-      else if (text.includes(w)) score += 1;
+      // Exact word in question = highest score
+      if (qLower.includes(w)) score += 4;
+      // Exact word in answer = medium score
+      else if (aLower.includes(w)) score += 1;
     });
+    // Bonus: if ALL words appear somewhere in the FAQ, boost it significantly
+    const allMatch = words.every(w => (qLower + ' ' + aLower).includes(w));
+    if (allMatch && words.length > 1) score += 5;
     return { ...faq, score };
   });
   return scored.filter(f => f.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
@@ -77,9 +87,11 @@ const LiveChat = () => {
   const quickQuestions = [
     "How do I reset my password?",
     "What are the annual dues?",
-    "How do I claim a death benefit?",
+    "How do I pay my dues?",
     "How do I edit my profile?",
     "What is EMRAN?",
+    "How do I contact AXA Mansard?",
+    "What is the death benefit amount?",
   ];
 
   return (
@@ -298,3 +310,4 @@ const LiveChat = () => {
 };
 
 export default LiveChat;
+
