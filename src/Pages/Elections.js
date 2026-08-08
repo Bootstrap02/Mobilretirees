@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 
 
-const API_URL = "https://campusbuy-backend-nkmx.onrender.com/mobilcreatecandidates";
+const API_URL = (process.env.REACT_APP_API || 'http://localhost:3000') + '/mobilcreatecandidates';
 
 // Get all candidates
 const getCandidates = async () => {
@@ -32,6 +33,7 @@ export const VotingDashboard = () => {
   const [loading, setLoading] = useState(false);
   const userData = JSON.parse(localStorage.getItem('userData')) || null;
   const userId = userData?._id;
+  const navigate = useNavigate();
   
 
   useEffect(() => {
@@ -84,45 +86,37 @@ export const VotingDashboard = () => {
         <div key={office} className="mb-8">
           <h2 className="text-xl font-semibold mb-4">{office}</h2>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            {grouped[office].map((candidate) => (
-              <div
-                key={candidate._id}
-                className={`border rounded-xl p-4 cursor-pointer transition ${
-                  selected[office] === candidate._id
-                    ? "border-blue-600 bg-blue-50"
-                    : "border-gray-200"
-                }`}
-                onClick={() =>
-                  handleSelect(office, candidate._id)
-                }
-              >
-                {candidate.image?.[0] && (
-                  <img
-                    src={candidate.image?.[0]}
-                    alt={candidate.fullName}
-                    className="h-32 w-32 object-cover rounded-full mx-auto mb-4"
-                  />
-                )}
-                <h3 className="text-lg font-bold text-center">
-                  {candidate.fullName}
-                </h3>
-                <p className="text-sm text-gray-600 text-center mt-2">
-                  {candidate.manifesto}
-                </p>
-              </div>
-            ))}
+          <div>
+            <select
+              value={selected[office] || ''}
+              onChange={(e) => handleSelect(office, e.target.value)}
+              className="w-full border rounded-lg p-3"
+            >
+              <option value="">-- Select a candidate --</option>
+              {grouped[office].map((candidate) => (
+                <option key={candidate._id} value={candidate._id}>
+                  {candidate.fullName}{candidate.manifesto ? ` — ${candidate.manifesto}` : ''}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       ))}
 
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="w-full bg-blue-600 text-white py-3 rounded-xl mt-6 hover:bg-blue-700"
-      >
-        {loading ? "Submitting..." : "Cast Vote"}
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={() => navigate('/electionresults')}
+          className="w-1/2 bg-gray-200 text-gray-800 py-3 rounded-xl mt-6 hover:bg-gray-300"
+        >
+          View Results
+        </button>
+        <button
+          onClick={() => navigate('/elections/cast')}
+          className="w-1/2 bg-blue-600 text-white py-3 rounded-xl mt-6 hover:bg-blue-700"
+        >
+          Cast Vote
+        </button>
+      </div>
     </div>
      <Footer/>
     </>

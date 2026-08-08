@@ -13,6 +13,7 @@ import  NewsEvents from './Pages/NewsEvents';
 import  News from './Pages/News';
 import Dashboard from './Pages/Dashboard';
 import Elections from './Pages/Elections';
+import CastVote from './Pages/CastVote';
 import Resources from './Pages/Resources';
 import Profile from "./Pages/Profile";
 import Support from "./Pages/Support";
@@ -33,6 +34,7 @@ function App() {
 <Route path='/profile/:id' element={<Profile />} />
 <Route path='/dashboard/:id' element={<Dashboard />} />
 <Route path='/elections/:id' element={<Elections />} />
+<Route path='/elections/cast' element={<CastVote />} />
         <Route path='/newsevents' element={<NewsEvents /> }/>
         <Route path='/news/:id' element={<News /> }/>
         <Route path='/resources' element= {<Resources /> }/>          
@@ -52,7 +54,9 @@ function App() {
         <Route path='/benefits' element= {<Benefits /> }/>
         <Route path='/comingsoon' element= {<Comingsoon /> }/>
         <Route path='/voting/:id' element= {<VotingDashboard /> }/>
+        <Route path='/voting' element= {<VotingDashboard /> }/>
         <Route path='/electionresults/:id' element= {<ResultsPage /> }/>
+        <Route path='/electionresults' element= {<ResultsPage /> }/>
         <Route path='/faqs' element= {<Faqs /> }/>
     </Routes>
     </BrowserRouter>
