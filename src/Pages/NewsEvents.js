@@ -21,84 +21,109 @@ const CATEGORY_CONFIG = {
 const getCat = (cat) => CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.general;
 
 // ── IMAGE SLIDER ─────────────────────────────────────────────────────────────
+// ── IMAGE SLIDER ─────────────────────────────────────────────────────────────
 const ImageSlider = ({ images, title }) => {
   const [current, setCurrent] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [paused, setPaused] = useState(false);
   const touchStartX = useRef(null);
+  const resumeTimer = useRef(null);
+
+  // Auto-advance every 3 seconds
+  useEffect(() => {
+    if (!images || images.length <= 1 || lightbox || paused) return;
+    const id = setInterval(() => {
+      setCurrent(i => (i + 1) % images.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [images, lightbox, paused]);
+
+  // Temporarily pause auto-advance after manual interaction, then resume
+  const pauseThenResume = () => {
+    setPaused(true);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => setPaused(false), 5000);
+  };
+
+  useEffect(() => () => { if (resumeTimer.current) clearTimeout(resumeTimer.current); }, []);
 
   if (!images || images.length === 0) return null;
 
-  const prev = (e) => { e?.stopPropagation(); setCurrent(i => (i - 1 + images.length) % images.length); };
-  const next = (e) => { e?.stopPropagation(); setCurrent(i => (i + 1) % images.length); };
+  const prev = (e) => { e?.stopPropagation(); pauseThenResume(); setCurrent(i => (i - 1 + images.length) % images.length); };
+  const next = (e) => { e?.stopPropagation(); pauseThenResume(); setCurrent(i => (i + 1) % images.length); };
+  const goTo = (i) => { pauseThenResume(); setCurrent(i); };
 
-  // Touch swipe support
   const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
   const onTouchEnd   = (e) => {
     if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? next() : prev();
+    if (Math.abs(diff) > 40) { pauseThenResume(); diff > 0 ? next() : prev(); }
     touchStartX.current = null;
   };
 
   return (
     <>
       <div
-        className="relative w-full overflow-hidden rounded-2xl mb-4 bg-gray-100 select-none"
-        style={{ aspectRatio: '16/9' }}
+        className="relative w-full overflow-hidden rounded-3xl mb-4 bg-gray-100 select-none shadow-lg ring-1 ring-black/5"
+        style={{ aspectRatio: '4/3' }}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onClick={() => setLightbox(true)}
       >
-        {/* Images */}
+        {/* Crossfading images, stacked */}
         <div className="relative w-full h-full cursor-pointer">
-          <img
-            src={images[current]}
-            alt={`${title} ${current + 1}`}
-            className="w-full h-full object-cover transition-opacity duration-300"
-            onError={e => { e.target.style.display = 'none'; }}
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+          {images.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt={`${title} ${i + 1}`}
+              className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out"
+              style={{
+                opacity: i === current ? 1 : 0,
+                transform: i === current ? 'scale(1.02)' : 'scale(1.08)',
+              }}
+              onError={e => { e.target.style.display = 'none'; }}
+            />
+          ))}
+          {/* Bolder gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/0 to-black/10 pointer-events-none" />
         </div>
 
-        {/* Prev / Next arrows — only show if more than 1 image */}
         {images.length > 1 && (
           <>
             <button
               onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition z-10"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition z-10 backdrop-blur-sm"
             >
-              <FiChevronLeft className="text-lg" />
+              <FiChevronLeft className="text-xl" />
             </button>
             <button
               onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition z-10"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition z-10 backdrop-blur-sm"
             >
-              <FiChevronRight className="text-lg" />
+              <FiChevronRight className="text-xl" />
             </button>
 
-            {/* Dot indicators */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {/* Bigger, bolder dot indicators */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10">
               {images.map((_, i) => (
                 <button
                   key={i}
-                  onClick={(e) => { e.stopPropagation(); setCurrent(i); }}
-                  className={`rounded-full transition-all ${
-                    i === current ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                  onClick={(e) => { e.stopPropagation(); goTo(i); }}
+                  className={`rounded-full transition-all duration-300 shadow ${
+                    i === current ? 'w-7 h-2 bg-white' : 'w-2 h-2 bg-white/60 hover:bg-white/80'
                   }`}
                 />
               ))}
             </div>
 
-            {/* Counter */}
-            <div className="absolute top-2 right-2 bg-black/40 text-white text-xs font-semibold px-2 py-0.5 rounded-full z-10">
+            <div className="absolute top-3 right-3 bg-black/50 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10 backdrop-blur-sm">
               {current + 1}/{images.length}
             </div>
           </>
         )}
       </div>
 
-      {/* Lightbox */}
       {lightbox && (
         <div
           className="fixed inset-0 bg-black/90 z-[9999] flex items-center justify-center"
@@ -134,6 +159,8 @@ const ImageSlider = ({ images, title }) => {
     </>
   );
 };
+                
+
 
 // ── News Card ────────────────────────────────────────────────────────────────
 const NewsCard = ({ item }) => {
