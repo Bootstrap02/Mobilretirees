@@ -1,10 +1,14 @@
-// pages/ElectionsPage.jsx  — Member-facing voting + results page
+
+// pages/ElectionsPage.jsx  — Member-facing elections list: vote + view results
+// FIX: previously fetched a single election via GET /active. Now fetches
+// every election via GET /all so members can see and act on President,
+// Financial Secretary, Treasurer, etc. all at once, each as its own card.
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import axios from 'axios';
-import { FiCheckCircle, FiAward, FiLoader, FiBarChart2, FiCalendar } from 'react-icons/fi';
+import { FiCheckCircle, FiAward, FiLoader, FiBarChart2, FiCalendar, FiChevronDown } from 'react-icons/fi';
 
 const API = 'https://campusbuy-backend-nkmx.onrender.com/mobilcreateelection';
 
@@ -16,20 +20,218 @@ const statusBadge = (status) => {
     results_declared: { label: 'Results Declared',  cls: 'bg-purple-100 text-purple-700' },
   };
   const s = map[status] || { label: status, cls: 'bg-gray-100 text-gray-600' };
+  return <span className={`text-xs font-bold px-3 py-1 rounded-full flex-shrink-0 ${s.cls}`}>{s.label}</span>;
+};
+
+const Avatar = ({ c, size = 'w-10 h-10 sm:w-12 sm:h-12' }) =>
+  c.photo
+    ? <img src={c.photo} alt={c.fullName} className={`${size} rounded-full object-cover border border-gray-200 flex-shrink-0`} />
+    : <div className={`${size} rounded-full bg-[#001F5B]/10 flex items-center justify-center font-bold text-[#001F5B] flex-shrink-0 text-sm sm:text-base`}>
+        {c.fullName.charAt(0)}
+      </div>;
+
+// ── One election card: handles its own vote/results state ──────────────────
+const ElectionCard = ({ election, userId, defaultOpen }) => {
+  const [open,     setOpen]     = useState(defaultOpen);
+  const [hasVoted, setHasVoted] = useState(false);
+  const [checked,  setChecked]  = useState(false);
+  const [voting,   setVoting]   = useState('');
+  const [msg,      setMsg]      = useState({ type: '', text: '' });
+
+  useEffect(() => {
+    if (election.status !== 'active' || !userId) { setChecked(true); return; }
+    axios.get(`${API}/${election._id}/has-voted/${userId}`)
+      .then(res => setHasVoted(res.data.hasVoted))
+      .catch(() => {})
+      .finally(() => setChecked(true));
+  }, [election._id, election.status, userId]);
+
+  const castVote = async (positionId, candidateId, candidateName) => {
+    if (!userId) return;
+    if (!window.confirm(`Confirm your vote for ${candidateName}? This cannot be changed.`)) return;
+    setVoting(candidateId);
+    try {
+      await axios.post(`${API}/${election._id}/vote`, { userId, positionId, candidateId });
+      setHasVoted(true);
+      setMsg({ type: 'success', text: `Your vote for ${candidateName} has been recorded!` });
+    } catch (err) {
+      setMsg({ type: 'error', text: err.response?.data?.message || 'Failed to cast vote.' });
+      if (err.response?.data?.alreadyVoted) setHasVoted(true);
+    } finally {
+      setVoting('');
+    }
+  };
+
+  // For results_declared elections, the full election doc already carries
+  // each candidate's voteCount, so results are computed right here rather
+  // than needing a second network call.
+  const standingsByPosition = election.status === 'results_declared'
+    ? election.positions.map(pos => ({
+        position: pos.title,
+        standings: [...pos.candidates].sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0)),
+      }))
+    : null;
+
   return (
-    <span className={`text-xs font-bold px-3 py-1 rounded-full ${s.cls}`}>{s.label}</span>
+    <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
+      <button onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between gap-3 px-4 sm:px-6 py-5 text-left">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h2 className="text-base sm:text-xl font-extrabold text-[#001F5B] truncate">{election.title}</h2>
+            {statusBadge(election.status)}
+          </div>
+          <p className="text-xs sm:text-sm text-gray-400 flex items-center gap-1.5">
+            <FiCalendar className="flex-shrink-0" />
+            {new Date(election.startDate).toLocaleString('en-GB', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}
+            {election.status === 'active' && checked && hasVoted && (
+              <span className="ml-2 text-green-600 font-semibold flex items-center gap-1"><FiCheckCircle /> Voted</span>
+            )}
+          </p>
+        </div>
+        <FiChevronDown className={`text-gray-400 flex-shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="px-4 sm:px-6 pb-6 border-t border-gray-100 pt-4">
+          {msg.text && (
+            <div className={`mb-5 px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 ${
+              msg.type === 'success'
+                ? 'bg-green-50 border border-green-200 text-green-800'
+                : 'bg-red-50 border border-red-200 text-red-700'
+            }`}>
+              {msg.type === 'success' ? <FiCheckCircle className="flex-shrink-0" /> : '⚠️'} {msg.text}
+            </div>
+          )}
+
+          {/* ACTIVE + not voted: ballot */}
+          {election.status === 'active' && checked && !hasVoted && (
+            <div className="space-y-5">
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 text-amber-800 text-xs sm:text-sm font-medium">
+                ⚠️ You can only vote once per election. Choose carefully — your vote cannot be changed.
+              </div>
+              {election.positions.map(pos => (
+                <div key={pos._id}>
+                  <h3 className="text-sm sm:text-base font-bold text-[#001F5B] mb-3 flex items-center gap-2">
+                    <span className="text-[#E30613]">🗳️</span> {pos.title}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {pos.candidates.map(c => (
+                      <div key={c._id} className="border-2 border-gray-100 rounded-2xl p-4 flex flex-col hover:border-[#001F5B]/30 transition">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Avatar c={c} />
+                          <div className="min-w-0">
+                            <p className="font-bold text-gray-900 text-sm">{c.fullName}</p>
+                            {c.manifesto && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{c.manifesto}</p>}
+                          </div>
+                        </div>
+                        <button disabled={!!voting}
+                          onClick={() => castVote(pos._id, c._id, c.fullName)}
+                          className="mt-auto w-full py-2.5 rounded-xl text-white font-bold text-sm transition flex items-center justify-center gap-2"
+                          style={{ background: voting === c._id ? '#9CA3AF' : '#E30613' }}>
+                          {voting === c._id ? <><FiLoader className="animate-spin" /> Casting...</> : 'Vote'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ACTIVE + already voted */}
+          {election.status === 'active' && checked && hasVoted && (
+            <div className="bg-green-50 border border-green-200 rounded-2xl px-4 py-4 flex items-center gap-3">
+              <FiCheckCircle className="text-green-600 text-xl flex-shrink-0" />
+              <div>
+                <p className="text-green-800 font-bold text-sm">Your vote has been recorded!</p>
+                <p className="text-green-700/70 text-xs">Thank you for participating in this election.</p>
+              </div>
+            </div>
+          )}
+
+          {/* UPCOMING: preview only */}
+          {election.status === 'upcoming' && (
+            <div className="space-y-5">
+              <p className="text-xs sm:text-sm text-gray-500">Voting hasn't opened yet. Here's who's running:</p>
+              {election.positions.map(pos => (
+                <div key={pos._id}>
+                  <h4 className="text-xs sm:text-sm font-bold text-gray-700 mb-2 border-b pb-1.5">{pos.title}</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {pos.candidates.map(c => (
+                      <div key={c._id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <Avatar c={c} size="w-9 h-9" />
+                        <p className="font-semibold text-gray-900 text-sm truncate">{c.fullName}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ENDED, awaiting results */}
+          {election.status === 'ended' && (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">⏳</div>
+              <p className="text-gray-600 font-semibold text-sm">Voting has ended — results are being tallied.</p>
+            </div>
+          )}
+
+          {/* RESULTS DECLARED */}
+          {election.status === 'results_declared' && standingsByPosition && (
+            <div className="space-y-6">
+              {standingsByPosition.map((r, ri) => {
+                const total = r.standings.reduce((s, c) => s + (c.voteCount || 0), 0);
+                return (
+                  <div key={ri}>
+                    <h4 className="text-sm sm:text-base font-bold text-[#001F5B] mb-3 flex items-center gap-2">
+                      <FiBarChart2 /> {r.position}
+                    </h4>
+                    <div className="space-y-2.5">
+                      {r.standings.map((c, ci) => {
+                        const pct = total > 0 ? Math.round(((c.voteCount || 0) / total) * 100) : 0;
+                        const isWinner = ci === 0;
+                        return (
+                          <div key={c._id} className={`flex items-center gap-3 p-3 rounded-xl border-2 ${
+                            isWinner ? 'border-[#E30613]/40 bg-red-50' : 'border-gray-100 bg-gray-50'
+                          }`}>
+                            <Avatar c={c} size="w-9 h-9" />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1 gap-2">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  {isWinner && <FiAward className="text-[#E30613] flex-shrink-0 text-sm" />}
+                                  <span className={`font-bold truncate text-sm ${isWinner ? 'text-[#001F5B]' : 'text-gray-700'}`}>{c.fullName}</span>
+                                  {isWinner && <span className="text-[10px] font-bold bg-[#E30613] text-white px-1.5 py-0.5 rounded-full flex-shrink-0">WINNER</span>}
+                                </div>
+                                <span className="text-xs font-semibold text-gray-500 flex-shrink-0">{c.voteCount || 0} ({pct}%)</span>
+                              </div>
+                              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="h-full rounded-full transition-all duration-700"
+                                  style={{ width: `${pct}%`, background: isWinner ? '#E30613' : '#001F5B' }} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
+// ── Main page: fetches every election ───────────────────────────────────────
 const ElectionsPage = () => {
   const navigate  = useNavigate();
-  const [userData, setUserData] = useState(null);
-  const [election, setElection] = useState(null);
-  const [hasVoted, setHasVoted] = useState(false);
-  const [results,  setResults]  = useState(null);
-  const [loading,  setLoading]  = useState(true);
-  const [voting,   setVoting]   = useState(''); // candidateId currently being voted
-  const [msg,      setMsg]      = useState({ type: '', text: '' });
+  const [userData,  setUserData]  = useState(null);
+  const [elections, setElections] = useState([]);
+  const [loading,   setLoading]   = useState(true);
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('userData'));
@@ -37,23 +239,10 @@ const ElectionsPage = () => {
     setUserData(stored);
   }, [navigate]);
 
-  const loadElection = useCallback(async (userId) => {
+  const loadElections = useCallback(async () => {
     try {
-      const res = await axios.get(`${API}/active`);
-      const el  = res.data.election;
-      setElection(el);
-
-      if (!el) { setLoading(false); return; }
-
-      // Check if this user has already voted
-      const votedRes = await axios.get(`${API}/${el._id}/has-voted/${userId}`);
-      setHasVoted(votedRes.data.hasVoted);
-
-      // Load results if declared
-      if (el.status === 'results_declared') {
-        const resRes = await axios.get(`${API}/${el._id}/results`);
-        setResults(resRes.data.results);
-      }
+      const res = await axios.get(`${API}/all`);
+      setElections(res.data.elections || []);
     } catch (err) {
       console.error('Load error:', err.message);
     } finally {
@@ -61,239 +250,46 @@ const ElectionsPage = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (userData?._id) loadElection(userData._id);
-  }, [userData, loadElection]);
-
-  const castVote = async (positionId, candidateId, candidateName) => {
-    if (!election || !userData?._id) return;
-    if (!window.confirm(`Confirm your vote for ${candidateName}? This cannot be changed.`)) return;
-
-    setVoting(candidateId);
-    try {
-      await axios.post(`${API}/${election._id}/vote`, {
-        userId:      userData._id,
-        positionId,
-        candidateId,
-      });
-      setHasVoted(true);
-      setMsg({ type: 'success', text: `Your vote for ${candidateName} has been recorded! Thank you for participating.` });
-      // Refresh election to get updated counts
-      loadElection(userData._id);
-    } catch (err) {
-      const serverMsg = err.response?.data?.message || 'Failed to cast vote. Please try again.';
-      setMsg({ type: 'error', text: serverMsg });
-      if (err.response?.data?.alreadyVoted) setHasVoted(true);
-    } finally {
-      setVoting('');
-    }
-  };
+  useEffect(() => { loadElections(); }, [loadElections]);
 
   if (loading) {
     return (
       <>
         <Header />
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-2xl text-[#001F5B] animate-pulse">Loading election...</div>
+          <div className="text-xl sm:text-2xl text-[#001F5B] animate-pulse">Loading elections...</div>
         </div>
         <Footer />
       </>
     );
   }
 
+  // Show the most relevant elections first: open for voting, then upcoming,
+  // then results just declared, then old/ended ones last.
+  const rank = { active: 0, upcoming: 1, results_declared: 2, ended: 3 };
+  const sorted = [...elections].sort((a, b) => (rank[a.status] ?? 9) - (rank[b.status] ?? 9));
+
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-4">
+      <div className="min-h-screen bg-gray-50 pt-20 sm:pt-24 pb-16 sm:pb-20 px-3 sm:px-4">
         <div className="max-w-4xl mx-auto">
-
-          {/* Page header */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#001F5B] mb-2">EMRAN Elections</h1>
-            <p className="text-gray-500 text-lg">Your vote matters. Cast it securely below.</p>
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-[#001F5B] mb-2">EMRAN Elections</h1>
+            <p className="text-gray-500 text-base sm:text-lg">Your vote matters. Cast it securely below.</p>
           </div>
 
-          {/* Feedback message */}
-          {msg.text && (
-            <div className={`mb-8 px-6 py-4 rounded-2xl font-semibold flex items-center gap-3 ${
-              msg.type === 'success'
-                ? 'bg-green-50 border border-green-200 text-green-800'
-                : 'bg-red-50 border border-red-200 text-red-700'
-            }`}>
-              {msg.type === 'success' ? <FiCheckCircle className="text-2xl flex-shrink-0" /> : '⚠️'}
-              {msg.text}
+          {sorted.length === 0 ? (
+            <div className="bg-white rounded-3xl shadow-lg p-10 sm:p-16 text-center">
+              <div className="text-6xl sm:text-7xl mb-4">🗳️</div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#001F5B] mb-3">No Elections Yet</h2>
+              <p className="text-gray-500 text-base sm:text-lg">There are no elections at this time. Check back later.</p>
             </div>
-          )}
-
-          {/* No election */}
-          {!election && (
-            <div className="bg-white rounded-3xl shadow-lg p-16 text-center">
-              <div className="text-7xl mb-4">🗳️</div>
-              <h2 className="text-2xl font-bold text-[#001F5B] mb-3">No Active Elections</h2>
-              <p className="text-gray-500 text-lg">There are no elections open for voting at this time. Check back later.</p>
-            </div>
-          )}
-
-          {election && (
-            <div className="space-y-8">
-              {/* Election info card */}
-              <div className="bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-8 shadow-2xl">
-                <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-extrabold mb-2">{election.title}</h2>
-                    {election.description && (
-                      <p className="text-white/80 text-base mb-3">{election.description}</p>
-                    )}
-                    <p className="text-white/60 text-sm flex items-center gap-2">
-                      <FiCalendar />
-                      Started: {new Date(election.startDate).toLocaleString('en-GB', { day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' })}
-                    </p>
-                  </div>
-                  <div>{statusBadge(election.status)}</div>
-                </div>
-
-                {/* Voted banner */}
-                {hasVoted && election.status === 'active' && (
-                  <div className="mt-5 bg-green-500/20 border border-green-400/40 rounded-2xl px-5 py-4 flex items-center gap-3">
-                    <FiCheckCircle className="text-green-300 text-2xl flex-shrink-0" />
-                    <div>
-                      <p className="text-white font-bold">Your vote has been recorded!</p>
-                      <p className="text-white/70 text-sm">You have successfully voted in this election. Thank you for participating.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* ── ACTIVE ELECTION — show ballot if not yet voted ── */}
-              {election.status === 'active' && !hasVoted && (
-                <div className="space-y-6">
-                  <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 text-amber-800 text-sm font-medium">
-                    ⚠️ You can only vote <strong>once</strong> per election. Once your vote is cast for a position, it cannot be changed. Please choose carefully.
-                  </div>
-
-                  {election.positions.map((pos) => (
-                    <div key={pos._id} className="bg-white rounded-3xl shadow-lg p-8">
-                      <h3 className="text-xl font-extrabold text-[#001F5B] mb-6 flex items-center gap-2">
-                        <span className="text-[#E30613]">🗳️</span> {pos.title}
-                      </h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {pos.candidates.map((c) => (
-                          <div key={c._id}
-                            className="border-2 border-gray-100 rounded-2xl p-5 flex flex-col hover:border-[#001F5B]/30 transition">
-                            <div className="flex items-center gap-4 mb-4">
-                              {c.photo
-                                ? <img src={c.photo} alt={c.fullName} className="w-14 h-14 rounded-full object-cover border-2 border-gray-200 flex-shrink-0" />
-                                : <div className="w-14 h-14 rounded-full bg-[#001F5B]/10 flex items-center justify-center text-xl font-bold text-[#001F5B] flex-shrink-0">
-                                    {c.fullName.charAt(0)}
-                                  </div>
-                              }
-                              <div>
-                                <p className="font-bold text-gray-900">{c.fullName}</p>
-                                {c.manifesto && <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">{c.manifesto}</p>}
-                              </div>
-                            </div>
-                            <button
-                              disabled={!!voting}
-                              onClick={() => castVote(pos._id, c._id, c.fullName)}
-                              className="mt-auto w-full py-3 rounded-xl text-white font-bold text-sm transition flex items-center justify-center gap-2"
-                              style={{ background: voting === c._id ? '#9CA3AF' : '#E30613' }}>
-                              {voting === c._id
-                                ? <><FiLoader className="animate-spin" /> Casting Vote...</>
-                                : 'Vote for this Candidate'}
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* ── UPCOMING — show candidates preview ── */}
-              {election.status === 'upcoming' && (
-                <div className="bg-white rounded-3xl shadow-lg p-8">
-                  <h3 className="text-xl font-bold text-[#001F5B] mb-6">Election Preview — Candidates</h3>
-                  {election.positions.map((pos) => (
-                    <div key={pos._id} className="mb-8">
-                      <h4 className="text-base font-bold text-gray-700 mb-4 border-b pb-2">{pos.title}</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {pos.candidates.map((c) => (
-                          <div key={c._id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            {c.photo
-                              ? <img src={c.photo} alt={c.fullName} className="w-12 h-12 rounded-full object-cover border border-gray-200 flex-shrink-0" />
-                              : <div className="w-12 h-12 rounded-full bg-[#001F5B]/10 flex items-center justify-center font-bold text-[#001F5B] flex-shrink-0">
-                                  {c.fullName.charAt(0)}
-                                </div>
-                            }
-                            <div>
-                              <p className="font-bold text-gray-900">{c.fullName}</p>
-                              {c.manifesto && <p className="text-xs text-gray-500 mt-0.5">{c.manifesto}</p>}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* ── RESULTS DECLARED ── */}
-              {election.status === 'results_declared' && results && (
-                <div className="bg-white rounded-3xl shadow-lg p-8">
-                  <h3 className="text-2xl font-extrabold text-[#001F5B] mb-8 flex items-center gap-3">
-                    <FiAward className="text-[#E30613] text-3xl" /> Official Election Results
-                  </h3>
-                  {results.map((r, ri) => (
-                    <div key={ri} className="mb-10">
-                      <h4 className="text-lg font-bold text-[#001F5B] mb-4 flex items-center gap-2">
-                        <FiBarChart2 /> {r.position}
-                      </h4>
-                      <div className="space-y-3">
-                        {r.standings.map((s, si) => {
-                          const total = r.standings.reduce((x, y) => x + y.votes, 0);
-                          const pct   = total > 0 ? Math.round((s.votes / total) * 100) : 0;
-                          const isWinner = si === 0;
-                          return (
-                            <div key={si} className={`flex items-center gap-4 p-4 rounded-2xl border-2 ${
-                              isWinner ? 'border-[#E30613]/40 bg-red-50' : 'border-gray-100 bg-gray-50'
-                            }`}>
-                              {s.photo
-                                ? <img src={s.photo} alt={s.name} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow flex-shrink-0" />
-                                : <div className="w-12 h-12 rounded-full bg-[#001F5B]/10 flex items-center justify-center font-bold text-[#001F5B] flex-shrink-0 text-lg">
-                                    {s.name.charAt(0)}
-                                  </div>
-                              }
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between mb-1.5 gap-2">
-                                  <div className="flex items-center gap-2 min-w-0">
-                                    {isWinner && <FiAward className="text-[#E30613] flex-shrink-0" />}
-                                    <span className={`font-bold truncate ${isWinner ? 'text-[#001F5B]' : 'text-gray-700'}`}>{s.name}</span>
-                                    {isWinner && <span className="text-xs font-bold bg-[#E30613] text-white px-2 py-0.5 rounded-full flex-shrink-0">WINNER</span>}
-                                  </div>
-                                  <span className="text-sm font-semibold text-gray-500 flex-shrink-0">{s.votes} votes ({pct}%)</span>
-                                </div>
-                                <div className="h-2.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div className="h-full rounded-full transition-all duration-700"
-                                    style={{ width: `${pct}%`, background: isWinner ? '#E30613' : '#001F5B' }} />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* ── VOTING ENDED, RESULTS PENDING ── */}
-              {election.status === 'ended' && (
-                <div className="bg-white rounded-3xl shadow-lg p-12 text-center">
-                  <div className="text-6xl mb-4">⏳</div>
-                  <h3 className="text-2xl font-bold text-[#001F5B] mb-3">Voting has ended</h3>
-                  <p className="text-gray-500">Results are being tallied and will be announced shortly. Check back soon.</p>
-                </div>
-              )}
+          ) : (
+            <div className="space-y-5 sm:space-y-6">
+              {sorted.map((el, i) => (
+                <ElectionCard key={el._id} election={el} userId={userData?._id} defaultOpen={i === 0} />
+              ))}
             </div>
           )}
         </div>
@@ -304,4 +300,3 @@ const ElectionsPage = () => {
 };
 
 export default ElectionsPage;
-
