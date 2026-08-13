@@ -244,6 +244,17 @@ const NewsEvents = () => {
       } finally { setLoading(false); }
     };
     load();
+
+    // Listen for REFRESH_NEWSEVENTS message from service worker
+    // This fires when user taps a push notification and the page is already open
+    const handleSwMessage = (event) => {
+      if (event.data?.type === 'REFRESH_NEWSEVENTS') {
+        setLoading(true);
+        load();
+      }
+    };
+    navigator.serviceWorker?.addEventListener('message', handleSwMessage);
+    return () => navigator.serviceWorker?.removeEventListener('message', handleSwMessage);
   }, [navigate]);
 
   const categories = ['all', ...Object.keys(CATEGORY_CONFIG)];
