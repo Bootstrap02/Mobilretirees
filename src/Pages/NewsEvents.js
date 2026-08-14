@@ -188,6 +188,7 @@ const NewsEvents = () => {
       try {
         const res = await axios.get(`${API}`);
         const data = res.data.newsEvents || res.data.newsevents || res.data || [];
+        console.log(data)
         // Sort newest first
         const sorted = [...data].sort((a, b) =>
           new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0));
