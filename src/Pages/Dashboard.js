@@ -32,6 +32,11 @@ const isPWA = () =>
   window.navigator.standalone === true;
 
 const notificationsSupported = () => 'Notification' in window;
+// FIX (new): some browsers (notably Opera Mini) have `Notification` but no
+// real Push API / Service Worker support. Checking both together avoids
+// silently doing nothing with no explanation to the person.
+const pushFullySupported = () =>
+  notificationsSupported() && 'serviceWorker' in navigator && 'PushManager' in window;
 
 const sendTestNotification = () => {
   if (notificationsSupported() && Notification.permission === 'granted') {
@@ -89,12 +94,20 @@ const Dashboard = () => {
   const [showNotifModal, setShowNotifModal] = useState(false);
   const [showIOSTip, setShowIOSTip]         = useState(false);
   const [notifBlocked, setNotifBlocked]     = useState(false);
+  // FIX (new): friendly message for browsers with no real push support
+  // (e.g. Opera Mini) instead of silently showing nothing
+  const [showUnsupportedTip, setShowUnsupportedTip] = useState(false);
+  // FIX (new): surfaces whether the LAST subscription attempt actually
+  // succeeded end-to-end (service worker + VAPID key + subscribe + backend
+  // save) — not just whether the OS permission was granted. This is what
+  // was missing before: permission granted ≠ subscription actually saved.
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null); // null | 'success' | 'failed'
 
-  /* ── DEBUG: visible push diagnostics panel (dev-only helper) ── */
+  /* ── DEBUG: visible push diagnostics panel ── */
   const [pushDebug, setPushDebug] = useState([]);
   const logPush = (msg) => {
     console.log('[PUSH]', msg);
-    setPushDebug(prev => [...prev.slice(-6), `${new Date().toLocaleTimeString()} — ${msg}`]);
+    setPushDebug(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()} — ${msg}`]);
   };
 
   useEffect(() => {
@@ -123,42 +136,15 @@ const Dashboard = () => {
     setLoading(false);
   }, [navigate]);
 
-  /* ── Decide whether to show the notification permission prompt ── */
-  useEffect(() => {
-    if (loading) return;
-    const stored = localStorage.getItem(NOTIF_STORAGE_KEY);
-    logPush(`Permission check — localStorage flag: "${stored}", browser permission: "${notificationsSupported() ? Notification.permission : 'unsupported'}"`);
-
-    if (stored === 'granted') return;
-
-    if (notificationsSupported()) {
-      if (Notification.permission === 'granted') {
-        localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
-        registerPushSubscription();
-        return;
-      }
-      if (Notification.permission === 'denied') {
-        localStorage.setItem(NOTIF_STORAGE_KEY, 'denied');
-        setNotifBlocked(true);
-        return;
-      }
-    }
-
-    if (isIOS() && !isPWA()) {
-      if (stored !== 'ios_pwa_pending') setShowIOSTip(true);
-      return;
-    }
-
-    if (notificationsSupported()) setShowNotifModal(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
-
   const registerPushSubscription = useCallback(async () => {
+    // FIX: now returns true/false so callers know whether it ACTUALLY
+    // succeeded end-to-end, instead of assuming success the moment
+    // permission was granted.
     try {
       logPush('Step 1: checking serviceWorker support...');
       if (!('serviceWorker' in navigator)) {
         logPush('❌ serviceWorker NOT supported in this browser');
-        return;
+        return false;
       }
 
       logPush('Step 2: registering /emran-sw.js ...');
@@ -172,12 +158,12 @@ const Dashboard = () => {
       const keyRes = await fetch(`${PUSH_BASE}/push/vapid-key`);
       if (!keyRes.ok) {
         logPush(`❌ vapid-key request failed: HTTP ${keyRes.status}`);
-        return;
+        return false;
       }
       const { publicKey } = await keyRes.json();
       if (!publicKey) {
         logPush('❌ vapid-key response has no publicKey — check VAPID_PUBLIC_KEY in .env on the server');
-        return;
+        return false;
       }
       logPush('✅ Got VAPID public key');
 
@@ -204,14 +190,76 @@ const Dashboard = () => {
       });
       if (!subRes.ok) {
         logPush(`❌ Subscribe save failed: HTTP ${subRes.status}`);
-        return;
+        return false;
       }
       logPush('✅ Subscription saved on backend — push notifications are now active for this browser');
+      return true;
     } catch (err) {
       logPush('❌ ERROR: ' + (err.message || String(err)));
       console.error('Push subscription error:', err);
+      return false;
     }
   }, []);
+
+  /* ── Decide whether to show the notification permission prompt, OR
+        silently re-verify an existing subscription is still healthy ── */
+  useEffect(() => {
+    if (loading) return;
+    const stored = localStorage.getItem(NOTIF_STORAGE_KEY);
+    logPush(`Permission check — localStorage flag: "${stored}", browser permission: "${notificationsSupported() ? Notification.permission : 'unsupported'}"`);
+
+    // FIX (new): browsers like Opera Mini report no real push support at
+    // all — tell the person plainly instead of doing nothing silently.
+    if (!pushFullySupported() && !isIOS()) {
+      logPush('⚠️ This browser does not support push notifications (no Notification/ServiceWorker/PushManager API)');
+      setShowUnsupportedTip(true);
+      return;
+    }
+
+    if (stored === 'granted') {
+      // FIX: previously this just returned here forever, assuming a past
+      // successful grant meant the subscription was still alive. Browsers
+      // can silently invalidate a subscription (updates, storage limits,
+      // etc.) while permission itself stays "granted". Now we actually
+      // check the live subscription and silently re-subscribe if it's gone.
+      (async () => {
+        try {
+          if (!('serviceWorker' in navigator)) return;
+          const reg = await navigator.serviceWorker.getRegistration('/emran-sw.js');
+          const existing = reg ? await reg.pushManager.getSubscription() : null;
+          if (existing) {
+            logPush('✅ Existing push subscription is still healthy — no action needed');
+          } else {
+            logPush('⚠️ No live subscription found despite "granted" flag — silently re-subscribing');
+            const ok = await registerPushSubscription();
+            setSubscriptionStatus(ok ? 'success' : 'failed');
+          }
+        } catch (err) {
+          logPush('❌ Health-check error: ' + err.message);
+        }
+      })();
+      return;
+    }
+
+    if (Notification.permission === 'granted') {
+      localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
+      registerPushSubscription().then(ok => setSubscriptionStatus(ok ? 'success' : 'failed'));
+      return;
+    }
+    if (Notification.permission === 'denied') {
+      localStorage.setItem(NOTIF_STORAGE_KEY, 'denied');
+      setNotifBlocked(true);
+      return;
+    }
+
+    if (isIOS() && !isPWA()) {
+      if (stored !== 'ios_pwa_pending') setShowIOSTip(true);
+      return;
+    }
+
+    setShowNotifModal(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, registerPushSubscription]);
 
   const handleAllowNotifications = useCallback(async () => {
     setShowNotifModal(false);
@@ -220,8 +268,17 @@ const Dashboard = () => {
       localStorage.setItem(NOTIF_STORAGE_KEY, permission);
       logPush(`User responded to permission prompt: "${permission}"`);
       if (permission === 'granted') {
-        sendTestNotification();
-        registerPushSubscription();
+        // FIX: the "you're subscribed" notification now only fires AFTER
+        // registerPushSubscription() actually confirms the backend save
+        // succeeded — previously it fired immediately on permission grant,
+        // regardless of whether the subscription was ever actually saved.
+        // That false-positive is exactly what made it look like it worked
+        // for your wife when it silently hadn't.
+        const ok = await registerPushSubscription();
+        setSubscriptionStatus(ok ? 'success' : 'failed');
+        if (ok) {
+          sendTestNotification();
+        }
       } else {
         setNotifBlocked(permission === 'denied');
       }
@@ -240,6 +297,13 @@ const Dashboard = () => {
     setShowIOSTip(false);
     localStorage.setItem(NOTIF_STORAGE_KEY, 'ios_pwa_pending');
   }, []);
+
+  const handleRetrySubscription = useCallback(async () => {
+    setSubscriptionStatus(null);
+    const ok = await registerPushSubscription();
+    setSubscriptionStatus(ok ? 'success' : 'failed');
+    if (ok) sendTestNotification();
+  }, [registerPushSubscription]);
 
   const openNotifications  = () => setNotifications(true);
   const closeNotifications = () => setNotifications(false);
@@ -314,14 +378,52 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* ── Unsupported browser tip (e.g. Opera Mini) ── */}
+      {showUnsupportedTip && (
+        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5">
+              <span className="text-3xl">🚫🔔</span>
+            </div>
+            <h2 className="text-xl font-extrabold text-[#001F5B] mb-2">Notifications not available here</h2>
+            <p className="text-gray-500 text-sm leading-relaxed mb-6">
+              This browser doesn't support push notifications. Try Chrome, Firefox, or Edge to receive
+              EMRAN alerts and news event updates directly on your device.
+            </p>
+            <button onClick={() => setShowUnsupportedTip(false)}
+              className="w-full bg-[#001F5B] hover:bg-[#003494] text-white font-bold py-3 rounded-xl text-sm transition active:scale-95">
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
-          {/* ── DEBUG PANEL — remove once push is confirmed working ── */}
+          {/* ── DEBUG PANEL — now actually shows the real diagnostic trail ── */}
           {pushDebug.length > 0 && (
             <div className="bg-gray-900 text-green-400 font-mono text-xs rounded-2xl p-4 mb-8 overflow-x-auto">
-              <p className="text-white font-bold mb-2">🔧 Welcome to the EMRAN users Personal Dashboard</p>
-              <div>Here you can Get more personal information and General EMRAN Information. Click profile to update your account.</div>
+              <p className="text-white font-bold mb-2 flex items-center gap-2">
+                🔧 Push Notification Diagnostics
+                {subscriptionStatus === 'success' && (
+                  <span className="text-green-400 font-sans font-normal">— Subscribed ✅</span>
+                )}
+                {subscriptionStatus === 'failed' && (
+                  <span className="text-red-400 font-sans font-normal">— Subscription failed ⚠️</span>
+                )}
+              </p>
+              <div className="space-y-1">
+                {pushDebug.map((line, i) => (
+                  <div key={i}>{line}</div>
+                ))}
+              </div>
+              {subscriptionStatus === 'failed' && (
+                <button onClick={handleRetrySubscription}
+                  className="mt-3 bg-red-600 hover:bg-red-700 text-white font-sans font-semibold text-xs px-4 py-2 rounded-lg transition">
+                  Retry Subscription
+                </button>
+              )}
             </div>
           )}
 
