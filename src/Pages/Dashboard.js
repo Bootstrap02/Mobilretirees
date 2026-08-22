@@ -298,13 +298,6 @@ const Dashboard = () => {
     localStorage.setItem(NOTIF_STORAGE_KEY, 'ios_pwa_pending');
   }, []);
 
-  const handleRetrySubscription = useCallback(async () => {
-    setSubscriptionStatus(null);
-    const ok = await registerPushSubscription();
-    setSubscriptionStatus(ok ? 'success' : 'failed');
-    if (ok) sendTestNotification();
-  }, [registerPushSubscription]);
-
   const openNotifications  = () => setNotifications(true);
   const closeNotifications = () => setNotifications(false);
 
@@ -400,8 +393,6 @@ const Dashboard = () => {
 
       <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-
-          
 
           {/* Welcome Banner - Desktop */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
