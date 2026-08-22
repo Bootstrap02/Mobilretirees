@@ -401,31 +401,7 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
 
-          {/* ── DEBUG PANEL — now actually shows the real diagnostic trail ── */}
-          {pushDebug.length > 0 && (
-            <div className="bg-gray-900 text-green-400 font-mono text-xs rounded-2xl p-4 mb-8 overflow-x-auto">
-              <p className="text-white font-bold mb-2 flex items-center gap-2">
-                🔧 Push Notification Diagnostics
-                {subscriptionStatus === 'success' && (
-                  <span className="text-green-400 font-sans font-normal">— Subscribed ✅</span>
-                )}
-                {subscriptionStatus === 'failed' && (
-                  <span className="text-red-400 font-sans font-normal">— Subscription failed ⚠️</span>
-                )}
-              </p>
-              <div className="space-y-1">
-                {pushDebug.map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
-              </div>
-              {subscriptionStatus === 'failed' && (
-                <button onClick={handleRetrySubscription}
-                  className="mt-3 bg-red-600 hover:bg-red-700 text-white font-sans font-semibold text-xs px-4 py-2 rounded-lg transition">
-                  Retry Subscription
-                </button>
-              )}
-            </div>
-          )}
+          
 
           {/* Welcome Banner - Desktop */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
