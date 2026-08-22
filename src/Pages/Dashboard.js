@@ -97,17 +97,10 @@ const Dashboard = () => {
   // FIX (new): friendly message for browsers with no real push support
   // (e.g. Opera Mini) instead of silently showing nothing
   const [showUnsupportedTip, setShowUnsupportedTip] = useState(false);
-  // FIX (new): surfaces whether the LAST subscription attempt actually
-  // succeeded end-to-end (service worker + VAPID key + subscribe + backend
-  // save) — not just whether the OS permission was granted. This is what
-  // was missing before: permission granted ≠ subscription actually saved.
-  const [subscriptionStatus, setSubscriptionStatus] = useState(null); // null | 'success' | 'failed'
 
-  /* ── DEBUG: visible push diagnostics panel ── */
-  const [pushDebug, setPushDebug] = useState([]);
+  /* ── Push diagnostics — console only, nothing rendered on screen ── */
   const logPush = (msg) => {
-    console.log('[PUSH]', msg);
-    setPushDebug(prev => [...prev.slice(-9), `${new Date().toLocaleTimeString()} — ${msg}`]);
+    console.log('[PUSH]', `${new Date().toLocaleTimeString()} — ${msg}`);
   };
 
   useEffect(() => {
@@ -231,8 +224,7 @@ const Dashboard = () => {
             logPush('✅ Existing push subscription is still healthy — no action needed');
           } else {
             logPush('⚠️ No live subscription found despite "granted" flag — silently re-subscribing');
-            const ok = await registerPushSubscription();
-            setSubscriptionStatus(ok ? 'success' : 'failed');
+            await registerPushSubscription();
           }
         } catch (err) {
           logPush('❌ Health-check error: ' + err.message);
@@ -243,7 +235,7 @@ const Dashboard = () => {
 
     if (Notification.permission === 'granted') {
       localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
-      registerPushSubscription().then(ok => setSubscriptionStatus(ok ? 'success' : 'failed'));
+      registerPushSubscription();
       return;
     }
     if (Notification.permission === 'denied') {
@@ -268,14 +260,10 @@ const Dashboard = () => {
       localStorage.setItem(NOTIF_STORAGE_KEY, permission);
       logPush(`User responded to permission prompt: "${permission}"`);
       if (permission === 'granted') {
-        // FIX: the "you're subscribed" notification now only fires AFTER
+        // The "you're subscribed" notification only fires AFTER
         // registerPushSubscription() actually confirms the backend save
-        // succeeded — previously it fired immediately on permission grant,
-        // regardless of whether the subscription was ever actually saved.
-        // That false-positive is exactly what made it look like it worked
-        // for your wife when it silently hadn't.
+        // succeeded — not just because OS permission was granted.
         const ok = await registerPushSubscription();
-        setSubscriptionStatus(ok ? 'success' : 'failed');
         if (ok) {
           sendTestNotification();
         }
