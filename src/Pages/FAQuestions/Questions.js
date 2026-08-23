@@ -15,7 +15,7 @@ export const faqCategories = [
       { q: "Where can I find EMRAN's resource documents from the homepage?", a: "On the homepage, scroll down to the 'Our Purpose' section and click 'Learn More' to access EMRAN's resource documents, including rules and regulations." },
       { q: "What is the primary purpose of the EMRAN Rules & Regulations document?", a: "The purpose is to provide clarity to the provisions of the Articles of Association and to establish rules that guide and control the actions of the Association's members." },
       { q: "What does EMRAN stand for?", a: "EMRAN stands for ExxonMobil Retirees Association of Nigeria." },
-      { q: "When was EMRAN founded?", a: "EMRAN was incorporated under the Companies and Allied Matters Act (CAMA) and is registered with the Corporate Affairs Commission under registration mark RC IT - 153528." },
+      { q: "When was EMRAN founded?", a: "EMRAN was incorporated in December 2020 under the Companies and Allied Matters Act (CAMA) and is registered with the Corporate Affairs Commission under registration mark RC IT - 153528." },
       { q: "What is the official email address of EMRAN?", a: "The official email address of EMRAN is emranannuitants@gmail.com." },
       { q: "What is the official website of EMRAN?", a: "The official EMRAN member portal is accessible at https://emran.center." },
       { q: "How can I contact EMRAN by phone?", a: "You can reach the EMRAN help desk by calling +234 906 941 2463." },
