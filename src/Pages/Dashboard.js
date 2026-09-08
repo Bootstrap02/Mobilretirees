@@ -1,21 +1,12 @@
 
+
 // pages/Dashboard.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import constitutionPDF from '../assets/emran-constitution.pdf';
-import rulesPDF from '../assets/emran-rules.pdf';
-import associationPDF from '../assets/emran-association.pdf';
-import agm from '../assets/agm2026.pdf';
-import executives from '../assets/executives.pdf';
-import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
-import whatsapp_rules from '../assets/whatsapp_rules.pdf';
-import retireesBenefit from '../assets/retiree_benefits_2026.pdf'
-import retireesProviders from '../assets/retirees_providers_2026.xlsx'
 import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiCalendar, FiFileText } from 'react-icons/fi';
-import cacCertificate from '../assets/cac-certificate.jpg';
 
 /* ─────────────────────────────────────────────────────────────────────────
    PUSH NOTIFICATION HELPERS
@@ -439,7 +430,7 @@ const Dashboard = () => {
           </div>
 
           {/* Quick Status Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiDollarSign className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Dues Status</h3>
@@ -470,6 +461,16 @@ const Dashboard = () => {
               <p className="text-3xl font-bold text-gray-800">{news}</p>
               <NavLink to="/newsevents" className="text-[#E30613] font-bold mt-4 block hover:underline">See Calendar →</NavLink>
             </div>
+
+            <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
+              <FiFileText className="text-6xl text-[#E30613] mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Documents</h3>
+              <p className="text-lg text-gray-600 mb-6">Constitution, AGM records & benefits</p>
+              <NavLink to={`/documents/${user.staffId}`}
+                className="bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg px-10 py-4 rounded-2xl transition transform hover:scale-105 w-full block">
+                View Documents →
+              </NavLink>
+            </div>
           </div>
 
           {/* Blocked notification hint */}
@@ -479,38 +480,6 @@ const Dashboard = () => {
               <p>Browser notifications are currently blocked. Click the lock icon in your browser's address bar, find <strong>Notifications</strong>, and set it to <strong>Allow</strong>.</p>
             </div>
           )}
-
-          {/* Documents Grid */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {[
-              { title: 'CAC Certification', desc: "View the official Corporate Affairs Commission certification confirming EMRAN's legal registration status.", href: cacCertificate, color: '#E30613' },
-              { title: 'CAC-ABRIDGED CONSTITUTION', desc: 'View the official EMRAN Constitution document outlining governance, membership structure, and operational guidelines.', href: constitutionPDF, color: '#001F5B' },
-              { title: 'Articles of Association', desc: 'View the official Articles of Association of ExxonMobil Retirees Association of Nigeria (EMRAN).', href: associationPDF, color: '#001F5B' },
-              { title: 'Rules and Regulations', desc: 'View the official Rules and Regulations of ExxonMobil Retirees Association of Nigeria (EMRAN).', href: rulesPDF, color: '#001F5B' },
-              { title: 'AGM Attendees in 2026', desc: 'View the official EMRAN AGM Attendees in 2026.', href: agm, color: '#001F5B' },
-              { title: 'EMRAN Newly Elected Executives 2026', desc: 'View the official EMRAN Newly Elected Executives in 2026.', href: executives, color: '#001F5B' },
-              { title: 'EMRAN WhatsApp Rules and Regulations', desc: 'Rules and Regulations for Posting and Commenting on EMRAN WhatsApp.', href: whatsapp_rules, color: '#001F5B' },
-              { title: 'EMRAN WhatsApp Penalties', desc: 'Penalties for offences on EMRAN WhatsApp Group.', href: whatsapp_penalties, color: '#001F5B' },
-              { title: 'AXA MANSARD Medical Benefits 2026', desc: 'Retiree Benefits for EMRAN members 2026.', href: retireesBenefit, color: '#001F5B' },
-              { title: 'AXA MANSARD Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
-            ].map((doc, i) => (
-              <div key={i} className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition flex flex-col justify-between"
-                style={{ borderTop: `8px solid ${doc.color}` }}>
-                <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <FiFileText className="text-4xl" style={{ color: doc.color }} />
-                    <h3 className="text-2xl font-bold text-[#001F5B]">{doc.title}</h3>
-                  </div>
-                  <p className="text-gray-600 text-lg">{doc.desc}</p>
-                </div>
-                <a href={doc.href} target="_blank" rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center justify-center gap-3 text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
-                  style={{ background: `linear-gradient(to right, ${doc.color}, ${doc.color}cc)` }}>
-                  View Document
-                </a>
-              </div>
-            ))}
-          </div>
 
           {/* Support Section */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
