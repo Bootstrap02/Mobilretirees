@@ -488,5 +488,42 @@ export const faqCategories = [
       { q: "How do I view upcoming EMRAN events?", a: "From your Dashboard, click the Upcoming Events card or go to emran.center/newsevents to see all current news and upcoming events." },
       { q: "Where can I see EMRAN news and announcements?", a: "Log in and visit the News and Events page at emran.center/newsevents. Recent news is also shown in the carousel on the homepage and in the Notifications section of your Dashboard." }
     ]
-  }
+  }, 
+  /*
+  NEW FAQ CATEGORY — paste this object into your existing `faqCategories`
+  array (the file that defines faqCategories, imported by your Faqs page).
+
+  Suggested placement: right after the "pension-scheme" category's closing
+  `},` and before the "healthcare" category begins — i.e. it slots in
+  between "Contributory Pension Scheme (PenCom)" and "Healthcare & AXA
+  MANSARD", since it covers a related but distinct retirement-admin topic.
+
+  Nothing else in your existing faqCategories array needs to change —
+  just insert the block below as a new element in the array.
+*/
+
+{
+  id: "retiree-refunds",
+  label: "NHF & NSITF Refunds",
+  icon: "📋",
+  faqs: [
+    { q: "What are the NSITF and NHF refunds?", a: "These are two separate government refund schemes available to retirees, covering contributions made during their working years. The NSITF Refund is processed through Stanbic IBTC Pension Managers upon retirement. The NHF (National Housing Fund) Refund is processed through the Federal Mortgage Bank of Nigeria (FMBN) once the retiree turns 60." },
+    { q: "When should I apply for my NSITF refund?", a: "The NSITF Refund Application should be processed upon retirement, through Stanbic IBTC Pension Managers." },
+    { q: "What documents do I need for the NSITF refund?", a: "You need the completed NSITF Refund Form and a copy of a Government-issued photo ID." },
+    { q: "Where do I submit my NSITF Refund Application Form?", a: "Submit your completed NSITF Refund Form and government-issued ID to the company contact through either exxonmobilngges@deloitte.com.ng or hrexpress@exxonmobil.com." },
+    { q: "When can I apply for my NHF refund?", a: "The NHF refund can be processed at age 60, through the Federal Mortgage Bank of Nigeria (FMBN). Company endorsement is required on the form before it is submitted to FMBN through the company contact." },
+    { q: "Who is eligible for the NHF refund?", a: "The NHF refund applies only to retirees who retired after April 2005." },
+    { q: "Which organization pays out the NHF refund, and how long does it take?", a: "Payment is handled strictly by the Federal Mortgage Bank of Nigeria (FMBN), and it may take several months to be paid out after submission." },
+    { q: "What is the full checklist of documents required for an NHF refund application?", a: "You will need: a self-application letter handwritten by you with your full names and signature; the completed NHF Refund Form (signed and stamped by the organization); your original, updated NHF passbook (signed and stamped by the organization); an introduction letter and a forwarding letter, both written by the organization; a copy of your retirement letter; a Letter of Confirmation of Retiree (completed, signed, and stamped by the organization); your Birth Certificate, Declaration of Age, or Marriage Certificate; your NIN slip; your signed BVN biodata page; and your bank account details showing a 10-digit NUBAN, confirmed with either an original bank statement showing your name and NUBAN or a Banker's Confirmation of Account Details. If you spent 35 years in service, you'll also need evidence of this together with your Letter of First Appointment or a copy of the Official Gazette publication." },
+    { q: "What additional documents are needed if the NHF refund is being claimed for a deceased staff member?", a: "In the case of a deceased staff member, the family or next-of-kin must also submit a certified copy of the death certificate, a Letter of Administration, and a sworn court affidavit of next-of-kin." },
+    { q: "Where do I submit my completed NHF Refund Form and supporting documents?", a: "Send your completed NHF Refund Form and attachments to the company contact via exxonmobilngges@deloitte.com.ng or hrexpress@exxonmobil.com. Completed forms should also be submitted to the NHF Unit (Desk Officer) in the organization." },
+    { q: "What is the NHF 8 'Application for Withdrawal' form?", a: "NHF 8 is issued by the Federal Mortgage Bank of Nigeria under the National Housing Fund Act. It records your Employer's Registration Number, NHF Participation Number, surname, other names, and date of birth/age, and asks whether you obtained a mortgage loan under the fund. If you did not take a mortgage loan, you indicate your reason for withdrawal — retirement from employment or incapacity to continue contributions due to ill-health — then sign and date the form." },
+    { q: "What personal and employment information does the Refund of NHF Contribution Form ask for?", a: "It collects your personal data (surname, other names, date of birth/age, permanent home address, next-of-kin, and next-of-kin address) plus your employment record — both current employment (employer name and address, annual basic salary, employer's registration number) and former employment (name and address of former employer, employer's registration number if known, and date of separation)." },
+    { q: "What contributor and refund-request details do I need to provide on the NHF form?", a: "You provide your Passbook Number, cumulative contribution to date, and current balance in the passbook (the passbook itself must be forwarded with the completed forms), along with your reason for requesting the refund. Attach a copy of your letter of retirement, evidence of incapability to continue if applicable, and a photocopy of your Age/Birth Certificate." },
+    { q: "Does my bank need to confirm my account details for the NHF refund?", a: "Yes. You complete the Applicant's Commercial Bank Account Details section with your account name, bank, branch, account number, BVN, sort code, phone number, email, and NHF Participation Number. Your banker then completes the Confirmation section — ticking whether the account number and name are correct, the account status (active, dormant, or closed), and whether the sort code is correct — and signs and stamps it." },
+    { q: "Is there a separate form to update my contact and biodata details with the Federal Mortgage Bank?", a: "Yes, the SMS Update Form. It captures your date of appointment, employer name, NHF number, full name, IPPIS/Staff ID/Oracle number, sex, date of birth, home/office address, mobile number, active email address, bank name and account number, NIN, BVN, and next-of-kin details (name, address, mobile number, and relationship), along with your signature and date." },
+    { q: "Who do I contact for NSITF and NHF refund matters?", a: "For both the NSITF Refund Application and the NHF Refund Form, submit your documents to the company contact through exxonmobilngges@deloitte.com.ng or hrexpress@exxonmobil.com." }
+  ]
+},
+
 ];
