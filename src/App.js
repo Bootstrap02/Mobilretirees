@@ -12,6 +12,7 @@ import Benefits from './Pages/Benefits'
 import  NewsEvents from './Pages/NewsEvents';
 import  News from './Pages/News';
 import Dashboard from './Pages/Dashboard';
+import Documents from './Pages/Documents';
 import Elections from './Pages/Elections';
 import CastVote from './Pages/CastVote';
 import Resources from './Pages/Resources';
@@ -33,6 +34,7 @@ function App() {
 <Route path="/" element={<Firstpage />} />
 <Route path='/profile/:id' element={<Profile />} />
 <Route path='/dashboard/:id' element={<Dashboard />} />
+ <Route path='/documents/:id' element={<Documents />} />
 <Route path='/elections/:id' element={<Elections />} />
 <Route path='/elections/cast' element={<CastVote />} />
         <Route path='/newsevents' element={<NewsEvents /> }/>
