@@ -121,14 +121,7 @@ const Header = ({ isOpen, notifications = [] }) => {
             >
               Support
             </NavLink>
-            <NavLink 
-              to="/voting"
-              className={({ isActive }) => 
-                `font-medium transition ${scrolled || isActive ? 'text-[#001F5B]' : 'text-white'} hover:text-[#E30613]`
-              }
-            >
-              Elections
-            </NavLink>
+            
             <NavLink 
               to="/faqs" 
               className={({ isActive }) => 
@@ -263,13 +256,7 @@ const Header = ({ isOpen, notifications = [] }) => {
                 Support
               </NavLink>
 
-              <NavLink
-               to="/voting"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block text-white py-2 border-b border-gray-700"
-              >
-               Elections
-              </NavLink>
+              
 
               <NavLink
                to="/faqs"

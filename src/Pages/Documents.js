@@ -11,6 +11,9 @@ import executives from '../assets/executives.pdf';
 import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
 import whatsapp_rules from '../assets/whatsapp_rules.pdf';
 import retireesBenefit from '../assets/retiree_benefits_2026.pdf';
+import annuitantsBenefits from '../assets/Annuitants-Benefits-2026.pdf';
+import emranNHFRefundForm from '../assets/EMRAN-NHF-Refund-Form.pdf';
+import nsitfRefundApplicationForm from '../assets/NSITF-Refund-Application-Form.pdf';
 import retireesProviders from '../assets/retirees_providers_2026.xlsx';
 import cacCertificate from '../assets/cac-certificate.jpg';
 import { FiFileText, FiArrowLeft } from 'react-icons/fi';
@@ -30,6 +33,9 @@ const documentsList = [
   { title: 'EMRAN WhatsApp Penalties', desc: 'Penalties for offences on EMRAN WhatsApp Group.', href: whatsapp_penalties, color: '#001F5B' },
   { title: 'AXA MANSARD Medical Benefits 2026', desc: 'Retiree Benefits for EMRAN members 2026.', href: retireesBenefit, color: '#001F5B' },
   { title: 'AXA MANSARD Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
+  { title: 'AXA MANSARD Annuitants Benefits 2026', desc: 'Annuitants Benefits for EMRAN members 2026.', href: annuitantsBenefits, color: '#001F5B' },
+  { title: 'EMRAN NHF Refund Form', desc: 'EMRAN NHF Refund Form for EMRAN members.', href: emranNHFRefundForm, color: '#001F5B' },
+  { title: 'NSITF Refund Application Form', desc: 'NSITF Refund Application Form for EMRAN members.', href: nsitfRefundApplicationForm, color: '#001F5B' },
 ];
 
 const Documents = () => {
