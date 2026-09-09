@@ -12,7 +12,7 @@ import whatsapp_penalties from '../assets/whatsapp_penalties.pdf';
 import whatsapp_rules from '../assets/whatsapp_rules.pdf';
 import retireesBenefit from '../assets/retiree_benefits_2026.pdf';
 import annuitantsBenefits from '../assets/Annuitants-Benefit-Admin-Items.pdf';
-import emranNHFRefundForm from '../assets/EMRAN-NHF-Refund-Form.pdf;
+import emranNHFRefundForm from '../assets/EMRAN-NHF-Refund-Form.pdf';
 import nsitfRefundApplicationForm from '../assets/NSITF-Refund Application-Form.pdf';
 import retireesProviders from '../assets/retirees_providers_2026.xlsx';
 import cacCertificate from '../assets/cac-certificate.jpg';
