@@ -1,17 +1,28 @@
-
-
 // pages/Dashboard.jsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import NotificationsList from '../Components/Notificationslist';
 import { FiUser, FiLogOut, FiDollarSign, FiBell, FiCalendar, FiFileText } from 'react-icons/fi';
 
-/* ─────────────────────────────────────────────────────────────────────────
-   PUSH NOTIFICATION HELPERS
-───────────────────────────────────────────────────────────────────────── */
-const NOTIF_STORAGE_KEY = 'emran_notif_permission';
+// PDF and asset paths — using public folder paths instead of imports
+// This prevents Safari from crashing on asset imports that may not exist
+const DOCS = {
+  constitution:      '/assets/emran-constitution.pdf',
+  rules:             '/assets/emran-rules.pdf',
+  association:       '/assets/emran-association.pdf',
+  agm:               '/assets/agm2026.pdf',
+  executives:        '/assets/executives.pdf',
+  whatsapp_penalties:'/assets/whatsapp_penalties.pdf',
+  whatsapp_rules:    '/assets/whatsapp_rules.pdf',
+  cacCertificate:    '/assets/cac-certificate.jpg',
+};
+
+/* ─────────────────────────────────────────────────────────────────
+   CONSTANTS
+────────────────────────────────────────────────────────────────── */
+const NOTIF_KEY = 'emran_notif_permission';
 const PUSH_BASE = 'https://campusbuy-backend-nkmx.onrender.com/mobilcreatenotifications';
 
 const isIOS = () =>
@@ -20,289 +31,288 @@ const isIOS = () =>
 
 const isPWA = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
-  window.navigator.standalone === true;
+  !!window.navigator.standalone;
 
-const notificationsSupported = () => 'Notification' in window;
-// FIX (new): some browsers (notably Opera Mini) have `Notification` but no
-// real Push API / Service Worker support. Checking both together avoids
-// silently doing nothing with no explanation to the person.
-const pushFullySupported = () =>
-  notificationsSupported() && 'serviceWorker' in navigator && 'PushManager' in window;
-
-const sendTestNotification = () => {
-  if (notificationsSupported() && Notification.permission === 'granted') {
-    new Notification('EMRAN Portal', {
-      body: 'You are now subscribed to EMRAN updates. Welcome!',
-      icon: '/emran-icon.png',
-    });
-  }
-};
-
-window.emranNotify = (title, body, icon = '/emran-icon.png') => {
-  if (notificationsSupported() && Notification.permission === 'granted') {
-    new Notification(title, { body, icon });
-  }
-};
-
-/* ─────────────────────────────────────────────────────────────────────── */
-
-// ── Helper: Format retirement date ─────────────────────────────────────
-const formatRetirementDate = (dateOfRetirement) => {
-  if (!dateOfRetirement || dateOfRetirement === 'N/A') {
-    return 'Active Member';
-  }
+/* ─────────────────────────────────────────────────────────────────
+   PUSH SUBSCRIPTION REGISTRATION
+   Completely standalone function — no React hooks inside.
+   Saves a PushSubscription to MongoDB so the backend can push
+   to this specific browser at any time, even when it's closed.
+────────────────────────────────────────────────────────────────── */
+const registerPushSubscription = async (userId, log) => {
+  const L = log || console.log;
   try {
-    const retDate = new Date(dateOfRetirement);
-    if (isNaN(retDate.getTime())) {
-      return 'Active Member';
+    if (!('serviceWorker' in navigator)) {
+      L('serviceWorker not supported in this browser');
+      return false;
     }
-    const now = new Date();
-    const years = Math.floor((now - retDate) / (1000 * 60 * 60 * 24 * 365));
-    const formattedDate = retDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    
-    if (years < 1) {
-      return `Retired (${formattedDate})`;
+
+    // Register the SW. It MUST be at /emran-sw.js in the /public folder.
+    // If your build puts it elsewhere this will 404 silently.
+    L('Registering service worker...');
+    let reg;
+    try {
+      reg = await navigator.serviceWorker.register('/emran-sw.js');
+    } catch (e) {
+      L('SW register failed: ' + e.message +
+        ' — ensure emran-sw.js is in /public and deployed');
+      return false;
     }
-    return `Retired ${years} year${years > 1 ? 's' : ''} ago (${formattedDate})`;
-  } catch {
-    return 'Active Member';
+
+    await navigator.serviceWorker.ready;
+    L('SW ready ✓');
+
+    // Fetch VAPID key from backend
+    L('Fetching VAPID key...');
+    let publicKey;
+    try {
+      const r = await fetch(`${PUSH_BASE}/push/vapid-key`);
+      if (!r.ok) {
+        L('VAPID fetch HTTP ' + r.status +
+          ' — check route order in notificationRoutes.js and that VAPID_PUBLIC_KEY is set in .env');
+        return false;
+      }
+      const json = await r.json();
+      publicKey = json.publicKey;
+      if (!publicKey) {
+        L('VAPID_PUBLIC_KEY missing from server .env');
+        return false;
+      }
+    } catch (e) {
+      L('VAPID fetch error: ' + e.message);
+      return false;
+    }
+    L('VAPID key received ✓');
+
+    // Subscribe to push service (Google FCM / Mozilla / Apple)
+    L('Subscribing to push service...');
+    const toUint8 = (b64) => {
+      const pad = '='.repeat((4 - b64.length % 4) % 4);
+      const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+      return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+    };
+    let sub;
+    try {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: toUint8(publicKey),
+      });
+    } catch (e) {
+      L('pushManager.subscribe failed: ' + e.message +
+        ' — VAPID key mismatch or site not on HTTPS');
+      return false;
+    }
+    L('Push subscribed ✓ endpoint: ' + sub.endpoint.slice(0, 50) + '...');
+
+    // Save to MongoDB via backend
+    L('Saving subscription to database...');
+    try {
+      const r = await fetch(`${PUSH_BASE}/push/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: sub, userId: userId || null }),
+      });
+      if (!r.ok) {
+        L('Save subscription HTTP ' + r.status);
+        return false;
+      }
+    } catch (e) {
+      L('Save subscription error: ' + e.message);
+      return false;
+    }
+
+    L('✅ Push subscription saved to DB — this browser will receive notifications');
+    return true;
+  } catch (e) {
+    L('Unexpected error: ' + e.message);
+    return false;
   }
 };
 
+/* ─────────────────────────────────────────────────────────────────
+   DASHBOARD
+────────────────────────────────────────────────────────────────── */
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const [user,             setUser]             = useState(null);
+  const [loading,          setLoading]          = useState(true);
   const [allNotifications, setAllNotifications] = useState([]);
-  const [notifications, setNotifications] = useState(false);
-  const [news, setNews] = useState(0);
+  const [showList,         setShowList]         = useState(false);
+  const [news,             setNews]             = useState(0);
 
-  /* ── Notification permission modal state ── */
-  const [showNotifModal, setShowNotifModal] = useState(false);
-  const [showIOSTip, setShowIOSTip]         = useState(false);
-  const [notifBlocked, setNotifBlocked]     = useState(false);
-  // FIX (new): friendly message for browsers with no real push support
-  // (e.g. Opera Mini) instead of silently showing nothing
-  const [showUnsupportedTip, setShowUnsupportedTip] = useState(false);
+  // Push UI state
+  const [showModal,    setShowModal]    = useState(false);
+  const [showIOSTip,   setShowIOSTip]   = useState(false);
+  const [notifBlocked, setNotifBlocked] = useState(false);
 
-  /* ── Push diagnostics — console only, nothing rendered on screen ── */
-  const logPush = (msg) => {
-    console.log('[PUSH]', `${new Date().toLocaleTimeString()} — ${msg}`);
-  };
+  // Diagnostic log — stored in a ref so it never triggers re-renders
+  const diagRef = useRef([]);
+  const [diagVisible, setDiagVisible] = useState(false);
+  const [diagLines,   setDiagLines]   = useState([]);
 
+  const log = useCallback((msg) => {
+    console.log('[Push]', msg);
+    diagRef.current = [...diagRef.current.slice(-12), msg];
+    setDiagLines([...diagRef.current]);
+  }, []);
+
+  /* ── Load user data ── */
   useEffect(() => {
-    const stored           = JSON.parse(localStorage.getItem('userData'));
-    const notificationsData = JSON.parse(localStorage.getItem('notifications')) || [];
-    const newsevents       = JSON.parse(localStorage.getItem('newsevents')) || [];
+    const stored     = JSON.parse(localStorage.getItem('userData'));
+    const notifData  = JSON.parse(localStorage.getItem('notifications')) || [];
+    const newsevents = JSON.parse(localStorage.getItem('newsevents'))    || [];
 
-    setAllNotifications(notificationsData);
+    setAllNotifications(notifData);
     setNews(newsevents.length);
 
     if (!stored) { navigate('/signin'); return; }
 
     setUser({
-      fullname:       stored.fullname       || 'EMRAN Member',
-      email:          stored.email          || 'No email available',
-      staffId:        stored._id            || 'N/A',
-      dateOfRetirement: stored.dateOfRetirement || 'N/A',
-      profilePhoto:   stored.image?.[0]     || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
-      duesStatus:     stored.duesStatus     || 'Pending Verification',
-      unreadMessages: stored.messages       || 0,
-      notificationsCount: notificationsData.length,
-      upcomingEvents: stored.upcomingEvents || 0,
-      role:           stored.role           || 'member',
+      fullname:           stored.fullname      || 'EMRAN Member',
+      email:              stored.email         || '',
+      staffId:            stored._id           || 'N/A',
+      dateOfRetirement:   stored.dateOfRetirement || 'N/A',
+      profilePhoto:       stored.image?.[0]    ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=128`,
+      duesStatus:         (() => {
+        // Compute from actual dues Map — never fall back to 'Pending Verification'
+        const currentYear = new Date().getFullYear().toString();
+        const dues = stored.dues || {};
+        const currentDues = dues[currentYear];
+        if (currentDues?.payment === true) {
+          return `Dues Paid (${currentYear})`;
+        }
+        // Check if any year is paid
+        const paidYears = Object.entries(dues)
+          .filter(([, d]) => d?.payment === true)
+          .map(([y]) => y)
+          .sort()
+          .reverse();
+        if (paidYears.length > 0) {
+          return `Dues Paid (${paidYears[0]})`;
+        }
+        return 'Dues Unpaid';
+      })(),
+      notificationsCount: notifData.length,
+      role:               stored.role          || 'member',
     });
 
     setLoading(false);
   }, [navigate]);
 
-  const registerPushSubscription = useCallback(async () => {
-    // FIX: now returns true/false so callers know whether it ACTUALLY
-    // succeeded end-to-end, instead of assuming success the moment
-    // permission was granted.
-    try {
-      logPush('Step 1: checking serviceWorker support...');
-      if (!('serviceWorker' in navigator)) {
-        logPush('❌ serviceWorker NOT supported in this browser');
-        return false;
-      }
-
-      logPush('Step 2: registering /emran-sw.js ...');
-      const reg = await navigator.serviceWorker.register('/emran-sw.js');
-      logPush('✅ Service worker registered: ' + reg.scope);
-
-      await navigator.serviceWorker.ready;
-      logPush('✅ Service worker ready');
-
-      logPush('Step 3: fetching VAPID public key...');
-      const keyRes = await fetch(`${PUSH_BASE}/push/vapid-key`);
-      if (!keyRes.ok) {
-        logPush(`❌ vapid-key request failed: HTTP ${keyRes.status}`);
-        return false;
-      }
-      const { publicKey } = await keyRes.json();
-      if (!publicKey) {
-        logPush('❌ vapid-key response has no publicKey — check VAPID_PUBLIC_KEY in .env on the server');
-        return false;
-      }
-      logPush('✅ Got VAPID public key');
-
-      const urlBase64ToUint8Array = (b64) => {
-        const padding = '='.repeat((4 - (b64.length % 4)) % 4);
-        const base64  = (b64 + padding).replace(/-/g, '+').replace(/_/g, '/');
-        const raw     = atob(base64);
-        return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
-      };
-
-      logPush('Step 4: subscribing pushManager...');
-      const subscription = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(publicKey),
-      });
-      logPush('✅ Got push subscription endpoint: ' + subscription.endpoint.substring(0, 50) + '...');
-
-      const storedUser = JSON.parse(localStorage.getItem('userData'));
-      logPush('Step 5: sending subscription to backend...');
-      const subRes = await fetch(`${PUSH_BASE}/push/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscription, userId: storedUser?._id || null }),
-      });
-      if (!subRes.ok) {
-        logPush(`❌ Subscribe save failed: HTTP ${subRes.status}`);
-        return false;
-      }
-      logPush('✅ Subscription saved on backend — push notifications are now active for this browser');
-      return true;
-    } catch (err) {
-      logPush('❌ ERROR: ' + (err.message || String(err)));
-      console.error('Push subscription error:', err);
-      return false;
-    }
-  }, []);
-
-  /* ── Decide whether to show the notification permission prompt, OR
-        silently re-verify an existing subscription is still healthy ── */
+  /* ── Push eligibility check — runs once after user loads ──
+     IMPORTANT: dependency array is [loading] only.
+     Do NOT add `log` here — useCallback recreates it on every
+     render which would cause this effect to loop infinitely,
+     preventing setShowModal(true) from ever settling.          */
   useEffect(() => {
     if (loading) return;
-    const stored = localStorage.getItem(NOTIF_STORAGE_KEY);
-    logPush(`Permission check — localStorage flag: "${stored}", browser permission: "${notificationsSupported() ? Notification.permission : 'unsupported'}"`);
 
-    // FIX (new): browsers like Opera Mini report no real push support at
-    // all — tell the person plainly instead of doing nothing silently.
-    if (!pushFullySupported() && !isIOS()) {
-      logPush('⚠️ This browser does not support push notifications (no Notification/ServiceWorker/PushManager API)');
-      setShowUnsupportedTip(true);
+    const stored  = JSON.parse(localStorage.getItem('userData'));
+    const userId  = stored?._id || null;
+    const flag    = localStorage.getItem(NOTIF_KEY);
+
+    log('Checking push eligibility...');
+    log('Browser Notification.permission: ' + (('Notification' in window) ? Notification.permission : 'unsupported'));
+    log('localStorage flag: ' + (flag || 'none'));
+
+    // No Notification API — very old browser or some embedded webviews
+    if (!('Notification' in window)) {
+      log('Notification API not available — skip');
       return;
     }
 
-    if (stored === 'granted') {
-      // FIX: previously this just returned here forever, assuming a past
-      // successful grant meant the subscription was still alive. Browsers
-      // can silently invalidate a subscription (updates, storage limits,
-      // etc.) while permission itself stays "granted". Now we actually
-      // check the live subscription and silently re-subscribe if it's gone.
-      (async () => {
-        try {
-          if (!('serviceWorker' in navigator)) return;
-          const reg = await navigator.serviceWorker.getRegistration('/emran-sw.js');
-          const existing = reg ? await reg.pushManager.getSubscription() : null;
-          if (existing) {
-            logPush('✅ Existing push subscription is still healthy — no action needed');
-          } else {
-            logPush('⚠️ No live subscription found despite "granted" flag — silently re-subscribing');
-            await registerPushSubscription();
-          }
-        } catch (err) {
-          logPush('❌ Health-check error: ' + err.message);
-        }
-      })();
-      return;
-    }
-
+    // Already granted at OS level
     if (Notification.permission === 'granted') {
-      localStorage.setItem(NOTIF_STORAGE_KEY, 'granted');
-      registerPushSubscription();
+      log('Already granted — silently re-subscribing to ensure DB record exists');
+      localStorage.setItem(NOTIF_KEY, 'granted');
+      registerPushSubscription(userId, log);
       return;
     }
+
+    // Blocked at OS level — user clicked "Block" on the browser prompt
     if (Notification.permission === 'denied') {
-      localStorage.setItem(NOTIF_STORAGE_KEY, 'denied');
+      log('Blocked at OS level — showing hint strip');
+      localStorage.setItem(NOTIF_KEY, 'denied');
       setNotifBlocked(true);
       return;
     }
 
+    // permission === 'default' from here on (never asked, or browser reset)
+
+    // iOS plain Safari — needs PWA install first
+    // Delay the tip by 2 seconds so the dashboard renders fully first
+    // This prevents the white-screen effect on iPhone
     if (isIOS() && !isPWA()) {
-      if (stored !== 'ios_pwa_pending') setShowIOSTip(true);
+      log('iOS plain Safari — will show Add to Home Screen tip after delay');
+      if (flag !== 'ios_pwa_pending') {
+        setTimeout(() => setShowIOSTip(true), 2000);
+      }
       return;
     }
 
-    setShowNotifModal(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, registerPushSubscription]);
+    // All clear — show EMRAN styled permission modal
+    log('Showing notification permission modal');
+    setShowModal(true);
 
-  const handleAllowNotifications = useCallback(async () => {
-    setShowNotifModal(false);
-    try {
-      const permission = await Notification.requestPermission();
-      localStorage.setItem(NOTIF_STORAGE_KEY, permission);
-      logPush(`User responded to permission prompt: "${permission}"`);
-      if (permission === 'granted') {
-        // The "you're subscribed" notification only fires AFTER
-        // registerPushSubscription() actually confirms the backend save
-        // succeeded — not just because OS permission was granted.
-        const ok = await registerPushSubscription();
-        if (ok) {
-          sendTestNotification();
-        }
-      } else {
-        setNotifBlocked(permission === 'denied');
-      }
-    } catch (err) {
-      logPush('❌ requestPermission threw: ' + err.message);
-      console.error('Notification permission error:', err);
+  }, [loading]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── User clicks Allow ── */
+  const handleAllow = useCallback(async () => {
+    setShowModal(false);
+    log('User clicked Allow — requesting OS permission...');
+
+    const permission = await Notification.requestPermission();
+    log('OS permission result: ' + permission);
+    localStorage.setItem(NOTIF_KEY, permission);
+
+    if (permission === 'granted') {
+      // Immediate local notification so user sees it worked right away
+      new Notification('EMRAN Portal 🔔', {
+        body: 'Notifications enabled! You will be notified of all EMRAN updates.',
+        icon: '/emran-icon.png',
+      });
+      const stored = JSON.parse(localStorage.getItem('userData'));
+      await registerPushSubscription(stored?._id, log);
+    } else {
+      log('User blocked at OS level');
+      setNotifBlocked(permission === 'denied');
     }
-  }, [registerPushSubscription]);
+  }, [log]);
 
-  const handleDenyNotifications = useCallback(() => {
-    setShowNotifModal(false);
-    // Deliberately NOT writing to localStorage — prompt returns next visit
-  }, []);
+  /* ── User clicks Not Now — does NOT write to localStorage
+     so the modal returns on next dashboard visit ── */
+  const handleDeny = useCallback(() => {
+    setShowModal(false);
+    log('User chose Not Now — will ask again next visit');
+  }, [log]);
 
-  const handleDismissIOSTip = useCallback(() => {
+  const handleDismissIOS = useCallback(() => {
     setShowIOSTip(false);
-    localStorage.setItem(NOTIF_STORAGE_KEY, 'ios_pwa_pending');
+    localStorage.setItem(NOTIF_KEY, 'ios_pwa_pending');
   }, []);
-
-  const openNotifications  = () => setNotifications(true);
-  const closeNotifications = () => setNotifications(false);
 
   const openElections = () => {
     if (!user?.staffId) { alert('User ID not found. Please login again.'); return; }
-   // const role = user.role || 'member';
-  navigate(`/elections/${user.staffId}`)
+    window.open(
+      `https://emranelections.site/user/ballot.php?id=${user.staffId}&role=${user.role || 'member'}&email=${user.email}`,
+      '_blank', 'noopener,noreferrer'
+    );
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-2xl text-[#001F5B]">Loading your dashboard...</div>
-      </div>
-    );
-  }
-
-  // Format retirement date once
-  const retirementDisplay = formatRetirementDate(user?.dateOfRetirement);
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-2xl text-[#001F5B]">Loading your dashboard...</div>
+    </div>
+  );
 
   return (
     <>
       <Header />
 
-      {/* ── Allow Notifications Modal (Android / Desktop) ── */}
-      {showNotifModal && (
+      {/* ══ NOTIFICATION PERMISSION MODAL ══════════════════════════ */}
+      {showModal && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center px-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
             <div className="w-16 h-16 bg-[#E30613]/10 rounded-full flex items-center justify-center mx-auto mb-5">
@@ -311,13 +321,14 @@ const Dashboard = () => {
             <h2 className="text-xl font-extrabold text-[#001F5B] mb-2">Stay in the loop</h2>
             <p className="text-gray-500 text-sm leading-relaxed mb-6">
               EMRAN would like to send you browser notifications for new announcements,
-              welfare updates, news events, and important alerts — even when you're not on the site.
+              welfare updates, news events, and important alerts — even when you're
+              not on the site.
             </p>
-            <button onClick={handleAllowNotifications}
-              className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-3 rounded-xl text-sm transition mb-3 active:scale-95">
+            <button onClick={handleAllow}
+              className="w-full bg-[#E30613] hover:bg-[#c20511] text-white font-bold py-3 rounded-xl text-sm transition mb-3">
               Allow Notifications
             </button>
-            <button onClick={handleDenyNotifications}
+            <button onClick={handleDeny}
               className="w-full border border-gray-200 text-gray-500 hover:bg-gray-50 font-medium py-3 rounded-xl text-sm transition">
               Not now
             </button>
@@ -325,45 +336,25 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* ── iOS Add to Home Screen tip ── */}
+      {/* ══ iOS ADD TO HOME SCREEN TIP ════════════════════════════ */}
       {showIOSTip && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0">
           <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
-            <div className="w-16 h-16 bg-[#001F5B]/10 rounded-full flex items-center justify-center mx-auto mb-5">
-              <span className="text-3xl">📲</span>
-            </div>
-            <h2 className="text-xl font-extrabold text-[#001F5B] mb-2">Enable notifications on iPhone</h2>
-            <p className="text-gray-500 text-sm leading-relaxed mb-3">
-              To receive EMRAN notifications on your iPhone, add this site to your Home Screen first:
+            <span className="text-5xl">📲</span>
+            <h2 className="text-xl font-extrabold text-[#001F5B] mt-4 mb-2">
+              Enable notifications on iPhone
+            </h2>
+            <p className="text-gray-500 text-sm mb-3">
+              Safari on iPhone requires the site to be installed as an app first:
             </p>
-            <ol className="text-left text-sm text-gray-600 space-y-2 mb-6 bg-gray-50 rounded-2xl px-5 py-4">
-              <li><span className="font-bold text-[#001F5B]">1.</span> Tap the <span className="font-bold">Share</span> icon at the bottom of Safari</li>
-              <li><span className="font-bold text-[#001F5B]">2.</span> Tap <span className="font-bold">"Add to Home Screen"</span></li>
-              <li><span className="font-bold text-[#001F5B]">3.</span> Open EMRAN from your Home Screen — notifications will then be available</li>
+            <ol className="text-left text-sm text-gray-600 space-y-2 my-3 bg-gray-50 rounded-2xl px-5 py-4">
+              <li><b className="text-[#001F5B]">1.</b> Tap the <b>Share</b> icon at the bottom of Safari</li>
+              <li><b className="text-[#001F5B]">2.</b> Scroll down and tap <b>"Add to Home Screen"</b></li>
+              <li><b className="text-[#001F5B]">3.</b> Open EMRAN from your Home Screen — then come back to this page</li>
             </ol>
-            <p className="text-xs text-gray-400 mb-5">Requires iOS 16.4 or later.</p>
-            <button onClick={handleDismissIOSTip}
-              className="w-full bg-[#001F5B] hover:bg-[#003494] text-white font-bold py-3 rounded-xl text-sm transition active:scale-95">
-              Got it
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Unsupported browser tip (e.g. Opera Mini) ── */}
-      {showUnsupportedTip && (
-        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5">
-              <span className="text-3xl">🚫🔔</span>
-            </div>
-            <h2 className="text-xl font-extrabold text-[#001F5B] mb-2">Notifications not available here</h2>
-            <p className="text-gray-500 text-sm leading-relaxed mb-6">
-              This browser doesn't support push notifications. Try Chrome, Firefox, or Edge to receive
-              EMRAN alerts and news event updates directly on your device.
-            </p>
-            <button onClick={() => setShowUnsupportedTip(false)}
-              className="w-full bg-[#001F5B] hover:bg-[#003494] text-white font-bold py-3 rounded-xl text-sm transition active:scale-95">
+            <p className="text-xs text-gray-400 mb-5">Requires iOS 16.4 or later</p>
+            <button onClick={handleDismissIOS}
+              className="w-full bg-[#001F5B] text-white font-bold py-3 rounded-xl text-sm">
               Got it
             </button>
           </div>
@@ -372,6 +363,28 @@ const Dashboard = () => {
 
       <div className="min-h-screen bg-gray-50 pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+
+          {/* ══ DIAGNOSTIC PANEL — remove after push confirmed working ══ */}
+          <div className="mb-4">
+            <button
+              onClick={() => setDiagVisible(v => !v)}
+              className="text-xs text-gray-400 underline"
+            >
+              {diagVisible ? 'Hide' : 'Show'} push diagnostics
+            </button>
+            {diagVisible && diagLines.length > 0 && (
+              <div className="mt-2 bg-gray-900 rounded-2xl p-4 font-mono text-xs">
+                {diagLines.map((l, i) => (
+                  <div key={i} className={
+                    l.includes('✅') ? 'text-green-400' :
+                    l.includes('failed') || l.includes('error') || l.includes('Error') ? 'text-red-400' :
+                    l.includes('✓') ? 'text-green-300' :
+                    'text-gray-300'
+                  }>{l}</div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Welcome Banner - Desktop */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 mb-12 shadow-2xl">
@@ -384,7 +397,7 @@ const Dashboard = () => {
                   <h1 className="text-4xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-xl opacity-90 mt-2">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                    {retirementDisplay}
+                    Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
                   </p>
                 </div>
               </div>
@@ -412,7 +425,7 @@ const Dashboard = () => {
                   <h1 className="text-2xl sm:text-3xl font-bold">Welcome, {user.fullname}</h1>
                   <p className="text-base sm:text-lg opacity-90 mt-1">
                     {user.staffId !== 'N/A' && `Staff ID: ${user.staffId} • `}
-                    {retirementDisplay}
+                    Retired {user.dateOfRetirement !== 'N/A' ? user.dateOfRetirement : 'Member'}
                   </p>
                 </div>
               </div>
@@ -430,21 +443,26 @@ const Dashboard = () => {
           </div>
 
           {/* Quick Status Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiDollarSign className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Dues Status</h3>
-              <p className="text-xl font-medium text-green-600">{user.duesStatus}</p>
-              <NavLink to="/dues" className="text-[#E30613] font-bold mt-4 block hover:underline">View Details →</NavLink>
+              <p className={`text-xl font-medium ${user.duesStatus.includes('Paid') ? 'text-green-600' : 'text-red-500'}`}>
+                {user.duesStatus}
+              </p>
+              <NavLink to="/dues" className="text-[#E30613] font-bold mt-4 block hover:underline">
+                View Details →
+              </NavLink>
             </div>
-
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiBell className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Notifications</h3>
               <p className="text-3xl font-bold text-gray-800">{user.notificationsCount}</p>
-              <button onClick={openNotifications} className="text-[#E30613] font-bold mt-4 block hover:underline">View All →</button>
+              <button onClick={() => setShowList(true)}
+                className="text-[#E30613] font-bold mt-4 block hover:underline">
+                View All →
+              </button>
             </div>
-
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiFileText className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Elections</h3>
@@ -454,21 +472,12 @@ const Dashboard = () => {
                 Go to Elections →
               </button>
             </div>
-
             <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
               <FiCalendar className="text-6xl text-[#E30613] mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Upcoming Events</h3>
               <p className="text-3xl font-bold text-gray-800">{news}</p>
-              <NavLink to="/newsevents" className="text-[#E30613] font-bold mt-4 block hover:underline">See Calendar →</NavLink>
-            </div>
-
-            <div className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-2xl transition">
-              <FiFileText className="text-6xl text-[#E30613] mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-[#001F5B] mb-2">Documents</h3>
-              <p className="text-lg text-gray-600 mb-6">Constitution, AGM records & benefits</p>
-              <NavLink to={`/documents/${user.staffId}`}
-                className="bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-lg px-10 py-4 rounded-2xl transition transform hover:scale-105 w-full block">
-                View Documents →
+              <NavLink to="/newsevents" className="text-[#E30613] font-bold mt-4 block hover:underline">
+                See Calendar →
               </NavLink>
             </div>
           </div>
@@ -477,24 +486,62 @@ const Dashboard = () => {
           {notifBlocked && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-2xl px-5 py-4 mb-8 flex items-start gap-3 text-sm text-yellow-800">
               <span className="text-xl flex-shrink-0">⚠️</span>
-              <p>Browser notifications are currently blocked. Click the lock icon in your browser's address bar, find <strong>Notifications</strong>, and set it to <strong>Allow</strong>.</p>
+              <p>
+                Browser notifications are blocked. To re-enable: click the lock icon
+                in your browser address bar → <strong>Notifications</strong> → set to <strong>Allow</strong>,
+                then refresh the page.
+              </p>
             </div>
           )}
 
-          {/* Support Section */}
+          {/* Documents Grid */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {[
+              { title: 'CAC Certification',                    href: DOCS.cacCertificate,      color: '#E30613', desc: "Official Corporate Affairs Commission certification confirming EMRAN's legal registration." },
+              { title: 'CAC-ABRIDGED CONSTITUTION',            href: DOCS.constitution,         color: '#001F5B', desc: 'Official EMRAN Constitution outlining governance, membership structure, and operational guidelines.' },
+              { title: 'Articles of Association',              href: DOCS.association,          color: '#001F5B', desc: 'Official Articles of Association of ExxonMobil Retirees Association of Nigeria (EMRAN).' },
+              { title: 'Rules and Regulations',                href: DOCS.rules,                color: '#001F5B', desc: 'Official Rules and Regulations of ExxonMobil Retirees Association of Nigeria (EMRAN).' },
+              { title: 'AGM Attendees in 2026',                href: DOCS.agm,                  color: '#001F5B', desc: 'Official EMRAN AGM Attendees in 2026.' },
+              { title: 'EMRAN Newly Elected Executives 2026',  href: DOCS.executives,           color: '#001F5B', desc: 'Official EMRAN Newly Elected Executives in 2026.' },
+              { title: 'EMRAN WhatsApp Rules and Regulations', href: DOCS.whatsapp_rules,       color: '#001F5B', desc: 'Rules and Regulations for Posting and Commenting on EMRAN WhatsApp.' },
+              { title: 'EMRAN WhatsApp Penalties',             href: DOCS.whatsapp_penalties,   color: '#001F5B', desc: 'Penalties for offences on EMRAN WhatsApp Group.' },
+            ].map((doc, i) => (
+              <div key={i}
+                className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition flex flex-col justify-between"
+                style={{ borderTop: `8px solid ${doc.color}` }}>
+                <div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <FiFileText className="text-4xl" style={{ color: doc.color }} />
+                    <h3 className="text-2xl font-bold text-[#001F5B]">{doc.title}</h3>
+                  </div>
+                  <p className="text-gray-600 text-lg">{doc.desc}</p>
+                </div>
+                <a href={doc.href} target="_blank" rel="noopener noreferrer"
+                  className="mt-8 inline-flex items-center justify-center gap-3 text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
+                  style={{ background: `linear-gradient(to right, ${doc.color}, ${doc.color}cc)` }}>
+                  View Document
+                </a>
+              </div>
+            ))}
+          </div>
+
+          {/* Support Section Desktop */}
           <div className="max-lg:hidden bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
             <h3 className="text-4xl font-bold mb-6">Need Assistance?</h3>
             <p className="text-2xl mb-8 opacity-90">Our team is available 24/7 for your pension, health, dues, and membership queries.</p>
-            <a href="tel:+2349069412463" className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-3xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 mb-8">
+            <a href="tel:+2349069412463"
+              className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-3xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 mb-8">
               Call +234 906 941 2463
             </a>
             <p className="text-xl opacity-90">Or email: <a href="mailto:emranannuitants@gmail.com" className="text-[#E30613] hover:text-white underline">emranannuitants@gmail.com</a></p>
           </div>
 
-          <div className="hidden max-lg:block bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-12 text-center shadow-2xl">
+          {/* Support Section Mobile */}
+          <div className="hidden max-lg:block bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-3xl p-10 text-center shadow-2xl mt-8">
             <h3 className="text-3xl font-bold mb-6">Need Assistance?</h3>
             <p className="text-xl mb-8 opacity-90">Our team is available 24/7 for your pension, health, dues, and membership queries.</p>
-            <a href="tel:+2349069412463" className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-3xl px-16 py-8 rounded-full shadow-2xl transition transform hover:scale-110 mb-8">
+            <a href="tel:+2349069412463"
+              className="inline-block bg-[#E30613] hover:bg-[#c20511] text-white font-bold text-2xl px-12 py-6 rounded-full shadow-2xl transition transform hover:scale-110 mb-6">
               Call +234 906 941 2463
             </a>
             <p className="text-lg opacity-90">Or email: <a href="mailto:emranannuitants@gmail.com" className="text-[#E30613] hover:text-white underline">emranannuitants@gmail.com</a></p>
@@ -503,7 +550,13 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {notifications && <NotificationsList isOpen={openNotifications} onClose={closeNotifications} notifications={allNotifications} />}
+      {showList && (
+        <NotificationsList
+          isOpen={() => setShowList(true)}
+          onClose={() => setShowList(false)}
+          notifications={allNotifications}
+        />
+      )}
       <Footer />
     </>
   );
