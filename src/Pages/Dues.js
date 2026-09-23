@@ -22,7 +22,7 @@ const Dues = () => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
     setUserData(stored);
-    console.log(userData.fullname) 
+    console.log(userData) 
 
     // Build dues array from the Map object sorted newest first
     const duesMap = stored.dues || {};
