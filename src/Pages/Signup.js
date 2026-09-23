@@ -1,3 +1,4 @@
+
 // pages/Auth.jsx
 import React, { useState, useRef } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
@@ -37,7 +38,7 @@ const AuthLayout = ({ children, title, subtitle }) => (
     </NavLink>
     <div className="max-w-md w-full">
       <div className="text-center mb-10">
-        <img src={exxonLogo} alt="ExxonMobil Nigeria" className="h-20 mx-auto mb-6" />
+        <img src={exxonLogo} alt="ExxonMobil Nigeria" className="h-20 mx-auto mb-6 rounded-full    " />
         <h1 className="text-3xl font-bold text-white">{title}</h1>
         <p className="text-gray-300 mt-2">{subtitle}</p>
       </div>
@@ -139,7 +140,7 @@ export const Signup = () => {
       if (avatarFile && userId) {
         const fd = new FormData();
         fd.append('images', avatarFile);
-        await axios.put(`${API}/uploadimages/${userId}`, fd, {
+        await axios.put(`${API}/upload-fortune-image/${userId}`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
@@ -182,10 +183,16 @@ export const Signup = () => {
         </div>
 
         {/* Basic fields */}
-        <div>
-          <Label required>Full Name (as in service record)</Label>
+          <div className="space-y-2 w-full">
+                  <Label required>Full Name (as in service record)</Label>
           <InputField icon={FiUser} type="text" name="fullname" placeholder="Full Name" value={formData.fullname} onChange={handleChange} required />
-        </div>
+      
+                  {/* ── SURNAME FIRST NOTICE ── */}
+                  <p className="text-[10px] md:text-xs text-red-600 font-bold flex items-center gap-1.5">
+                    <span className="inline-block w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
+                    ⚠️ Surname first, please
+                  </p>
+                </div>
         <div>
           <Label required>Email Address</Label>
           <InputField icon={FiMail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
@@ -372,10 +379,9 @@ export const Signup = () => {
 
 // ====================== SIGN IN ======================
 export const Signin = () => {
-  const [loading,  setLoading]  = useState(false);
+  const [loading, setLoading]   = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [formData, setFormData] = useState({ email:'', password:'' });
-  const [error,    setError]    = useState('');
   const navigate = useNavigate();
   const handleChange = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
   const handleSubmit = async (e) => {
@@ -383,30 +389,21 @@ export const Signin = () => {
     try {
       const res = await axios.post(`${API}/login`, formData);
       const { success, token, user, message } = res.data;
-      if (!success) {
-        setError(message || 'Your account is still pending Administrative approval. Please wait.');
-        setLoading(false);
-        return;
-      }
+      if (!success) { alert(message || "Your Account is still pending Administrative approval. Please wait"); setLoading(false); navigate('/'); return; }
       localStorage.setItem('userData', JSON.stringify(user));
       localStorage.setItem('token', token);
-      // Navigate directly — no alert() which shows 'Close' on Safari iOS
+      alert('Login successful! Welcome back.');
       navigate(`/dashboard/${user._id}`);
     } catch (err) {
       setLoading(false);
-      if (err.response?.status === 401) setError('Invalid email or password.');
-      else setError(err.response?.data?.message || 'Something went wrong. Please try again later.');
+      if (err.response?.status === 401) alert('Invalid email or password');
+      else alert(err.response?.data?.message || 'Something went wrong. Please try again later.');
     }
   };
   return (
     <AuthLayout title="Welcome Back" subtitle="Sign in to access your retiree benefits portal">
       {loading && <BigLoader message="Signing you in securely..." />}
       <form onSubmit={handleSubmit} className="space-y-5">
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm font-medium">
-            {error}
-          </div>
-        )}
         <InputField icon={FiMail} type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
         <InputField icon={FiLock} type={showPass?'text':'password'} name="password" placeholder="Password"
           value={formData.password} onChange={handleChange} showToggle toggleShow={() => setShowPass(!showPass)} required />
