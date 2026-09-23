@@ -1,4 +1,4 @@
-import React, {  useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FiLoader, FiCheckCircle, FiArrowLeft } from 'react-icons/fi';
@@ -13,7 +13,15 @@ const DuesPayment = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('userData'));
+
+    if (!storedUser) {
+      navigate('/signin');
+      return;
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
