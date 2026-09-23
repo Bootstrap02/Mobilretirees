@@ -18,7 +18,7 @@ const AlertModal = ({ alert }) => { // accept array
 
   return (
     <div 
-      className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4 animate-fadeIn"
+      className="absolute inset-0 bg-black/70 z-50 flex items-center justify-center px-4 animate-fadeIn"
       onClick={() => setIsVisible(false)}
     >
       <div 
