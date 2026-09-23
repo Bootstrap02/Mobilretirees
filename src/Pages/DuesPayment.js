@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
 import axios from 'axios';
 import { FiLoader, FiCheckCircle, FiArrowLeft } from 'react-icons/fi';
 
