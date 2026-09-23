@@ -14,7 +14,7 @@ const fmtDate = (d) => {
 
 const Dues = () => {
   const navigate = useNavigate();
-  
+  const [userData, setUserData] = useState(null);
   const [dues,         setDues]         = useState([]);
   const [registration, setRegistration] = useState(null);
 
@@ -22,6 +22,7 @@ const Dues = () => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
     setUserData(stored);
+    console.log(userData.fullname) 
 
     // Build dues array from the Map object sorted newest first
     const duesMap = stored.dues || {};
