@@ -14,7 +14,7 @@ const fmtDate = (d) => {
 
 const Dues = () => {
   const navigate = useNavigate();
-  const [userData,     setUserData]     = useState(null);
+  
   const [dues,         setDues]         = useState([]);
   const [registration, setRegistration] = useState(null);
 
