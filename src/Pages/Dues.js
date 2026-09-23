@@ -32,7 +32,7 @@ const Dues = () => {
     setDues(duesArr);
 
     setRegistration(stored.registration || null);
-  }, [navigate]);
+  }, [navigate, userData]);
 
   const currentYear = new Date().getFullYear().toString();
 
