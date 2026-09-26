@@ -1,3 +1,4 @@
+
 // pages/Dashboard.jsx
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -314,7 +315,7 @@ const Dashboard = () => {
       {/* ══ NOTIFICATION PERMISSION MODAL ══════════════════════════ */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center px-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center max-h-[85vh] overflow-y-auto">
             <div className="w-16 h-16 bg-[#E30613]/10 rounded-full flex items-center justify-center mx-auto mb-5">
               <FiBell className="text-4xl text-[#E30613]" />
             </div>
@@ -338,21 +339,21 @@ const Dashboard = () => {
 
       {/* ══ iOS ADD TO HOME SCREEN TIP ════════════════════════════ */}
       {showIOSTip && (
-        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
-            <span className="text-5xl">📲</span>
-            <h2 className="text-xl font-extrabold text-[#001F5B] mt-4 mb-2">
+        <div className="fixed inset-0 bg-black/60 z-[9999] flex items-end sm:items-center justify-center px-4 pb-4 sm:pb-0">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-sm w-full max-h-[80vh] overflow-y-auto p-6 text-center">
+            <span className="text-4xl">📲</span>
+            <h2 className="text-lg font-extrabold text-[#001F5B] mt-3 mb-1">
               Enable notifications on iPhone
             </h2>
-            <p className="text-gray-500 text-sm mb-3">
+            <p className="text-gray-500 text-xs mb-3">
               Safari on iPhone requires the site to be installed as an app first:
             </p>
-            <ol className="text-left text-sm text-gray-600 space-y-2 my-3 bg-gray-50 rounded-2xl px-5 py-4">
+            <ol className="text-left text-xs text-gray-600 space-y-1.5 my-3 bg-gray-50 rounded-2xl px-4 py-3">
               <li><b className="text-[#001F5B]">1.</b> Tap the <b>Share</b> icon at the bottom of Safari</li>
-              <li><b className="text-[#001F5B]">2.</b> Scroll down and tap <b>"Add to Home Screen"</b></li>
-              <li><b className="text-[#001F5B]">3.</b> Open EMRAN from your Home Screen — then come back to this page</li>
+              <li><b className="text-[#001F5B]">2.</b> Tap <b>"Add to Home Screen"</b></li>
+              <li><b className="text-[#001F5B]">3.</b> Open EMRAN from your Home Screen</li>
             </ol>
-            <p className="text-xs text-gray-400 mb-5">Requires iOS 16.4 or later</p>
+            <p className="text-xs text-gray-400 mb-4">Requires iOS 16.4 or later</p>
             <button onClick={handleDismissIOS}
               className="w-full bg-[#001F5B] text-white font-bold py-3 rounded-xl text-sm">
               Got it
@@ -494,35 +495,23 @@ const Dashboard = () => {
             </div>
           )}
 
-          {/* Documents Grid */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {[
-              { title: 'CAC Certification',                    href: DOCS.cacCertificate,      color: '#E30613', desc: "Official Corporate Affairs Commission certification confirming EMRAN's legal registration." },
-              { title: 'CAC-ABRIDGED CONSTITUTION',            href: DOCS.constitution,         color: '#001F5B', desc: 'Official EMRAN Constitution outlining governance, membership structure, and operational guidelines.' },
-              { title: 'Articles of Association',              href: DOCS.association,          color: '#001F5B', desc: 'Official Articles of Association of ExxonMobil Retirees Association of Nigeria (EMRAN).' },
-              { title: 'Rules and Regulations',                href: DOCS.rules,                color: '#001F5B', desc: 'Official Rules and Regulations of ExxonMobil Retirees Association of Nigeria (EMRAN).' },
-              { title: 'AGM Attendees in 2026',                href: DOCS.agm,                  color: '#001F5B', desc: 'Official EMRAN AGM Attendees in 2026.' },
-              { title: 'EMRAN Newly Elected Executives 2026',  href: DOCS.executives,           color: '#001F5B', desc: 'Official EMRAN Newly Elected Executives in 2026.' },
-              { title: 'EMRAN WhatsApp Rules and Regulations', href: DOCS.whatsapp_rules,       color: '#001F5B', desc: 'Rules and Regulations for Posting and Commenting on EMRAN WhatsApp.' },
-              { title: 'EMRAN WhatsApp Penalties',             href: DOCS.whatsapp_penalties,   color: '#001F5B', desc: 'Penalties for offences on EMRAN WhatsApp Group.' },
-            ].map((doc, i) => (
-              <div key={i}
-                className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition flex flex-col justify-between"
-                style={{ borderTop: `8px solid ${doc.color}` }}>
-                <div>
-                  <div className="flex items-center gap-4 mb-4">
-                    <FiFileText className="text-4xl" style={{ color: doc.color }} />
-                    <h3 className="text-2xl font-bold text-[#001F5B]">{doc.title}</h3>
-                  </div>
-                  <p className="text-gray-600 text-lg">{doc.desc}</p>
-                </div>
-                <a href={doc.href} target="_blank" rel="noopener noreferrer"
-                  className="mt-8 inline-flex items-center justify-center gap-3 text-white font-bold text-lg py-4 px-8 rounded-xl shadow-lg transition transform hover:scale-105"
-                  style={{ background: `linear-gradient(to right, ${doc.color}, ${doc.color}cc)` }}>
-                  View Document
-                </a>
+          {/* Documents Card — links to dedicated Documents page */}
+          <div className="bg-white rounded-3xl shadow-xl p-8 mb-12 hover:shadow-2xl transition flex flex-col sm:flex-row items-center justify-between gap-6"
+            style={{ borderTop: '8px solid #001F5B' }}>
+            <div className="flex items-center gap-5">
+              <FiFileText className="text-6xl text-[#001F5B] flex-shrink-0" />
+              <div>
+                <h3 className="text-2xl font-bold text-[#001F5B] mb-1">EMRAN Documents</h3>
+                <p className="text-gray-500 text-base">
+                  Access all official EMRAN documents — Constitution, Articles of Association,
+                  Rules and Regulations, AGM records, WhatsApp guidelines and more.
+                </p>
               </div>
-            ))}
+            </div>
+            <NavLink to="/documents"
+              className="flex-shrink-0 bg-[#001F5B] hover:bg-[#0A3D6B] text-white font-bold text-base px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 whitespace-nowrap">
+              View Documents →
+            </NavLink>
           </div>
 
           {/* Support Section Desktop */}
