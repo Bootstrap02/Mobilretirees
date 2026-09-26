@@ -1,9 +1,11 @@
+
 // Pages/Dues.jsx — User-facing dues history with proper dates
+// Restored: 2027 upcoming dues card + payment link
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
-import { FiCheckCircle, FiXCircle, FiCalendar, FiDollarSign } from 'react-icons/fi';
+import { FiCheckCircle, FiXCircle, FiCalendar, FiDollarSign, FiExternalLink } from 'react-icons/fi';
 
 const fmtDate = (d) => {
   if (!d) return null;
@@ -14,14 +16,14 @@ const fmtDate = (d) => {
 
 const Dues = () => {
   const navigate = useNavigate();
-  
   const [dues,         setDues]         = useState([]);
   const [registration, setRegistration] = useState(null);
+  const [userId,       setUserId]       = useState('');
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
-    
+    setUserId(stored._id || '');
 
     // Build dues array from the Map object sorted newest first
     const duesMap = stored.dues || {};
@@ -29,11 +31,16 @@ const Dues = () => {
       .map(([year, data]) => ({ year, ...data }))
       .sort((a, b) => Number(b.year) - Number(a.year));
     setDues(duesArr);
-
     setRegistration(stored.registration || null);
-  }, [navigate,]);
+  }, [navigate]);
 
-  const currentYear = new Date().getFullYear().toString();
+  const currentYear  = new Date().getFullYear();
+  const nextYear     = (currentYear + 1).toString();
+  const currentYearStr = currentYear.toString();
+
+  // Check if next year dues already paid
+  const nextYearDues   = dues.find(d => d.year === nextYear);
+  const nextYearPaid   = nextYearDues?.payment === true;
 
   return (
     <>
@@ -47,9 +54,29 @@ const Dues = () => {
             <p className="text-gray-500">Your complete payment history with EMRAN</p>
           </div>
 
+          {/* Upcoming year dues card — pay early prompt */}
+          {!nextYearPaid && (
+            <div className="bg-gradient-to-r from-[#001F5B] to-[#0A3D6B] text-white rounded-2xl p-6 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/60 mb-1">Upcoming</p>
+                <h3 className="text-xl font-extrabold">{nextYear} Annual Dues</h3>
+                <p className="text-white/80 text-sm mt-1">
+                  Pay your {nextYear} dues early — ₦40,000
+                </p>
+              </div>
+              <a
+                href={`https://emran.center/payment/${userId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-[#E30613] hover:bg-[#c20511] text-white font-bold px-6 py-3 rounded-xl text-sm transition flex-shrink-0">
+                Pay {nextYear} Dues <FiExternalLink />
+              </a>
+            </div>
+          )}
+
           {/* Registration fee card */}
           {registration && (
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-5">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#001F5B]/10 flex items-center justify-center flex-shrink-0">
@@ -58,24 +85,20 @@ const Dues = () => {
                   <div>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">Registration Fee</p>
                     <p className="font-bold text-[#001F5B] text-lg">
-                      {registration.amount ? `₦${Number(registration.amount).toLocaleString()}` : 'N/A'}
+                      {registration.amount ? `₦${Number(registration.amount).toLocaleString()}` : '₦20,000'}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
                   <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold ${
-                    registration.payment
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-600'
+                    registration.payment ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
                   }`}>
-                    {registration.payment
-                      ? <><FiCheckCircle /> Paid</>
-                      : <><FiXCircle /> Unpaid</>}
+                    {registration.payment ? <><FiCheckCircle /> Paid</> : <><FiXCircle /> Unpaid</>}
                   </span>
-                  {registration.payment && registration.dueDate && (
+                  {registration.payment && (registration.dueDate || registration.updatedAt) && (
                     <p className="text-xs text-gray-400 mt-1 flex items-center gap-1 justify-end">
                       <FiCalendar className="flex-shrink-0" />
-                      {fmtDate(registration.dueDate) || fmtDate(registration.updatedAt) || '—'}
+                      {fmtDate(registration.dueDate) || fmtDate(registration.updatedAt)}
                     </p>
                   )}
                 </div>
@@ -92,7 +115,7 @@ const Dues = () => {
           ) : (
             <div className="space-y-4">
               {dues.map(({ year, payment, amount, dueDate, updatedAt }) => {
-                const isCurrentYear = year === currentYear;
+                const isCurrentYear = year === currentYearStr;
                 const isPaid        = payment === true;
                 const dateStr       = fmtDate(dueDate) || fmtDate(updatedAt);
 
@@ -109,7 +132,7 @@ const Dues = () => {
                           {year}
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-bold text-[#001F5B] text-lg">{year} Annual Dues</p>
                             {isCurrentYear && (
                               <span className="text-xs bg-[#001F5B] text-white px-2 py-0.5 rounded-full font-bold">
@@ -118,9 +141,7 @@ const Dues = () => {
                             )}
                           </div>
                           {amount > 0 && (
-                            <p className="text-sm text-gray-500 mt-0.5">
-                              ₦{Number(amount).toLocaleString()}
-                            </p>
+                            <p className="text-sm text-gray-500 mt-0.5">₦{Number(amount).toLocaleString()}</p>
                           )}
                         </div>
                       </div>
@@ -138,7 +159,14 @@ const Dues = () => {
                           </p>
                         )}
                         {!isPaid && (
-                          <p className="text-xs text-gray-400 mt-1.5">Not yet paid</p>
+                          <div className="mt-1.5">
+                            <p className="text-xs text-gray-400 mb-1">Not yet paid</p>
+                            <a href={`https://emran.center/payment/${userId}`}
+                              target="_blank" rel="noopener noreferrer"
+                              className="text-xs text-[#E30613] font-bold hover:underline flex items-center gap-1 justify-end">
+                              Make Payment <FiExternalLink className="text-xs" />
+                            </a>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -158,6 +186,7 @@ const Dues = () => {
               </a>
             </p>
           </div>
+
         </div>
       </div>
       <Footer />
@@ -166,4 +195,3 @@ const Dues = () => {
 };
 
 export default Dues;
-
