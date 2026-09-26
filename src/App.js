@@ -34,7 +34,7 @@ function App() {
     <Routes>
 <Route path="/" element={<Firstpage />} />
 <Route path='/profile/:id' element={<Profile />} />
-<Route path='/dashboard/:id' element={<Dashboard />} />
+<Route path='/dashboard' element={<Dashboard />} />
  <Route path='/documents/:id' element={<Documents />} />
 <Route path='/elections/:id' element={<Elections />} />
 <Route path='/elections/cast' element={<CastVote />} />
