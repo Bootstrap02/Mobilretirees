@@ -9,16 +9,7 @@ import { FiUser, FiLogOut, FiDollarSign, FiBell, FiCalendar, FiFileText } from '
 
 // PDF and asset paths — using public folder paths instead of imports
 // This prevents Safari from crashing on asset imports that may not exist
-const DOCS = {
-  constitution:      '/assets/emran-constitution.pdf',
-  rules:             '/assets/emran-rules.pdf',
-  association:       '/assets/emran-association.pdf',
-  agm:               '/assets/agm2026.pdf',
-  executives:        '/assets/executives.pdf',
-  whatsapp_penalties:'/assets/whatsapp_penalties.pdf',
-  whatsapp_rules:    '/assets/whatsapp_rules.pdf',
-  cacCertificate:    '/assets/cac-certificate.jpg',
-};
+
 
 /* ─────────────────────────────────────────────────────────────────
    CONSTANTS
