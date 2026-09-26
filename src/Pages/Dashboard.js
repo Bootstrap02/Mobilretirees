@@ -499,10 +499,10 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
-            <NavLink to="/documents"
-              className="flex-shrink-0 bg-[#001F5B] hover:bg-[#0A3D6B] text-white font-bold text-base px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 whitespace-nowrap">
-              View Documents →
-            </NavLink>
+            <NavLink to={`/documents/${staffId}`}
+  className="flex-shrink-0 bg-[#001F5B] hover:bg-[#0A3D6B] text-white font-bold text-base px-8 py-4 rounded-2xl shadow-lg transition transform hover:scale-105 whitespace-nowrap">
+  View Documents →
+</NavLink>
           </div>
 
           {/* Support Section Desktop */}
