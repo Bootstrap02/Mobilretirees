@@ -13,6 +13,8 @@ import whatsapp_rules from '../assets/whatsapp_rules.pdf';
 import retireesBenefit from '../assets/retiree_benefits_2026.pdf';
 import annuitantsBenefits from '../assets/Annuitants-Benefit-Admin-Items.pdf';
 import emranNHFRefundForm from '../assets/EMRAN-NHF-Refund-Form.pdf';
+import emranNHFRequirement from '../assets/Requirement-to-process-NHF-refund';
+import nhfAuthorisationTemplate from '../assets/NHF_Authorisation_Letter_Template';
 import nsitfRefundApplicationForm from '../assets/NSITF-Refund Application-Form.pdf';
 import retireesProviders from '../assets/retirees_providers_2026.xlsx';
 import cacCertificate from '../assets/cac-certificate.jpg';
@@ -35,6 +37,8 @@ const documentsList = [
   { title: 'AXA MANSARD Medical Providers 2026', desc: 'Medical Providers for EMRAN members 2026.', href: retireesProviders, color: '#001F5B' },
   { title: 'AXA MANSARD Annuitants Benefits 2026', desc: 'Annuitants Benefits for EMRAN members 2026.', href: annuitantsBenefits, color: '#001F5B' },
   { title: 'EMRAN NHF Refund Form', desc: 'EMRAN NHF Refund Form for EMRAN members.', href: emranNHFRefundForm, color: '#001F5B' },
+  { title: 'EMRAN Requirements to Process NHF Refund ', desc: 'A list of all EMRAN Requirements for NHF Refund processing for EMRAN members.', href: emranNHFRequirement, color: '#001F5B' },
+  { title: ' NHF Authorization Letter Template ', desc: 'The Standard Letter Template of NHF Authorization  for EMRAN members.', href: nhfAuthorisationTemplate, color: '#001F5B' },
   { title: 'NSITF Refund Application Form', desc: 'NSITF Refund Application Form for EMRAN members.', href: nsitfRefundApplicationForm, color: '#001F5B' },
 ];
 
