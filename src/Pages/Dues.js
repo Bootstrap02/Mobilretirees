@@ -26,14 +26,17 @@ export const Dues = () => {
       const registrationData = storedUser.registration || {};
       const currentYear = new Date().getFullYear().toString();
 
+      // ONLY CHANGE vs. the original: the "Date Paid" column now shows the real
+      // payment date for paid years (paidAt -> updatedAt) and '—' for unpaid years,
+      // instead of falling back to the due date.
       const duesArray = Object.entries(duesMap).map(([year, data]) => ({
         year,
         amount: data.amount || 0,
-        date: data.updatedAt
-          ? new Date(data.updatedAt).toLocaleDateString()
-          : data.dueDate
-            ? new Date(data.dueDate).toLocaleDateString()
-            : '—',
+        date: data.payment
+          ? (data.paidAt || data.updatedAt
+              ? new Date(data.paidAt || data.updatedAt).toLocaleDateString()
+              : '—')
+          : '—',
         status: data.payment ? 'Paid' : 'Unpaid',
         payment: data.payment,
         dueDate: data.dueDate,
