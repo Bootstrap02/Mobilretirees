@@ -14,7 +14,7 @@ import retireesBenefit from '../assets/retiree_benefits_2026.pdf';
 import annuitantsBenefits from '../assets/Annuitants-Benefit-Admin-Items.pdf';
 import emranNHFRefundForm from '../assets/EMRAN-NHF-Refund-Form .pdf';
 import emranNHFRequirement from '../assets/Requirement-to-process-NHF-refund.pdf';
-import nhfAuthorisationTemplate from '../assets/NHF_Authorisation_Letter_Template';
+import nhfAuthorisationTemplate from '../assets/NHF_Authorisation_Letter_Template.pdf';
 import nsitfRefundApplicationForm from '../assets/NSITF-Refund Application-Form.pdf';
 import retireesProviders from '../assets/retirees_providers_2026.xlsx';
 import cacCertificate from '../assets/cac-certificate.jpg';
