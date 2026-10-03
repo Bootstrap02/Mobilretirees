@@ -1,3 +1,4 @@
+
 // pages/AboutUs.jsx — MOBILE FIXED
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -196,7 +197,7 @@ const AboutUs = () => {
             <h2 className="font-bold text-center mb-10" style={{ fontSize:'clamp(22px,4vw,40px)' }}>Join EMRAN Today</h2>
             <div className="membership-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'clamp(12px,3vw,48px)', textAlign:'center' }}>
               {[
-                { val:'₦20,000', label:'One-Time Registration Fee' },
+                { val:'₦40,000', label:'One-Time Registration Fee' },
                 { val:'₦40,000', label:'Annual Membership Dues' },
                 { val:'Lifetime Benefits', label:'Welfare, Advocacy, Community' },
               ].map((m,i) => (
