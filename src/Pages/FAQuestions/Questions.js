@@ -1,4 +1,5 @@
 
+
 export const faqCategories = [
   {
     id: "general",
@@ -38,14 +39,14 @@ export const faqCategories = [
     faqs: [
       { q: "Who is eligible to become a member of EMRAN?", a: "Membership is open to Nigerian retirees of ExxonMobil, Mobil Producing Nigeria Unlimited, Esso Exploration and Production Nigeria Limited, and their respective subsidiaries. Applicants must have formally retired and completed the membership registration process." },
       { q: "How do I register as a member?", a: "Applicants can register online through the EMRAN website at https://emran.center." },
-      { q: "What is the current registration fee?", a: "The current registration fee is a non-refundable ₦20,000." },
+      { q: "What is the current registration fee?", a: "The current registration fee is a non-refundable ₦40,000." },
       { q: "What are the annual dues?", a: "The current annual dues are a non-refundable ₦40,000 per year." },
       { q: "When are annual dues payable?", a: "Annual dues become due on January 1 each year and must be paid on or before March 31 after a 90-day grace period." },
       { q: "Are there concessions for elderly members?", a: "Yes. Members aged 80 years and above pay only 50% of the annual dues." },
       { q: "What happens if a member fails to pay dues?", a: "Members who owe annual dues for two years or more will have their names removed from the membership register until all outstanding amounts are paid." },
       { q: "Can members facing financial hardship receive consideration?", a: "Yes. Members experiencing extenuating circumstances such as serious illness or bereavement may contact the Secretariat before the due date for consideration by the Executive Committee." },
       { q: "Which fields are mandatory when filling out the registration form?", a: "All registration fields are mandatory except Date of Birth and Residential Address." },
-      { q: "What is the full process for becoming a member, from signup to full membership?", a: "After you fill out the Create Account form, you'll receive a message confirming your signup request has been submitted and is pending. This request goes to the EMRAN admins for approval. Once approved, you'll receive an email with instructions to pay your registration fee (₦20,000) and annual dues (₦40,000). After completing payment, click the link in that email to reach the Confirm Payment page, where you enter the serial number from your payment receipt and submit it. Once the admin verifies this, you're approved as a full member, you'll receive a welcome email, and you can fully log in, edit your profile, and use the platform." },
+      { q: "What is the full process for becoming a member, from signup to full membership?", a: "After you fill out the Create Account form, you'll receive a message confirming your signup request has been submitted and is pending. This request goes to the EMRAN admins for approval. Once approved, you'll receive an email with instructions to pay your registration fee (₦40,000) and annual dues (₦40,000). After completing payment, click the link in that email to reach the Confirm Payment page, where you enter the serial number from your payment receipt and submit it. Once the admin verifies this, you're approved as a full member, you'll receive a welcome email, and you can fully log in, edit your profile, and use the platform." },
       { q: "What is the timeline for formal membership confirmation?", a: "The President or the General Secretary will formally communicate the registration of membership via the applicant's registered email or phone number within two weeks of receiving the completed form and payment." },
       { q: "What happens if a member falls behind on their annual dues?", a: "The Financial Secretary publishes weekly lists of paid members from January through the first week of April, and the Executive Committee may choose to display a list of defaulters after that. On January 1st of any year, any member who is in arrears by two years or more will be removed from the membership list. They can only be reinstated after paying all outstanding amounts." },
       { q: "What details are maintained in the EMRAN Register of Members?", a: "The General Secretary maintains an up-to-date electronic register containing the member's name, spouse's name, residential address, email address, active telephone number, and the names, phone numbers, and email addresses of both the Next-of-Kin and the Designated Beneficiary." },
@@ -63,7 +64,7 @@ export const faqCategories = [
       { q: "Can I pay dues for more than one year at a time?", a: "Yes. You may pay dues for multiple years at once by transferring the combined amount and notifying the Secretariat via email at emranannuitants@gmail.com with your payment details." },
       { q: "How do I know when my membership has been approved?", a: "You will receive a confirmation email at your registered email address once your signup has been approved by the admin. Check your spam folder if you do not see it within 24 hours." },
       { q: "What is a prospective member?", a: "A prospective member is someone whose signup request has been approved by the admin and who has been sent payment instructions, but whose payment has not yet been confirmed. Once payment is confirmed, their status changes to full member." },
-      { q: "Is the registration fee refundable?", a: "No. The registration fee of ₦20,000 is strictly non-refundable." },
+      { q: "Is the registration fee refundable?", a: "No. The registration fee of ₦40,000 is strictly non-refundable." },
       { q: "Are annual dues refundable?", a: "No. Annual dues of ₦40,000 per year are non-refundable once paid." },
       { q: "What is the grace period for paying annual dues?", a: "Annual dues are due on January 1 each year. Members have a 90-day grace period and must pay on or before March 31 to remain in good standing." },
       { q: "What does it mean to be a financial member?", a: "A financial member is one who is fully up to date with all dues and fees owed to the Association. Only financial members can vote, access certain benefits, join WhatsApp platforms, and participate in elections." },
