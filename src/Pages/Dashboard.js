@@ -288,11 +288,10 @@ const Dashboard = () => {
 
   const openElections = () => {
     if (!user?.staffId) { alert('User ID not found. Please login again.'); return; }
-    window.open(
-      `https://emranelections.site/user/ballot.php?id=${user.staffId}&role=${user.role || 'member'}&email=${user.email}`,
-      '_blank', 'noopener,noreferrer'
-    );
+   // const role = user.role || 'member';
+  navigate(`/elections/${user.staffId}`)
   };
+
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
