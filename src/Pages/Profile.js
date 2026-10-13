@@ -1,4 +1,5 @@
 
+
 // pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH + EXIF ORIENTATION FIX
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useParams } from 'react-router-dom';
@@ -97,6 +98,40 @@ const fixImageOrientation = (file) =>
     reader.readAsDataURL(file);
   });
 
+// yyyy-mm-dd for <input type="date"> — UTC getters, because the server stores dates at UTC midnight
+const toInputDate = (v) => {
+  if (!v) return '';
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+};
+
+const avatarFor = (name, size = 256) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'U')}&background=001F5B&color=fff&size=${size}`;
+
+// Turn a stored/server user object into the form's state
+const buildForm = (stored) => ({
+  fullname: stored.fullname || '',
+  email: stored.email || '',
+  phone: stored.phone || '',
+  address: stored.address || '',
+  staffId: stored.staffId || stored._id || 'N/A',
+  dateOfRetirement: toInputDate(stored.dateOfRetirement),
+  dateOfBirth: toInputDate(stored.dateOfBirth),
+  profilePhoto: stored.image?.[0] || avatarFor(stored.fullname),
+  companyAtRetirement: stored.companyAtRetirement || '',
+  locationOfRetirement: stored.locationOfRetirement || '',
+  departmentOfRetirement: stored.departmentOfRetirement || '',
+  spouse: stored.spouse || '',
+  spousePhone: stored.spousePhone || '',
+  nextOfKin: stored.nextOfKin || '',
+  nextOfKinEmail: stored.nextOfKinEmail || '',
+  nextOfKinPhone: stored.nextOfKinPhone || '',
+  beneficiary: stored.beneficiary || '',
+  beneficiaryEmail: stored.beneficiaryEmail || '',
+  beneficiaryPhone: stored.beneficiaryPhone || '',
+});
+
 const Profile = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -130,51 +165,24 @@ const Profile = () => {
     const stored = JSON.parse(localStorage.getItem('userData'));
     if (!stored) { navigate('/signin'); return; }
 
-    let formattedRetirementDate = '';
-    if (stored.dateOfRetirement) {
-      const d = new Date(stored.dateOfRetirement);
-      if (!isNaN(d.getTime())) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        formattedRetirementDate = `${y}-${m}-${day}`;
-      }
-    }
-
-    let inputBirthDate = '';
-    if (stored.dateOfBirth) {
-      const d = new Date(stored.dateOfBirth);
-      if (!isNaN(d.getTime())) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        inputBirthDate = `${y}-${m}-${day}`;
-      }
-    }
-
-    setFormData({
-      fullname: stored.fullname || '',
-      email: stored.email || '',
-      phone: stored.phone || '',
-      address: stored.address || '',
-      staffId: stored.staffId || stored._id || 'N/A',
-      dateOfRetirement: formattedRetirementDate,
-      dateOfBirth: inputBirthDate,
-      profilePhoto: stored.image?.[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(stored.fullname || 'U')}&background=001F5B&color=fff&size=256`,
-      companyAtRetirement: stored.companyAtRetirement || '',
-      locationOfRetirement: stored.locationOfRetirement || '',
-      departmentOfRetirement: stored.departmentOfRetirement || '',
-      spouse: stored.spouse || '',
-      spousePhone: stored.spousePhone || '',
-      nextOfKin: stored.nextOfKin || '',
-      nextOfKinEmail: stored.nextOfKinEmail || '',
-      nextOfKinPhone: stored.nextOfKinPhone || '',
-      beneficiary: stored.beneficiary || '',
-      beneficiaryEmail: stored.beneficiaryEmail || '',
-      beneficiaryPhone: stored.beneficiaryPhone || '',
-    });
+    // 1) Show the cached copy straight away
+    setFormData(buildForm(stored));
     setLoading(false);
-  }, [navigate]);
+
+    // 2) Then refresh from the server, so changes made elsewhere (e.g. by an admin) show up here
+    //    and a stale cached copy can never overwrite them when this form is saved.
+    const userId = id || stored._id;
+    axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getuser/${userId}`)
+      .then((res) => {
+        const fresh = res.data?.user;
+        if (!fresh) return;
+        const { messages, ...freshRest } = fresh;          // keep the cached messages shape untouched
+        const merged = { ...stored, ...freshRest };
+        localStorage.setItem('userData', JSON.stringify(merged));
+        setFormData(buildForm(merged));
+      })
+      .catch(() => { /* offline / server asleep — the cached copy stays */ });
+  }, [navigate, id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -212,7 +220,7 @@ const Profile = () => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const userId = id || userData._id;
 
-      await axios.put(
+      const profileRes = await axios.put(
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/profile/${userId}`,
         {
           fullname: formData.fullname,
@@ -235,17 +243,25 @@ const Profile = () => {
         }
       );
 
+      // What the server actually saved (never the raw form values)
+      const { messages: _m1, ...savedUser } = profileRes.data?.user || {};
+
       if (selectedImage) {
         const imageFormData = new FormData();
         imageFormData.append('images', selectedImage);
-        await axios.put(
+        const imgRes = await axios.put(
           `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/upload-fortune-image/${userId}`,
           imageFormData,
         );
+        // Previously the new image URL was thrown away, so the Dashboard kept showing the old photo
+        if (Array.isArray(imgRes.data?.image) && imgRes.data.image.length) {
+          savedUser.image = imgRes.data.image;
+        }
       }
 
-      const updatedUser = { ...userData, ...formData };
+      const updatedUser = { ...userData, ...savedUser };
       localStorage.setItem('userData', JSON.stringify(updatedUser));
+      setFormData(buildForm(updatedUser));   // reflect exactly what is now stored (incl. the uploaded photo URL)
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
       setSelectedImage(null);
@@ -330,7 +346,7 @@ const Profile = () => {
                 src={formData.profilePhoto}
                 alt={formData.fullname || 'Profile Avatar'}
                 className="w-28 h-28 md:w-40 md:h-40 rounded-full object-cover border-4 md:border-8 border-white shadow-2xl ring-4 ring-[#E30613]/40 group-hover:opacity-80 transition"
-                onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.fullname || 'U')}&background=001F5B&color=fff&size=256`; }}
+                onError={(e) => { e.target.src = avatarFor(formData.fullname); }}
               />
               <div className="absolute bottom-1 right-1 bg-[#E30613] p-2 md:p-3 rounded-full text-white shadow-lg hover:bg-[#c20511] transition">
                 <FiCamera className="text-base md:text-xl" />
