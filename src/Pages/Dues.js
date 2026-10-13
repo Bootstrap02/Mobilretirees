@@ -1,4 +1,5 @@
 
+
 // pages/Dues.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -56,7 +57,8 @@ export const Dues = () => {
 
       const currentExpiry =
         latestPaid && latestPaid.dueDate
-          ? new Date(latestPaid.dueDate).toDateString()
+          ? (() => { const d = new Date(latestPaid.dueDate);   // due date is a UTC calendar day — don't let the viewer's time zone shift it
+                     return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()).toDateString(); })()
           : 'Not Available';
 
       const nextYear = (parseInt(currentYear) + 1).toString();
