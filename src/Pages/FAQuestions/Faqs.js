@@ -3,6 +3,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../../Components/Header';
 import Footer from '../../Components/Footer';
+import Seo from '../../Components/Seo';
 import { faqCategories } from './Questions';
 
 const Chevron = ({ open }) => (
@@ -120,6 +121,11 @@ const FAQ = () => {
 
   return (
     <>
+      <Seo
+        title="Frequently Asked Questions"
+        description="Everything you need to know about EMRAN — membership, welfare, governance, and using the portal."
+        canonical="https://emran.center/faqs"
+      />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600&display=swap');
         .faq-item { animation: fadeSlideUp 0.45s ease both; }

@@ -3,6 +3,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 import spotlight1 from '../assets/exxonmobil-logo-white.jpg'; // Add real photos
 import spotlight2 from '../assets/exxonmobil-logo-white.jpg';
 import spotlight3 from '../assets/exxonmobil-logo-white.jpg';
@@ -34,6 +35,11 @@ const Spotlight = () => {
 
   return (
     <>
+      <Seo
+        title="Retiree Spotlight"
+        description="Celebrating EMRAN members who continue to excel and impact society after retirement."
+        canonical="https://emran.center/spotlight"
+      />
       <Header />
       <div className="min-h-screen bg-gray-50 pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-6">

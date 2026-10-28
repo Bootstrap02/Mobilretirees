@@ -4,6 +4,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 
 import emranLogo        from '../assets/exxonmobil-logo-white.jpg';
 import president        from '../assets/president.jpg';
@@ -20,6 +21,11 @@ import constitution     from '../assets/emran-rules.pdf';
 const AboutUs = () => {
   return (
     <>
+      <Seo
+        title="About EMRAN"
+        description="ExxonMobil Retirees Association of Nigeria — A legacy of unity, welfare, and community impact since 2020."
+        canonical="https://emran.center/about"
+      />
       <style>{`
         /* Prevent horizontal overflow globally on this page */
         .about-page { overflow-x: hidden; }

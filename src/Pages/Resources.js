@@ -1,5 +1,6 @@
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 import { FiDownload, FiFileText, FiExternalLink } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
 
@@ -66,6 +67,11 @@ const Resources = () => {
 
   return (
     <>
+      <Seo
+        title="Resource Center"
+        description="Essential documents, guidelines, and official resources for EMRAN members and ExxonMobil Nigeria retirees."
+        canonical="https://emran.center/resources"
+      />
       <Header />
       <div className="min-h-screen bg-gray-50 pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-6">

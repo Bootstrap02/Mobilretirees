@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 import heroImage from '../assets/exxonmobil-logo-white.jpg';
 import cacCertificate from '../assets/cac-certificate.jpg';
 import NotificationsList from '../Components/Notificationslist';
@@ -99,6 +100,11 @@ const Homepage = () => {
 
   return (
     <>
+      <Seo
+        title="Emran: ExxonMobil Retirees Association of Nigeria"
+        description="A Congregation of ExxonMobil Retirees; Former staff members of exxonmobil in Nigeria who come together for welfare, association and common interests."
+        canonical="https://emran.center/"
+      />
       {/* Hero Section */}
       <div className="relative min-h-screen bg-gradient-to-br from-[#001F5B] via-[#001845] to-[#0A3D6B] overflow-hidden">
         <Header isOpen={openNotifications} />

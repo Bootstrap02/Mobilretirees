@@ -314,6 +314,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 
 const Support = () => {
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -366,6 +367,11 @@ const Support = () => {
 
   return (
     <>
+      <Seo
+        title="Contact Support"
+        description="Get support for pension, medical, membership, or any retiree concerns from the EMRAN team."
+        canonical="https://emran.center/support"
+      />
       <Header />
 
       <div className="min-h-screen bg-gray-50 pt-24 pb-20">

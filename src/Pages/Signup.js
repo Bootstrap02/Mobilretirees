@@ -2,6 +2,7 @@
 // pages/Auth.jsx
 import React, { useState, useRef } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import Seo from '../Components/Seo';
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiCheckCircle, FiLoader, FiXCircle, FiHeart, FiCamera } from 'react-icons/fi';
 import axios from 'axios';
 import { BigLoader } from './Loaders';
@@ -155,6 +156,12 @@ export const Signup = () => {
 
   return (
     <AuthLayout title="Welcome Home" subtitle="Create your retiree account to access your benefits">
+      <Seo
+        title="Create Account"
+        description="Register for an EMRAN retiree account."
+        canonical="https://emran.center/signup"
+        noindex={true}
+      />
       {loading && <BigLoader message="Creating your account..." />}
 
       {/* Required fields note */}
@@ -401,6 +408,12 @@ export const Signin = () => {
   };
   return (
     <AuthLayout title="Welcome Back" subtitle="Sign in to access your retiree benefits portal">
+      <Seo
+        title="Sign In"
+        description="Sign in to your EMRAN member portal."
+        canonical="https://emran.center/signin"
+        noindex={true}
+      />
       {loading && <BigLoader message="Signing you in securely..." />}
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
@@ -443,6 +456,12 @@ export const ForgotPassword = () => {
   };
   return (
     <AuthLayout title="Reset Password" subtitle="We'll send you a link to reset your password">
+      <Seo
+        title="Forgot Password"
+        description="Request a password reset link for your EMRAN account."
+        canonical="https://emran.center/forgotpassword"
+        noindex={true}
+      />
       {loading && <BigLoader message="Sending reset link..." />}
       {sent ? (
         <div className="text-center py-10">

@@ -1,7 +1,7 @@
 {
   "name": "Emran",
   "version": "0.1.0",
-  "homepage": "https://www.emran.center",
+  "homepage": "https://emran.center",
   "private": true,
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
@@ -16,6 +16,7 @@
     "react": "^18.2.0",
     "react-avatar-editor": "^13.0.2",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-icons": "^4.12.0",
     "react-loader-spinner": "^6.1.6",
     "react-loading": "^2.0.3",

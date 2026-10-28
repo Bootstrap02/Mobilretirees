@@ -20,4 +20,4 @@ User-agent: Googlebot-Mobile
 Allow: /
 
 # Sitemap location
-Sitemap: https://campusify.net/sitemap.xml
+Sitemap: https://emran.center/sitemap.xml

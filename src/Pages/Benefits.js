@@ -4,6 +4,7 @@
 import React from 'react';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 import emranLogo from '../assets/exxonmobil-logo-white.jpg'; // ← Your rebuilt logo here
 import constitutionCover from '../assets/constitution-cover.png'; // Page 1 of constitution
 import cacCertificate from '../assets/cac-certificate.jpg'; // CAC cert
@@ -15,6 +16,11 @@ import communityIcon from '../assets/community-icon.jpg';
 const Benefits = () => {
   return (
     <>
+      <Seo
+        title="EMRAN Retiree Benefits"
+        description="Comprehensive support honoring your dedicated service to ExxonMobil Nigeria. Pension, medical, death benefits, and community welfare."
+        canonical="https://emran.center/benefits"
+      />
       <Header />
       <div className="min-h-screen bg-gray-50 pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-6">

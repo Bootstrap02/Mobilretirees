@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
+import Seo from '../Components/Seo';
 
 // Images
 import schoolDonation from '../assets/address-map.jpg';
@@ -67,6 +68,11 @@ const Community = () => {
 
   return (
     <>
+      <Seo
+        title="EMRAN Community"
+        description="Giving back through education, health, and mentorship — while celebrating our leadership and members."
+        canonical="https://emran.center/community"
+      />
       <Header />
 
       <div className="min-h-screen bg-gray-50 pt-24 pb-20">
