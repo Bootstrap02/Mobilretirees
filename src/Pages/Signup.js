@@ -1,4 +1,5 @@
 
+
 // pages/Auth.jsx
 import React, { useState, useRef } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
@@ -83,7 +84,7 @@ export const Signup = () => {
   const avatarInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    fullname:'', email:'', phone:'', password:'',
+    fullname:'', surname:'', email:'', phone:'', password:'',
     dateOfBirth:'', dateOfRetirement:'',
     companyAtRetirement:'', locationOfRetirement:'', departmentOfRetirement:'',
     nextOfKin:'', nextOfKinEmail:'', nextOfKinPhone:'',
@@ -131,6 +132,7 @@ export const Signup = () => {
       /* Step 1: Register user */
       const payload = {
         ...formData,
+        surname: formData.surname.trim(),
         spouse: hasSpouse === 'yes' ? formData.spouse : 'None',
         spousePhone: hasSpouse === 'yes' ? formData.spousePhone : '',
       };
@@ -193,6 +195,10 @@ export const Signup = () => {
         <div>
           <Label required>Full Name (as in service record)</Label>
           <InputField icon={FiUser} type="text" name="fullname" placeholder="Full Name" value={formData.fullname} onChange={handleChange} required />
+        </div>
+        <div>
+          <Label required>Surname</Label>
+          <InputField icon={FiUser} type="text" name="surname" placeholder="Surname" value={formData.surname} onChange={handleChange} required />
         </div>
         <div>
           <Label required>Email Address</Label>
