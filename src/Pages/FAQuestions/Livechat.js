@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { faqCategories } from './Questions';
 
@@ -69,7 +70,13 @@ const LiveChat = () => {
     setInput('');
     setTyping(true);
     setTimeout(() => {
-      const matches = searchFaqs(text);
+      let matches = [];
+      try {
+        matches = searchFaqs(text);
+      } catch (err) {
+        console.error('Chat search failed:', err);
+      }
+      // Always stop the typing dots, even if the search fails
       setTyping(false);
       setMessages(prev => [...prev, {
         id: Date.now() + 1, from: 'bot',
