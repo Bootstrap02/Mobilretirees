@@ -38,8 +38,8 @@ const Field = ({ label, icon: Icon, children }) => (
 
 const inputCls =
   "w-full px-4 py-3 md:px-5 md:py-4 border-2 border-gray-200 rounded-2xl text-base focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/20 transition shadow-sm bg-white outline-none";
-const readOnlyCls =
-  "w-full px-4 py-3 md:px-5 md:py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-base text-gray-600 cursor-not-allowed";
+// const readOnlyCls =
+// "w-full px-4 py-3 md:px-5 md:py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl text-base text-gray-600 cursor-not-allowed";
 const selectCls =
   "w-full px-4 py-3 md:px-5 md:py-4 border-2 border-gray-200 rounded-2xl text-base focus:border-[#E30613] focus:ring-2 focus:ring-[#E30613]/20 transition shadow-sm bg-white appearance-none outline-none";
 
