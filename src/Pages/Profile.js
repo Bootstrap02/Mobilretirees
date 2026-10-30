@@ -392,9 +392,7 @@ const Profile = () => {
                 <Field label="Date of Birth" icon={FiCalendar}>
                   <input name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} className={inputCls} />
                 </Field>
-                <Field label="Staff ID">
-                  <div className={readOnlyCls}>{formData.staffId}</div>
-                </Field>
+                
                 <Field label="Date of Retirement" icon={FiCalendar}>
                   <input name="dateOfRetirement" type="date" value={formData.dateOfRetirement} onChange={handleChange} className={inputCls} />
                 </Field>
