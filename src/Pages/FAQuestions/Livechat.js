@@ -2,36 +2,57 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { faqCategories } from './Questions';
 
+// Build the searchable list once. Skip any malformed entry and remove duplicates.
+const seenQ = new Set();
 const allFaqs = faqCategories.flatMap(cat =>
-  cat.faqs.map(faq => ({ ...faq, category: cat.id, label: cat.label, icon: cat.icon }))
-);
+  (cat.faqs || [])
+    .filter(faq => faq && typeof faq.q === 'string' && typeof faq.a === 'string')
+    .map(faq => ({ ...faq, category: cat.id, label: cat.label, icon: cat.icon }))
+).filter(faq => {
+  const key = faq.q.trim().toLowerCase();
+  if (seenQ.has(key)) return false;
+  seenQ.add(key);
+  return true;
+});
+
+const STOP = new Set(['the','and','are','for','can','was','this','that','have','with','from','will','your','you','our',
+  'its','but','not','his','her','they','them','been','into','also','just','then','their','than','about','after','before',
+  'some','more','how','what','who','when','where','why','which','does','did','get','got','want','need','please','tell',
+  'there','would','should','could','any','all','use','using','me','my','is','do','to','of','in','on','at','it','be','an','or','as','if','i','a']);
+
+// Light normalisation: "funds" -> "fund", "payments" -> "payment"
+const stem = (w) => (w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w);
+
+// Words people use that the FAQs spell differently
+const SYNONYMS = {
+  nhf: ['housing'], nsitf: ['stanbic'], refund: ['refund'], password: ['password'],
+  due: ['dues'], dues: ['due'], pay: ['payment'], pension: ['pencom'],
+};
+
+const tokenize = (text) => text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/)
+  .filter(w => w.length > 1 && !STOP.has(w)).map(stem);
+
+// Pre-compute tokens for each FAQ and how rare each word is (rare words matter more)
+const docs = allFaqs.map(faq => ({
+  faq, qTokens: new Set(tokenize(faq.q)), aTokens: new Set(tokenize(faq.a)),
+}));
+const docFreq = {};
+docs.forEach(d => new Set([...d.qTokens, ...d.aTokens]).forEach(t => { docFreq[t] = (docFreq[t] || 0) + 1; }));
+const idf = (t) => Math.log(1 + docs.length / (1 + (docFreq[t] || 0)));
 
 const searchFaqs = (message) => {
-  const words = message.toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter(w => w.length > 2)
-    // Only strip true filler words — keep how/what/who/when/where/why
-    // because members ask things like "how do I pay" or "who is the president"
-    .filter(w => !['the','and','are','for','can','was','this','that','have',
-                   'with','from','will','your','you','our','its','but','not',
-                   'his','her','they','them','been','into','also','just','then',
-                   'their','than','about','after','before','some','more'].includes(w));
-  if (words.length === 0) return [];
-  const scored = allFaqs.map(faq => {
-    const qLower = faq.q.toLowerCase();
-    const aLower = faq.a.toLowerCase();
-    let score = 0;
+  const base = tokenize(message);
+  if (base.length === 0) return [];
+  const words = [...new Set(base.flatMap(w => [w, ...((SYNONYMS[w] || []).map(stem))]))];
+  const scored = docs.map(({ faq, qTokens, aTokens }) => {
+    let score = 0, matched = 0;
     words.forEach(w => {
-      // Exact word in question = highest score
-      if (qLower.includes(w)) score += 4;
-      // Exact word in answer = medium score
-      else if (aLower.includes(w)) score += 1;
+      const weight = idf(w);
+      if (qTokens.has(w)) { score += weight * 3; matched++; }
+      else if (aTokens.has(w)) { score += weight; matched++; }
     });
-    // Bonus: if ALL words appear somewhere in the FAQ, boost it significantly
-    const allMatch = words.every(w => (qLower + ' ' + aLower).includes(w));
-    if (allMatch && words.length > 1) score += 5;
-    return { ...faq, score };
+    if (base.length > 1 && base.every(w => qTokens.has(w) || aTokens.has(w))) score *= 1.5;
+    return { ...faq, score, matched };
   });
   return scored.filter(f => f.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
 };
