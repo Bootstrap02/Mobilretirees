@@ -1,6 +1,5 @@
 
-
-// pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH + EXIF ORIENTATION FIX
+// pages/Profile.jsx — EXPANDED WITH DATE OF BIRTH + EXIF ORIENTATION FIX + SURNAME
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useParams } from 'react-router-dom';
 import axios from "axios";
@@ -112,6 +111,7 @@ const avatarFor = (name, size = 256) =>
 // Turn a stored/server user object into the form's state
 const buildForm = (stored) => ({
   fullname: stored.fullname || '',
+  surname: stored.surname || '',
   email: stored.email || '',
   phone: stored.phone || '',
   address: stored.address || '',
@@ -148,7 +148,7 @@ const Profile = () => {
   const [saveSuccess, setSaveSuccess]       = useState(false);
 
   const [formData, setFormData] = useState({
-    fullname: '', email: '', phone: '', address: '',
+    fullname: '', surname: '', email: '', phone: '', address: '',
     staffId: 'N/A', dateOfRetirement: '', dateOfBirth: '', profilePhoto: '',
     companyAtRetirement: '', locationOfRetirement: '', departmentOfRetirement: '',
     spouse: '', spousePhone: '',
@@ -214,6 +214,11 @@ const Profile = () => {
   };
 
   const handleSaveProfile = async () => {
+    // Surname is required on the server — stop here with a clear message instead of a vague failure
+    if (!formData.surname.trim()) {
+      alert('Please enter your surname before saving.');
+      return;
+    }
     setSaving(true);
     setUploadError('');
     try {
@@ -224,6 +229,7 @@ const Profile = () => {
         `https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/profile/${userId}`,
         {
           fullname: formData.fullname,
+          surname: formData.surname.trim(),
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
@@ -379,6 +385,10 @@ const Profile = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                 <Field label="Full Name" icon={FiUser}>
                   <input name="fullname" value={formData.fullname} onChange={handleChange} className={inputCls} />
+                </Field>
+                <Field label="Surname" icon={FiUser}>
+                  <input name="surname" value={formData.surname} onChange={handleChange}
+                    placeholder="Your surname" className={inputCls} />
                 </Field>
                 <Field label="Email Address" icon={FiMail}>
                   <input name="email" type="email" value={formData.email} onChange={handleChange} className={inputCls} />
