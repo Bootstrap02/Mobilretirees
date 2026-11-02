@@ -1,5 +1,6 @@
 
 
+
 // pages/Dues.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,6 +9,69 @@ import Footer from '../Components/Footer';
 import axios from 'axios';
 import { FiLoader, FiCheckCircle, FiArrowLeft } from 'react-icons/fi';
 
+// ── Dates ────────────────────────────────────────────────────────────────────
+// The date shown for a payment is the UPDATED date (it changes whenever the record is paid or edited);
+// if there is no updated date it falls back to the CREATED date. Unpaid years show '—'.
+const stampOf = (entry) => (entry && (entry.updatedAt || entry.createdAt || entry.paidAt)) || null;
+const fmtDate = (value) => {
+  if (!value) return '—';
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? '—' : d.toLocaleDateString();
+};
+
+// Turns a stored user record into what the page displays (kept outside the component so it has no hook dependencies)
+const buildDuesView = (storedUser) => {
+  const duesMap = storedUser.dues || {};
+  const registrationData = storedUser.registration || {};
+  const currentYear = new Date().getFullYear().toString();
+
+  const duesArray = Object.entries(duesMap).map(([year, data]) => ({
+    year,
+    amount: data.amount || 0,
+    date: data.payment ? fmtDate(stampOf(data)) : '—',
+    status: data.payment ? 'Paid' : 'Unpaid',
+    payment: data.payment,
+    dueDate: data.dueDate,
+  }));
+
+  duesArray.sort((a, b) => Number(b.year) - Number(a.year));
+
+  const paidYears = duesArray.filter(d => d.payment);
+  const latestPaid = paidYears.length > 0 ? paidYears[0] : null;
+
+  const currentYearData = duesMap[currentYear];
+
+  const status =
+    currentYearData && currentYearData.payment
+      ? 'Paid'
+      : 'Unpaid';
+
+  const currentExpiry =
+    latestPaid && latestPaid.dueDate
+      ? (() => { const d = new Date(latestPaid.dueDate);   // due date is a UTC calendar day — don't let the viewer's time zone shift it
+                 return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()).toDateString(); })()
+      : 'Not Available';
+
+  const nextYear = (parseInt(currentYear) + 1).toString();
+  const nextAmount = currentYearData?.amount || 40000;
+
+  return {
+    fullname: storedUser.fullname,
+    registration: {
+      status: registrationData.payment ? 'Paid' : 'Unpaid',
+      amount: registrationData.amount || 0,
+      date: fmtDate(stampOf(registrationData))
+    },
+    dues: {
+      status,
+      currentExpiry,
+      history: duesArray,
+      nextYear,
+      nextAmount: `₦${Number(nextAmount).toLocaleString()}`
+    }
+  };
+};
+
 export const Dues = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -15,6 +79,7 @@ export const Dues = () => {
   const [id, setId] = useState('');
 
   useEffect(() => {
+    let cancelled = false;
     try {
       const storedUser = JSON.parse(localStorage.getItem('userData'));
 
@@ -22,70 +87,28 @@ export const Dues = () => {
         navigate('/signin');
         return;
       }
-      setId(storedUser._id)
-      const duesMap = storedUser.dues || {};
-      const registrationData = storedUser.registration || {};
-      const currentYear = new Date().getFullYear().toString();
+      setId(storedUser._id);
 
-      // ONLY CHANGE vs. the original: the "Date Paid" column now shows the real
-      // payment date for paid years (paidAt -> updatedAt) and '—' for unpaid years,
-      // instead of falling back to the due date.
-      const duesArray = Object.entries(duesMap).map(([year, data]) => ({
-        year,
-        amount: data.amount || 0,
-        date: data.payment
-          ? (data.paidAt || data.updatedAt
-              ? new Date(data.paidAt || data.updatedAt).toLocaleDateString()
-              : '—')
-          : '—',
-        status: data.payment ? 'Paid' : 'Unpaid',
-        payment: data.payment,
-        dueDate: data.dueDate,
-      }));
-
-      duesArray.sort((a, b) => Number(b.year) - Number(a.year));
-
-      const paidYears = duesArray.filter(d => d.payment);
-      const latestPaid = paidYears.length > 0 ? paidYears[0] : null;
-
-      const currentYearData = duesMap[currentYear];
-
-      const status =
-        currentYearData && currentYearData.payment
-          ? 'Paid'
-          : 'Unpaid';
-
-      const currentExpiry =
-        latestPaid && latestPaid.dueDate
-          ? (() => { const d = new Date(latestPaid.dueDate);   // due date is a UTC calendar day — don't let the viewer's time zone shift it
-                     return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()).toDateString(); })()
-          : 'Not Available';
-
-      const nextYear = (parseInt(currentYear) + 1).toString();
-      const nextAmount = currentYearData?.amount || 40000;
-
-      setUser({
-        fullname: storedUser.fullname,
-        registration: {
-          status: registrationData.payment ? 'Paid' : 'Unpaid',
-          amount: registrationData.amount || 0,
-          date: registrationData.updatedAt
-            ? new Date(registrationData.updatedAt).toLocaleDateString()
-            : '—'
-        },
-        dues: {
-          status,
-          currentExpiry,
-          history: duesArray,
-          nextYear,
-          nextAmount: `₦${Number(nextAmount).toLocaleString()}`
-        }
-      });
-
+      // 1) Show the copy saved in the browser straight away
+      setUser(buildDuesView(storedUser));
       setLoading(false);
+
+      // 2) Then refresh from the server, so a payment recorded or updated since the member last logged in
+      //    shows with its CURRENT date instead of the stale saved copy.
+      axios.get(`https://campusbuy-backend-nkmx.onrender.com/mobilcreateuser/getuser/${storedUser._id}`)
+        .then((res) => {
+          const fresh = res.data?.user;
+          if (!fresh || cancelled) return;
+          const { messages, ...freshRest } = fresh;          // keep the cached messages shape untouched
+          const merged = { ...storedUser, ...freshRest };
+          localStorage.setItem('userData', JSON.stringify(merged));
+          setUser(buildDuesView(merged));
+        })
+        .catch(() => { /* offline / server asleep — the saved copy stays */ });
     } catch (error) {
       navigate('/signin');
     }
+    return () => { cancelled = true; };
   }, [navigate]);
 
   if (loading) {
