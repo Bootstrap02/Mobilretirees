@@ -160,14 +160,30 @@ const LiveChat = () => {
            On mobile:  covers most of the screen, sits above the bottom nav bar
            On desktop: fixed height, never taller than viewport - 120px, 
                        always visible fully without clipping at the top           */
+        /* The mobile bottom navigation bar (Home / Benefits / News / Support) is about 65px tall and is shown below 1024px.
+           The chat bubble used to sit INSIDE that bar and covered "Support" — so below 1024px it is lifted above the bar. */
+        .chat-bubble-wrap {
+          position: fixed;
+          bottom: 88px;
+          right: 20px;
+          z-index: 1002;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+        @media (min-width: 1024px) {
+          .chat-bubble-wrap { bottom: 24px; }
+        }
+
         .chat-window {
           position: fixed;
           right: 20px;
-          bottom: 90px;           /* above mobile bottom bar */
+          bottom: 156px;          /* above the lifted bubble (88px + 56px bubble + gap) */
           width: 360px;
           max-width: calc(100vw - 32px);
           /* Never taller than the available viewport height minus some margin */
-          height: min(520px, calc(100vh - 120px));
+          height: min(520px, calc(100vh - 190px));
           background: #fff;
           border-radius: 20px;
           box-shadow: 0 12px 60px rgba(0,31,91,0.18);
@@ -178,7 +194,7 @@ const LiveChat = () => {
         }
 
         /* On wider desktop screens push it a bit higher from the bottom */
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           .chat-window {
             bottom: 88px;
             height: min(560px, calc(100vh - 120px));
@@ -303,7 +319,7 @@ const LiveChat = () => {
         )}
 
         {/* ── Floating Bubble (fixed position, separate from window) ── */}
-        <div style={{ position:'fixed', bottom:24, right:20, zIndex:1002, display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
+        <div className="chat-bubble-wrap">
           {!open && (
             <div className="chat-label"
               style={{ background:'#001F5B', color:'#fff', fontSize:11, fontWeight:700, padding:'4px 10px', borderRadius:20, letterSpacing:'0.04em', boxShadow:'0 2px 8px rgba(0,31,91,0.25)' }}>
