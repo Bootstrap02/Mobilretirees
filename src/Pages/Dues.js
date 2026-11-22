@@ -64,7 +64,7 @@ const buildDuesView = (storedUser) => {
     },
     dues: {
       status,
-      currentExpiry,
+      
       history: duesArray,
       nextYear,
       nextAmount: `₦${Number(nextAmount).toLocaleString()}`
