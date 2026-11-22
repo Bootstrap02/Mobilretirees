@@ -37,7 +37,7 @@ const buildDuesView = (storedUser) => {
   duesArray.sort((a, b) => Number(b.year) - Number(a.year));
 
   const paidYears = duesArray.filter(d => d.payment);
-  const latestPaid = paidYears.length > 0 ? paidYears[0] : null;
+  
 
   const currentYearData = duesMap[currentYear];
 
