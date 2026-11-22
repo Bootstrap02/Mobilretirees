@@ -191,14 +191,7 @@ export const Dues = () => {
                 </p>
               </div>
 
-              <div className="p-8 bg-yellow-50 rounded-2xl shadow-lg">
-                <h3 className="text-2xl font-bold text-yellow-800 mb-4">
-                  Expiry Date
-                </h3>
-                <p className="text-4xl font-extrabold text-yellow-700">
-                  {user.dues.currentExpiry}
-                </p>
-              </div>
+              
             </div>
           </div>
 
