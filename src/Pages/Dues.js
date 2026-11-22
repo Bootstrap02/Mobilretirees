@@ -46,11 +46,7 @@ const buildDuesView = (storedUser) => {
       ? 'Paid'
       : 'Unpaid';
 
-  const currentExpiry =
-    latestPaid && latestPaid.dueDate
-      ? (() => { const d = new Date(latestPaid.dueDate);   // due date is a UTC calendar day — don't let the viewer's time zone shift it
-                 return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()).toDateString(); })()
-      : 'Not Available';
+  
 
   const nextYear = (parseInt(currentYear) + 1).toString();
   const nextAmount = currentYearData?.amount || 40000;
